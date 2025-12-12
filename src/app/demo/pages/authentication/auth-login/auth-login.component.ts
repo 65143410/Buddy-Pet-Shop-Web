@@ -1,6 +1,6 @@
 // project import
-import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-auth-login',
@@ -9,6 +9,7 @@ import { RouterModule } from '@angular/router';
   styleUrl: './auth-login.component.scss'
 })
 export class AuthLoginComponent {
+router=inject(Router);
   // public method
   SignInOptions = [
     {
@@ -24,4 +25,7 @@ export class AuthLoginComponent {
       name: 'Facebook'
     }
   ];
+  goToHome() {
+  this.router.navigate(['/home'])
+}
 }

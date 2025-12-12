@@ -39,10 +39,28 @@ export const NavigationItems: NavigationItem[] = [
         title: 'Home',
         type: 'item',
         classes: 'nav-item',
-        url: '/home',
+        url: '/dashboard/home',
+        icon: 'global',
+        breadcrumbs: false
+      },
+      {
+        id: 'admin',
+        title: 'Admin',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/dashboard/admin',
         icon: 'dashboard',
         breadcrumbs: false
-      }
+      },
+      {
+        id: 'staff',
+        title: 'Staff',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/dashboard/staff',
+        icon: 'dashboard',
+        breadcrumbs: false
+      },
     ]
   },
   {

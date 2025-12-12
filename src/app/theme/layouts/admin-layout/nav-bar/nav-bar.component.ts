@@ -1,10 +1,12 @@
 // angular import
 import { Component, output } from '@angular/core';
 
+
 // project import
 
 import { NavLeftComponent } from './nav-left/nav-left.component';
 import { NavRightComponent } from './nav-right/nav-right.component';
+
 
 @Component({
   selector: 'app-nav-bar',

@@ -37,6 +37,7 @@ export class CartList implements OnInit {
 
   openCart(): void {
     this.isOpen = true;
+    console.log(this.isOpen)
   }
 
   closeCart(): void {

@@ -1,3 +1,4 @@
+import { Staff } from './demo/dashboard/staff/staff';
 import { Home } from './demo/dashboard/home/home';
 // angular import
 import { NgModule } from '@angular/core';
@@ -7,6 +8,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { AdminComponent } from './theme/layouts/admin-layout/admin-layout.component';
 import { GuestLayoutComponent } from './theme/layouts/guest-layout/guest-layout.component';
 import { ProductList } from './demo/dashboard/home/product-list/product-list';
+import { Admin } from './demo/dashboard/admin/admin';
 
 const routes: Routes = [
   {
@@ -35,8 +37,16 @@ const routes: Routes = [
         loadComponent: () => import('./demo/others/sample-page/sample-page.component').then((c) => c.SamplePageComponent)
       },
       {
-        path: 'home',
+        path: 'dashboard/home',
         component: Home
+      },
+      {
+        path: 'dashboard/admin',
+        component: Admin
+      },
+      {
+        path: 'dashboard/staff',
+        component: Staff
       },
       {
         path: 'home/product/:id',

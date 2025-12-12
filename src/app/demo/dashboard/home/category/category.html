@@ -3,7 +3,11 @@
 
   <a routerLink="category/{{category.id}}">{{category.name}}</a>
 </div>!-->
-<ul class="list-group" *ngFor="let category of categories">
-  <li class="list-group-item"><a (click)="goToProducts(category.id)">{{category.name}}</a></li>
+<ul class="list-group">
+  <li class="list-group-item" 
+      *ngFor="let category of categories" 
+      (click)="goToProducts(category.id)">
+      {{category.name}}
+  </li>
 </ul>
 

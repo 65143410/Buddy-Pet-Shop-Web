@@ -1,0 +1,12 @@
+
+.list-group-item {
+    cursor: pointer; 
+    transition: background-color 0.2s ease;
+    background-color: aqua;
+}
+
+.list-group-item a {
+    text-decoration: none; 
+    display: block; 
+    color: inherit; 
+}

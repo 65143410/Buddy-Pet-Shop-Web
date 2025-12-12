@@ -1,6 +1,6 @@
 // Angular import
-import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-auth-register',
@@ -9,6 +9,7 @@ import { RouterModule } from '@angular/router';
   styleUrl: './auth-register.component.scss'
 })
 export class AuthRegisterComponent {
+  router=inject(Router);
   // public method
   SignUpOptions = [
     {
@@ -24,4 +25,7 @@ export class AuthRegisterComponent {
       name: 'Facebook'
     }
   ];
+  goToHome() {
+  this.router.navigate(['/home'])
+}
 }
