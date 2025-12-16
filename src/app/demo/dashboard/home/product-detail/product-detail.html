@@ -1,0 +1,43 @@
+<div class="container my-5">
+    <div *ngIf="product">
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <img [src]="product.image" [alt]="product.name" class="img-fluid rounded shadow-sm">
+            </div>
+
+            <div class="col-md-6">
+                <h1 class="display-5 fw-bold">{{ product.name }}</h1>
+                <p class="text-muted">{{ product.category }} (ID: {{ product.categoryId }})</p>
+
+                <h2 class="text-success my-4">
+                    {{ product.price | currency: 'USD': true }}
+                </h2>
+
+                <hr>
+
+                <div class="mb-4">
+                    <p class="text-lead">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                    </p>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary btn-lg" (click)="addToCart(product);">
+                        <i class="fas fa-cart-plus me-2"></i> เพิ่มลงตะกร้า
+                    </button>
+
+                    <a class="btn btn-outline-secondary"
+                       [routerLink]="['/home/product', product.categoryId]"
+                       role="button">
+                        <i class="fas fa-arrow-left me-2"></i> กลับไปรายการสินค้า
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="!product" class="text-center alert alert-warning">
+        <h3 class="my-5">ไม่พบสินค้า ID: {{ productId }}</h3>
+        <p>สินค้าที่คุณกำลังค้นหาอาจถูกลบหรือไม่มีอยู่ในระบบ</p>
+    </div>
+</div>

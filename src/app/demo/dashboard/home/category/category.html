@@ -1,13 +1,16 @@
+<div class="row g-4 justify-content-center">
 
-<!--<div *ngFor="let category of categories">
+    <div class="col-6 col-md-4 col-lg-3"
+         *ngFor="let category of categories"
+         (click)="goToProducts(category.id)">
 
-  <a routerLink="category/{{category.id}}">{{category.name}}</a>
-</div>!-->
-<ul class="list-group">
-  <li class="list-group-item" 
-      *ngFor="let category of categories" 
-      (click)="goToProducts(category.id)">
-      {{category.name}}
-  </li>
-</ul>
+        <div class="card h-100 category-tile shadow-sm">
 
+            <div class="card-body text-center d-flex flex-column align-items-center justify-content-center">
+
+                <h5 class="card-title mb-1 fw-bold">{{ category.name }}</h5>
+
+                </div>
+        </div>
+    </div>
+</div>

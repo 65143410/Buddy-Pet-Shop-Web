@@ -1,0 +1,36 @@
+
+.category-selection-page {
+    padding-top: 2rem;
+    padding-bottom: 4rem;
+    background-color: #f8f9fa;
+    min-height: 80vh;
+}
+
+.category-selection-page h1 {
+    color: #343a40 !important;
+}
+.category-item {
+    text-align: center;
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    cursor: pointer;
+    background-color: white;
+    padding: 1.5rem;
+}
+
+.category-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+}
+
+.category-item .category-icon {
+    font-size: 3rem;
+    color: #007bff;
+    margin-bottom: 0.5rem;
+}
+
+.category-item h5 {
+    font-size: 1.1rem;
+    font-weight: 600;
+}

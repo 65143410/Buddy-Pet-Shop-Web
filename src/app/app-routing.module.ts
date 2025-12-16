@@ -9,6 +9,7 @@ import { AdminComponent } from './theme/layouts/admin-layout/admin-layout.compon
 import { GuestLayoutComponent } from './theme/layouts/guest-layout/guest-layout.component';
 import { ProductList } from './demo/dashboard/home/product-list/product-list';
 import { Admin } from './demo/dashboard/admin/admin';
+import { ProductDetail } from './demo/dashboard/home/product-detail/product-detail';
 
 const routes: Routes = [
   {
@@ -52,8 +53,13 @@ const routes: Routes = [
         path: 'home/product/:id',
         component: ProductList
       },
+      {
+        path: 'home/detail/:productId',
+        component: ProductDetail
+      },
     ]
   },
+
   {
     path: '',
     component: GuestLayoutComponent,
