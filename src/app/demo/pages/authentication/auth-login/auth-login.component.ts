@@ -1,4 +1,3 @@
-// project import
 import { Component, inject } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 
@@ -26,6 +25,6 @@ router=inject(Router);
     }
   ];
   goToHome() {
-  this.router.navigate(['/home'])
+  this.router.navigate(['dashboard/home'])
 }
 }

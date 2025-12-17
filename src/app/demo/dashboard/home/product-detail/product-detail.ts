@@ -17,13 +17,11 @@ interface Product {
 @Component({
     selector: 'app-product-detail',
     standalone: true,
-    // **แก้ไข:** เพิ่ม RouterModule เข้าไปใน imports
     imports: [CommonModule, RouterModule],
     templateUrl: './product-detail.html',
     styleUrl: './product-detail.scss'
 })
 export class ProductDetail implements OnInit {
-    // ตัวแปร productId ถูกเพิ่มกลับมาแล้ว (ถูกต้อง)
     productId: number | null = null;
 
     product: Product | undefined;

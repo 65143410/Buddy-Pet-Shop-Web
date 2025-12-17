@@ -34,15 +34,15 @@
         </thead>
         <tbody>
           <ng-container *ngFor="let order of ordersForShipping; let i = index">
-            <tr [ngClass]="{'active-row': selectedOrder === order}">
+            <tr [ngClass]="{'active-row': selectedOrder === order && isToggleLogisTable}">
               <td class="priority-number">{{ i + 1 }}</td>
               <td>**{{ order.orderId }}**</td>
               <td>{{ order.customerName }}</td>
               <td>{{ order.date }}</td>
               <td>{{ order.total | currency:'฿':'symbol':'1.2-2' }}</td>
               <td>
-                <button class="action-btn view" (click)="viewOrderDetails(order)">
-                  {{ selectedOrder === order ? '➖ ปิด' : '➕ สินค้า' }}
+                <button class="action-btn view" (click)="viewOrderDetails(order, 'logis')">
+                  {{ selectedOrder === order && isToggleLogisTable ? '➖ ปิด' : '➕ สินค้า' }}
                 </button>
               </td>
               <td>
@@ -50,7 +50,7 @@
               </td>
             </tr>
 
-            <tr *ngIf="selectedOrder === order" class="order-details-row">
+            <tr *ngIf="selectedOrder === order && isToggleLogisTable" class="order-details-row">
               <td colspan="7">
                 <div class="details-content">
                   <h4>รายการสินค้า (Order ID: {{ order.orderId }})</h4>
@@ -99,14 +99,14 @@
         </thead>
         <tbody>
           <ng-container *ngFor="let order of allOrders">
-            <tr [ngClass]="{'active-row': selectedOrder === order}">
+            <tr [ngClass]="{'active-row': selectedOrder === order && isToggleOrderTable}">
               <td>{{ order.orderId }}</td>
               <td>{{ order.customerName }}</td>
               <td>{{ order.date }}</td>
               <td>{{ order.total | currency:'฿':'symbol':'1.2-2' }}</td>
               <td>
-                <button class="action-btn view" (click)="viewOrderDetails(order)">
-                  {{ selectedOrder === order ? '➖ ปิด' : '➕ สินค้า' }}
+                <button class="action-btn view" (click)="viewOrderDetails(order, 'order')">
+                  {{ selectedOrder === order && isToggleOrderTable? '➖ ปิด' : '➕ สินค้า' }}
                 </button>
               </td>
               <td>
@@ -117,7 +117,7 @@
               </td>
             </tr>
 
-            <tr *ngIf="selectedOrder === order" class="order-details-row">
+            <tr *ngIf="selectedOrder === order && isToggleOrderTable" class="order-details-row">
               <td colspan="6">
                 <div class="details-content">
                   <h4>รายการสินค้า (Order ID: {{ order.orderId }})</h4>

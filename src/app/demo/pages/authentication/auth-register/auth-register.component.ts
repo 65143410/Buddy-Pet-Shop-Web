@@ -1,4 +1,3 @@
-// Angular import
 import { Component, inject } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 
@@ -10,7 +9,6 @@ import { Router, RouterModule } from '@angular/router';
 })
 export class AuthRegisterComponent {
   router=inject(Router);
-  // public method
   SignUpOptions = [
     {
       image: 'assets/images/authentication/google.svg',
@@ -26,6 +24,6 @@ export class AuthRegisterComponent {
     }
   ];
   goToHome() {
-  this.router.navigate(['/home'])
+  this.router.navigate(['dashboard/home'])
 }
 }

@@ -37,6 +37,9 @@ interface Employee {
   styleUrl: './staff.scss'
 })
 export class Staff implements OnInit {
+
+  isToggleLogisTable = false;
+  isToggleOrderTable = false;
   selectedOrder: Order | null = null;
   currentStaff: Employee = {
     empId: 'E002',
@@ -87,7 +90,14 @@ export class Staff implements OnInit {
       ]
     }
   ];
-  viewOrderDetails(order: Order): void {
+  viewOrderDetails(order: Order, table: string): void {
+    if('logis' == table){
+      this.isToggleLogisTable = true;
+      this.isToggleOrderTable = false;
+    }else if ('order' == table){
+      this.isToggleLogisTable = false;
+      this.isToggleOrderTable = true;
+    }
     if (this.selectedOrder === order) {
       this.selectedOrder = null;
     } else {
