@@ -1,17 +1,16 @@
 import { Staff } from './demo/dashboard/staff/staff';
 import { Home } from './demo/dashboard/home/home';
-// angular import
+
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-// Project import
 import { AdminComponent } from './theme/layouts/admin-layout/admin-layout.component';
 import { GuestLayoutComponent } from './theme/layouts/guest-layout/guest-layout.component';
 import { ProductList } from './demo/dashboard/home/product-list/product-list';
 import { Admin } from './demo/dashboard/admin/admin';
 import { ProductDetail } from './demo/dashboard/home/product-detail/product-detail';
 
-const routes: Routes = [
+export const routes: Routes = [
   {
     path: '',
     component: AdminComponent,
@@ -54,7 +53,7 @@ const routes: Routes = [
         component: ProductList
       },
       {
-        path: 'home/detail/:productId',
+        path: 'home/detail/:id',
         component: ProductDetail
       },
     ]

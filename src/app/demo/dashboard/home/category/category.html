@@ -1,16 +1,15 @@
 <div class="row g-4 justify-content-center">
+    <div *ngIf="categories.length === 0" class="text-center">
+        <p>กำลังโหลดหมวดหมู่...</p>
+    </div>
 
     <div class="col-6 col-md-4 col-lg-3"
-         *ngFor="let category of categories"
-         (click)="goToProducts(category.id)">
-
-        <div class="card h-100 category-tile shadow-sm">
-
+         *ngFor="let category of categories; trackBy: trackByCatId"
+         (click)="goToProducts(category.categoryId)">
+        <div class="card h-100 category-tile shadow-sm clickable-card">
             <div class="card-body text-center d-flex flex-column align-items-center justify-content-center">
-
-                <h5 class="card-title mb-1 fw-bold">{{ category.name }}</h5>
-
-                </div>
+                <h5 class="card-title mb-1 fw-bold">{{ category.categoryName }}</h5>
+            </div>
         </div>
     </div>
 </div>

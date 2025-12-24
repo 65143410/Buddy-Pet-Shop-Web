@@ -1,14 +1,18 @@
-import { ProductService } from './../services/product.service';
-import { Component, inject , OnInit } from '@angular/core';
-import { Router, ActivatedRoute,RouterModule} from '@angular/router';
-import { CartService } from './../services/cart.service';
-import { Product } from '../types/products';
+import { Component, inject, OnInit } from '@angular/core';
+import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 
+
+import { Product } from 'src/app/demo/models/product.model';
+
+import { CartService } from 'src/app/services/cart.service';
+import { ProductService } from 'src/app/services/ProductService';
+
 @Component({
   selector: 'app-product-list',
-  imports: [CommonModule,RouterModule],
+  standalone: true,
+  imports: [CommonModule, RouterModule],
   templateUrl: './product-list.html',
   styleUrls: ['./product-list.scss'],
 })
@@ -16,22 +20,32 @@ export class ProductList implements OnInit {
   public selectedCatList: Product[] = [];
   private originalCatList: Product[] = [];
 
-route = inject(ActivatedRoute);
-router = inject(Router);
-cartService =inject(CartService);
-productService=inject(ProductService);
-  constructor(
-  ) {}
+  route = inject(ActivatedRoute);
+  router = inject(Router);
+  cartService = inject(CartService);
+  productService = inject(ProductService);
+
+  temp_img_url = "https://www.prachachat.net/wp-content/uploads/2023/05/%E0%B8%94%E0%B8%B5%E0%B9%84%E0%B8%8B%E0%B8%99%E0%B9%8C%E0%B8%97%E0%B8%B5%E0%B9%88%E0%B8%A2%E0%B8%B1%E0%B8%87%E0%B9%84%E0%B8%A1%E0%B9%88%E0%B9%84%E0%B8%94%E0%B9%89%E0%B8%95%E0%B8%B1%E0%B9%89%E0%B8%87%E0%B8%8A%E0%B8%B7%E0%B9%88%E0%B8%AD-6.jpg";
+  constructor() {}
 
   ngOnInit() {
     const idParam = this.route.snapshot.paramMap.get('id');
-    const id = idParam ? parseInt(idParam, 10) : NaN;
+    const categoryId = idParam ? parseInt(idParam, 10) : NaN;
 
-    if (!isNaN(id)) {
-        const loadedList = this.productService.getCategoryItems(id);
-        this.originalCatList = [...loadedList];
-        this.selectedCatList = [...loadedList];
-        this.selectedCatList.sort((a, b) => b.id - a.id);
+    if (!isNaN(categoryId)) {
+      this.productService.getProducts().subscribe({
+        next: (allProducts) => {
+          const filteredList = allProducts.filter(p => p.category?.categoryId === categoryId);
+
+          this.originalCatList = [...filteredList];
+          this.selectedCatList = [...filteredList];
+
+          this.selectedCatList.sort((a, b) => Number(b.productId) - Number(a.productId));
+        },
+        error: (err) => {
+          console.error('Error fetching products:', err);
+        }
+      });
     } else {
       this.selectedCatList = [];
     }
@@ -40,6 +54,7 @@ productService=inject(ProductService);
   public addToCart(product: Product): void {
     this.cartService.add(product);
   }
+
   public onSortChange(event: Event): void {
     const sortValue = (event.target as HTMLSelectElement).value;
 
@@ -51,28 +66,31 @@ productService=inject(ProductService);
         this.selectedCatList.sort((a, b) => b.price - a.price);
         break;
       case 'newest':
-        this.selectedCatList.sort((a, b) => b.id - a.id);
+        this.selectedCatList.sort((a, b) => Number(b.productId) - Number(a.productId));
         break;
       case 'recommended':
-        this.selectedCatList = [...this.originalCatList].sort((a, b) => b.id - a.id);
+        this.selectedCatList = [...this.originalCatList].sort((a, b) => Number(b.productId) - Number(a.productId));
         break;
       default:
         break;
     }
     this.selectedCatList = [...this.selectedCatList];
   }
-  public handleCardClick(event: MouseEvent, id: number): void {
-    console.log("tsettttt");
-    this.router.navigate(['/home/detail', id]);
-    // [routerLink]="['/home/detail', item.id]"
 
-        const target = event.target as HTMLElement;
-        const isCartButton = target.closest('.add-to-cart-btn');
+  public handleCardClick(event: MouseEvent, id: number | string): void {
+    const target = event.target as HTMLElement;
+    const isCartButton = target.closest('.add-to-cart-btn');
 
-        if (isCartButton) {
-            event.preventDefault();
-            event.stopPropagation();
-        }
+    if (isCartButton) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
     }
-}
 
+    this.router.navigate(['/home/detail', id]);
+  }
+
+  trackByProductId(index: number, item: Product): string | number {
+  return item.productId;
+}
+}

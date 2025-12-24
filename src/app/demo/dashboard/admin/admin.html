@@ -1,252 +1,460 @@
-<div class="admin-container">
-    <div class="admin-header">
-        <div class="logo-area">
-            <h3>🐾 Pet Food Admin</h3>
-        </div>
-
-        <ul class="nav-list horizontal-tabs">
-            <li>
-                <button (click)="setPage('dashboard')" [ngClass]="{'active': currentPage === 'dashboard'}">
-                    <i class="icon dashboard"></i><span>หน้าหลัก</span>
-                </button>
-            </li>
-            <li>
-                <button (click)="setPage('products')" [ngClass]="{'active': currentPage === 'products'}">
-                    <i class="icon shopping-bag"></i><span>จัดการสินค้า</span>
-                </button>
-            </li>
-            <li>
-                <button (click)="setPage('orders')" [ngClass]="{'active': currentPage === 'orders'}">
-                    <i class="icon receipt"></i><span>จัดการคำสั่งซื้อ</span>
-                </button>
-            </li>
-            <li>
-                <button (click)="setPage('employees')" [ngClass]="{'active': currentPage === 'employees'}">
-                    <i class="icon group"></i><span>จัดการพนักงาน</span>
-                </button>
-            </li>
-            <li>
-                <button (click)="setPage('customers')" [ngClass]="{'active': currentPage === 'customers'}">
-                    <i class="icon person"></i><span>จัดการลูกค้า</span>
-                </button>
-            </li>
-            <li>
-                <button (click)="setPage('settings')" [ngClass]="{'active': currentPage === 'settings'}">
-                    <i class="icon settings"></i><span>ตั้งค่าระบบ</span>
-                </button>
-            </li>
-        </ul>
+<div class="admin-layout">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h3>🐾 PetStore Admin</h3>
     </div>
+    <nav class="sidebar-nav">
+      <button (click)="setPage('dashboard')" [class.active]="currentPage === 'dashboard'">📊 แผงควบคุม</button>
+      <button (click)="setPage('products')" [class.active]="currentPage === 'products'">🦴 จัดการสินค้า</button>
+      <button (click)="setPage('orders')" [class.active]="currentPage === 'orders'">📦 คำสั่งซื้อ</button>
+      <button (click)="setPage('customers')" [class.active]="currentPage === 'customers'">👥 รายชื่อลูกค้า</button>
+      <button (click)="setPage('staff')" [class.active]="currentPage === 'staff'">👥 จัดการพนักงาน</button>
+      <button (click)="setPage('settings')" [class.active]="currentPage === 'settings'">⚙️ ตั้งค่าระบบ</button>
+    </nav>
+  </aside>
 
-    <div class="content-wrapper">
-        <div class="content-area" *ngIf="currentPage === 'dashboard'">
-            <h2>📊 ภาพรวมระบบ</h2>
-            <div class="dashboard-grid">
-                <div class="stat-card" *ngFor="let stat of dashboardStats">
-                    <div class="card-info">
-                        <p>{{ stat.title }}</p>
-                        <h3>{{ stat.value }}</h3>
-                        <span class="trend" [ngClass]="stat.trendClass">{{ stat.trend }}</span>
-                    </div>
-                </div>
-            </div>
-            <div class="chart-container">
-                <h4>ยอดขาย 7 วันล่าสุด</h4>
-                <div style="height: 350px; background-color: white; border: 1px solid #ddd; padding: 20px;">
-
-
-[Image of a line chart showing sales over the last 7 days]
-
-                    *แสดงกราฟยอดขาย*
-                </div>
-            </div>
+  <main class="content-wrapper">
+    <div class="content-area" *ngIf="currentPage === 'dashboard'">
+      <h2>📊 ภาพรวมระบบ</h2>
+      <div class="dashboard-grid">
+        <div class="stat-card" *ngFor="let s of stats">
+          <div class="card-icon" *ngIf="s.icon">
+            <i [class]="s.icon"></i>
+          </div>
+          <div class="card-info">
+            <p>{{ s.label }}</p>
+            <h3>{{ s.value }}</h3>
+          </div>
         </div>
-
-        <div class="content-area" *ngIf="currentPage === 'products'">
-            <h2>🦴 จัดการสินค้า</h2>
-            <div class="table-actions">
-                <input type="text" placeholder="ค้นหาสินค้า..." class="search-input">
-                <button class="add-btn">เพิ่มสินค้าใหม่</button>
-            </div>
-            <div class="table-container">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>ชื่อสินค้า</th>
-                            <th>หมวดหมู่</th>
-                            <th>ราคา (฿)</th>
-                            <th>สต็อก</th>
-                            <th>สถานะ</th>
-                            <th>จัดการ</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let product of products">
-                            <td>{{ product.id }}</td>
-                            <td class="product-name">{{ product.name }}</td>
-                            <td>{{ product.category }}</td>
-                            <td>{{ product.price | number: '1.2-2' }}</td>
-                            <td [ngClass]="{'low-stock': product.stock <= 10, 'out-stock': product.stock === 0}">
-                                {{ product.stock }}
-                            </td>
-                            <td>
-                                <span class="status-chip" [ngClass]="{'chip-active': product.status === 'ใช้งาน', 'chip-hidden': product.status === 'ซ่อน'}">
-                                    {{ product.status }}
-                                </span>
-                            </td>
-                            <td>
-                                <button class="action-btn edit" (click)="mockAction('แก้ไข', product)">แก้ไข</button>
-                                <button class="action-btn delete" (click)="mockAction('ลบ', product)">ลบ</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="content-area" *ngIf="currentPage === 'orders'">
-            <h2>📦 จัดการคำสั่งซื้อ</h2>
-            <div class="table-actions">
-                <input type="text" placeholder="ค้นหาตามรหัส/ลูกค้า..." class="search-input">
-            </div>
-            <div class="table-container">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>รหัสสั่งซื้อ</th>
-                            <th>ลูกค้า</th>
-                            <th>วันที่</th>
-                            <th>ยอดรวม (฿)</th>
-                            <th>สถานะ</th>
-                            <th>จัดการ</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let order of orders">
-                            <td>**{{ order.orderId }}**</td>
-                            <td>{{ order.customerName }}</td>
-                            <td>{{ order.date }}</td>
-                            <td>{{ order.total | number: '1.2-2' }}</td>
-                            <td>
-                                <span class="status-chip" [ngClass]="{
-                                                 'chip-new': order.status === 'ใหม่',
-                                                 'chip-shipping': order.status === 'กำลังจัดส่ง',
-                                                 'chip-success': order.status === 'สำเร็จ',
-                                                 'chip-cancel': order.status === 'ยกเลิก'
-                                             }">
-                                    {{ order.status }}
-                                </span>
-                            </td>
-                            <td>
-                                <button class="action-btn view" (click)="mockAction('ดูรายละเอียด', order)">รายละเอียด</button>
-                                <button class="action-btn update" *ngIf="order.status === 'ใหม่'" (click)="mockAction('เปลี่ยนสถานะเป็นส่ง', order)">จัดส่ง</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="content-area" *ngIf="currentPage === 'employees'">
-            <h2>👤 จัดการพนักงาน</h2>
-            <div class="table-actions">
-                <input type="text" placeholder="ค้นหาชื่อ/ตำแหน่งพนักงาน..." class="search-input">
-                <button class="add-btn">เพิ่มพนักงานใหม่</button>
-            </div>
-            <div class="table-container">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>รหัสพนักงาน</th>
-                            <th>ชื่อ</th>
-                            <th>ตำแหน่ง</th>
-                            <th>อีเมล</th>
-                            <th>วันที่เริ่มงาน</th>
-                            <th>สถานะ</th>
-                            <th>จัดการ</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let employee of employees">
-                            <td>{{ employee.empId }}</td>
-                            <td>{{ employee.name }}</td>
-                            <td>{{ employee.position }}</td>
-                            <td>{{ employee.email }}</td>
-                            <td>{{ employee.hireDate }}</td>
-                            <td>
-                                <span class="status-chip" [ngClass]="{'chip-active': employee.status === 'ใช้งาน', 'chip-hidden': employee.status === 'ลาออก'}">
-                                    {{ employee.status }}
-                                </span>
-                            </td>
-                            <td>
-                                <button class="action-btn edit" (click)="mockAction('แก้ไข', employee)">แก้ไข</button>
-                                <button class="action-btn delete" (click)="mockAction('ลบ', employee)">ลบ</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="content-area" *ngIf="currentPage === 'customers'">
-            <h2>👥 จัดการข้อมูลลูกค้า</h2>
-            <div class="table-actions">
-                <input type="text" placeholder="ค้นหาชื่อ/อีเมลลูกค้า..." class="search-input">
-                <button class="add-btn">เพิ่มลูกค้าใหม่</button>
-            </div>
-            <div class="table-container">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>รหัสลูกค้า</th>
-                            <th>ชื่อลูกค้า</th>
-                            <th>อีเมล</th>
-                            <th>เบอร์โทรศัพท์</th>
-                            <th>ยอดสั่งซื้อรวม</th>
-                            <th>ใช้งานล่าสุด</th>
-                            <th>จัดการ</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let customer of customers">
-                            <td>{{ customer.custId }}</td>
-                            <td>**{{ customer.name }}**</td>
-                            <td>{{ customer.email }}</td>
-                            <td>{{ customer.phone }}</td>
-                            <td>{{ customer.totalOrders }} ครั้ง</td>
-                            <td>{{ customer.lastActive }}</td>
-                            <td>
-                                <button class="action-btn view" (click)="mockAction('ดูประวัติ', customer)">ประวัติ</button>
-                                <button class="action-btn edit" (click)="mockAction('แก้ไข', customer)">แก้ไข</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="content-area" *ngIf="currentPage === 'settings'">
-            <h2>⚙️ ตั้งค่าระบบ</h2>
-            <div class="settings-form-container">
-                <div class="form-group">
-                    <label>อัตราภาษีมูลค่าเพิ่ม (%)</label>
-                    <input type="number" value="7" placeholder="VAT Rate">
-                </div>
-                <div class="form-group">
-                    <label>ค่าจัดส่งมาตรฐาน (฿)</label>
-                    <input type="number" value="50" placeholder="Standard Shipping Fee">
-                </div>
-                <div class="form-group">
-                    <label>อีเมลแจ้งเตือนคำสั่งซื้อใหม่</label>
-                    <input type="email" value="orders@petfood.com" placeholder="Email for new orders">
-                </div>
-                <div class="form-group">
-                    <label>เปิดใช้งานโหมดบำรุงรักษา</label>
-                    <input type="checkbox">
-                </div>
-                <button class="save-btn">บันทึกการตั้งค่า</button>
-            </div>
-        </div>
-
+      </div>
     </div>
+    <div class="content-area" *ngIf="currentPage === 'products'">
+
+      <div *ngIf="!selectedCategory">
+        <div class="header-with-action" style="margin-bottom: 20px;">
+          <h2>📁 เลือกประเภทสินค้าเพื่อจัดการ</h2>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;">
+          <div *ngFor="let cat of categories" (click)="selectCategory(cat)"
+            style="background: white; padding: 30px; border-radius: 12px; border: 1px solid #ddd; cursor: pointer; text-align: center; transition: 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.05);"
+            onmouseover="this.style.borderColor='#FF9800'; this.style.transform='translateY(-5px)'"
+            onmouseout="this.style.borderColor='#ddd'; this.style.transform='translateY(0)'">
+            <div style="font-size: 40px; margin-bottom: 10px;">📦</div>
+            <h3 style="margin: 0; color: #333;">{{ cat.categoryName }}</h3>
+            <p style="color: #666; font-size: 14px; margin-top: 10px;">
+              {{ getProductCount(cat.categoryId) }} รายการ
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="selectedCategory">
+        <div class="header-with-action"
+          style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <div style="display: flex; align-items: center; gap: 15px;">
+            <button (click)="backToCategories()"
+              style="background: #eee; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">
+              ⬅️ กลับ
+            </button>
+            <h2 style="margin: 0;">🦴 หมวดหมู่: {{ selectedCategory.categoryName }}</h2>
+          </div>
+
+          <button class="add-btn" (click)="showAddProductForm = !showAddProductForm"
+            style="background-color: #FF9800; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
+            {{ showAddProductForm ? '❌ ยกเลิก' : '➕ เพิ่มสินค้าในหมวดนี้' }}
+          </button>
+        </div>
+
+        <div class="add-product-card" *ngIf="showAddProductForm"
+          style="background: #fff3e0; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ffcc80;">
+          <p style="font-size: 12px; color: #666;">* กำลังเพิ่มสินค้าในหมวด: {{selectedCategory.categoryName}}</p>
+
+          <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+            <div>
+              <label style="font-size: 12px;">ชื่อสินค้า</label>
+              <input type="text" [(ngModel)]="newProduct.productName" style="width: 100%; padding: 8px;">
+            </div>
+            <div>
+              <label style="font-size: 12px;">ราคา (฿)</label>
+              <input type="number" [(ngModel)]="newProduct.price" style="width: 100%; padding: 8px;">
+            </div>
+            <div>
+              <label style="font-size: 12px;">สต็อก</label>
+              <input type="number" [(ngModel)]="newProduct.stock" style="width: 100%; padding: 8px;">
+            </div>
+          </div>
+          <div style="margin-bottom: 10px;">
+            <label style="font-size: 12px;">รายละเอียดสินค้า</label>
+            <textarea [(ngModel)]="newProduct.description" style="width: 100%; padding: 8px; display: block;"
+              rows="2"></textarea>
+          </div>
+          <div style="text-align: right;">
+            <button (click)="saveProduct()"
+              style="background-color: #4CAF50; color: white; padding: 10px 40px; border: none; border-radius: 4px; cursor: pointer;">
+              🚀 บันทึกสินค้า
+            </button>
+          </div>
+        </div>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ชื่อสินค้า</th>
+              <th>ราคา</th>
+              <th>สต็อกปัจจุบัน</th>
+              <th>ปรับปรุงรวดเร็ว</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let p of filteredProducts">
+              <td>{{ p.productName }}</td>
+              <td>{{ p.price | number:'1.2-2' }} ฿</td>
+              <td [class.low-stock]="p.stock < systemConfig.lowStockAlert">
+                <strong>{{ p.stock }}</strong>
+              </td>
+              <td>
+                <div style="display: flex; gap: 5px; align-items: center;">
+                  <input type="number" [(ngModel)]="p.stock" min="0"
+                    style="width: 80px; padding: 6px; border: 1px solid #ccc; border-radius: 4px; text-align: center;">
+
+                  <button class="qty-btn" (click)="updateStockValue(p)"
+                    style="background-color: #2196F3; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">
+                    อัปเดต
+                  </button>
+
+                  <button class="qty-btn" (click)="deleteProductData(p)"
+                    style="background-color: red; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">
+                    ลบ
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div *ngIf="filteredProducts.length === 0" style="text-align: center; padding: 40px; color: #999;">
+          ยังไม่มีสินค้าในหมวดหมู่นี้
+        </div>
+      </div>
+    </div>
+    <div class="content-area" *ngIf="currentPage === 'orders'">
+      <h2>📦 การจัดการคำสั่งซื้อ (Order Management)</h2>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>ลูกค้า</th>
+            <th>ยอดชำระ</th>
+            <th>สถานะปัจจุบัน</th>
+            <th>หลักฐาน</th>
+            <th>การตรวจสอบสลิป</th>
+            <th>จัดการสถานะ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let o of orders">
+            <td>#{{ o.orderId }}</td>
+            <td>{{ o.customer?.customerName }}</td>
+            <td>{{ o.totalAmount | number:'1.2-2' }} ฿</td>
+            <td>
+              <span class="status-badge" [attr.data-status]="o.status.statusName">
+                {{ o.status.statusName }}
+              </span>
+            </td>
+            <td>
+              <button class="view-slip-btn" (click)="viewPaymentSlip()">👁️ ดูสลิป</button>
+            </td>
+
+            <td>
+              <div *ngIf="o.status.statusName === 'รอตรวจสอบยอดเงิน'" style="display: flex; gap: 5px;">
+
+                <button class="action-btn confirm" (click)="confirmPayment(o)"
+                  style="background-color: #4CAF50; color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer;">
+                  ✅ อนุมัติ
+                </button>
+
+                <button class="action-btn danger" (click)="rejectPayment(o)"
+                  style="background-color: #f44336; color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer;">
+                  ❌ ปฏิเสธ
+                </button>
+
+              </div>
+
+              <span *ngIf="o.status.statusName !== 'รอตรวจสอบยอดเงิน'" style="color: #888; font-size: 12px;">
+                ตรวจแล้ว / ไม่ต้องตรวจ
+              </span>
+            </td>
+
+            <td>
+              <span [ngClass]="{
+    'status-wait': o.status.statusName === 'รอชำระเงิน',
+    'status-pending': o.status.statusName === 'รอตรวจสอบยอดเงิน',
+    'status-success': o.status.statusName === 'ชำระเงินแล้ว' || o.status.statusName === 'สำเร็จ',
+    'status-danger': o.status.statusName === 'ยกเลิก/สลิปไม่ถูกต้อง'
+  }" style="padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">
+                {{ o.status.statusName }}
+              </span>
+            </td>
+
+            <td>
+              <select [(ngModel)]="o.status.statusName" (change)="updateStatus(o)"
+                style="padding: 5px; border-radius: 4px; border: 1px solid #ccc; width: 100%;">
+                <option [value]="o.status.statusName" disabled hidden>{{ o.status.statusName }}</option>
+
+                <option *ngFor="let st of adminAllowedStatuses" [value]="st">
+                  {{ st }}
+                </option>
+              </select>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="content-area" *ngIf="currentPage === 'customers'">
+      <div class="header-section" style="margin-bottom: 20px;">
+        <h2>👥 รายชื่อลูกค้าในระบบ</h2>
+        <p>คลิกที่แถวเพื่อดูข้อมูลที่อยู่และประวัติการสั่งซื้ออย่างละเอียด</p>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>ชื่อ-นามสกุล</th>
+            <th>อีเมล</th>
+            <th>เบอร์โทรศัพท์</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let c of customers" (click)="viewCustomerDetails(c)" style="cursor: pointer;" class="hover-row">
+            <td>#{{ c.customerId }}</td>
+            <td><strong>{{ c.customerName }}</strong></td>
+            <td>{{ c.email }}</td>
+            <td>{{ c.phone || '-' }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="detail-overlay" *ngIf="selectedCustomer" (click)="closeCustomerDetails()">
+        <div class="detail-card" (click)="$event.stopPropagation()">
+          <div class="detail-header">
+            <h3><i class="fas fa-user-circle"></i> ข้อมูลลูกค้าอย่างละเอียด</h3>
+            <button class="close-btn" (click)="closeCustomerDetails()">&times;</button>
+          </div>
+
+          <div class="detail-body">
+            <div class="info-grid">
+              <div class="info-item full">
+                <label>ID ลูกค้า</label>
+                <p>#{{ selectedCustomer.customerId }}</p>
+              </div>
+
+              <div class="info-item">
+                <label>ชื่อ-นามสกุล</label>
+                <p>{{ selectedCustomer.customerName }}</p>
+              </div>
+
+              <div class="info-item">
+                <label>อีเมล</label>
+                <p>{{ selectedCustomer.email }}</p>
+              </div>
+
+              <div class="info-item">
+                <label>เบอร์โทรศัพท์</label>
+                <p>{{ selectedCustomer.phone || '-' }}</p>
+              </div>
+
+              <div class="info-item">
+                <label>สถานะสมาชิก</label>
+                <p><span class="status-active">ปกติ</span></p>
+              </div>
+
+              <div class="info-item full">
+                <label>📍 ที่อยู่สำหรับจัดส่ง</label>
+                <div class="address-box">
+                  {{ selectedCustomer.address || 'ไม่ได้ระบุข้อมูลที่อยู่' }}
+                </div>
+              </div>
+            </div>
+
+            <hr class="divider">
+
+            <div class="history-section">
+              <h4><i class="fas fa-history"></i> ประวัติการสั่งซื้อ</h4>
+
+              <div *ngIf="isLoadingHistory" class="loading-state">
+                <i class="fas fa-spinner fa-spin"></i> กำลังโหลดประวัติ...
+              </div>
+
+              <div class="table-container" *ngIf="!isLoadingHistory">
+                <table class="history-table" *ngIf="customerOrderHistory.length > 0">
+                  <thead>
+                    <tr>
+                      <th>เลขที่</th>
+                      <th>วันที่</th>
+                      <th>ยอดเงิน</th>
+                      <th>สถานะ</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let order of customerOrderHistory">
+                      <td>{{ order.invoiceNo || '#' + order.orderId }}</td>
+                      <td>{{ order.orderDate | date:'dd/MM/yy' }}</td>
+                      <td>{{ order.totalAmount | number }} ฿</td>
+                      <td>
+                        <span class="status-badge-mini" [attr.data-status]="order.status.statusName">
+                          {{ order.status.statusName }}
+                        </span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <div class="no-history" *ngIf="customerOrderHistory.length === 0">
+                  <p>ยังไม่มีประวัติการสั่งซื้อ</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-footer">
+            <button class="action-btn secondary" (click)="closeCustomerDetails()">ปิดหน้าต่าง</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="content-area" *ngIf="currentPage === 'staff'">
+      <div class="header-with-action"
+        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2>👥 จัดการพนักงาน</h2>
+        <button class="add-btn" (click)="showAddStaffForm = !showAddStaffForm"
+          style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
+          {{ showAddStaffForm ? '❌ ยกเลิก' : '➕ เพิ่มพนักงานใหม่' }}
+        </button>
+      </div>
+
+      <div class="add-staff-card" *ngIf="showAddStaffForm"
+        style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ddd;">
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="display: flex; gap: 10px;">
+            <input type="text" [(ngModel)]="newStaff.name" placeholder="ชื่อ-นามสกุล" style="flex: 1; padding: 8px;">
+            <input type="email" [(ngModel)]="newStaff.email" placeholder="อีเมล" style="flex: 1; padding: 8px;">
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <input type="password" [(ngModel)]="newStaff.password" placeholder="กำหนดรหัสผ่าน"
+              style="flex: 1; padding: 8px;">
+            <button (click)="saveStaff()"
+              style="background-color: #2196F3; color: white; padding: 8px 40px; border: none; border-radius: 4px; cursor: pointer;">
+              บันทึกข้อมูลพนักงาน
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>รหัส</th>
+            <th>ชื่อ</th>
+            <th>อีเมล</th>
+            <th>สถานะ</th>
+            <th>จัดการ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let s of staffs" (click)="viewStaffDetails(s)" style="cursor: pointer;">
+            <td>#{{ s.staffId }}</td>
+            <td>{{ s.name }}</td>
+            <td>{{ s.email }}</td>
+            <td>
+              <span [class.status-active]="s.status === 'ACTIVE'" [class.status-inactive]="s.status !== 'ACTIVE'">
+                {{ s.status === 'ACTIVE' ? 'กำลังทำงาน' : 'พ้นสภาพ/ระงับ' }}
+              </span>
+            </td>
+            <td>
+              <button class="action-btn" (click)="toggleStaffStatus(s)">
+                {{ s.status === 'ACTIVE' ? 'ระงับสิทธิ์' : 'เปิดใช้งาน' }}
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="staff-detail-overlay" *ngIf="selectedStaff" (click)="closeDetails()">
+        <div class="detail-card" (click)="$event.stopPropagation()">
+          <div class="detail-header">
+            <h3><i class="fas fa-id-card"></i> ข้อมูลพนักงานอย่างละเอียด</h3>
+            <button class="close-btn" (click)="closeDetails()">&times;</button>
+          </div>
+
+          <div class="detail-body">
+            <div class="info-grid">
+              <div class="info-item full">
+                <label>ID พนักงาน</label>
+                <p>#{{ selectedStaff.staffId }}</p>
+              </div>
+
+              <div class="info-item">
+                <label>ชื่อ-นามสกุล</label>
+                <p>{{ selectedStaff.name }}</p>
+              </div>
+
+              <div class="info-item">
+                <label>อีเมล</label>
+                <p>{{ selectedStaff.email }}</p>
+              </div>
+
+              <div class="info-item">
+                <label>เบอร์โทรศัพท์</label>
+                <p>{{ selectedStaff.phone || '-' }}</p>
+              </div>
+
+              <div class="info-item">
+                <label>ตำแหน่ง</label>
+                <p>{{ selectedStaff.position || 'ไม่ได้ระบุ' }}</p>
+              </div>
+
+              <div class="info-item">
+                <label>สิทธิ์การเข้าถึง (Role)</label>
+                <p class="role-badge">{{ selectedStaff.role || 'STAFF' }}</p>
+              </div>
+
+              <div class="info-item">
+                <label>สถานะปัจจุบัน</label>
+                <span [class.status-active]="selectedStaff.status === 'ACTIVE'"
+                  [class.status-inactive]="selectedStaff.status !== 'ACTIVE'">
+                  {{ selectedStaff.status === 'ACTIVE' ? 'กำลังทำงาน' : 'ระงับสิทธิ์' }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-footer">
+            <button class="action-btn secondary" (click)="closeDetails()">ปิดหน้าต่าง</button>
+            <button class="action-btn" (click)="toggleStaffStatus(selectedStaff)">
+              {{ selectedStaff.status === 'ACTIVE' ? '🚫 ระงับการเข้าใช้งาน' : '✅ เปิดใช้งานอีกครั้ง' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="content-area" *ngIf="currentPage === 'settings'">
+      <h2>⚙️ ตั้งค่าระบบ</h2>
+      <div class="settings-container">
+        <div class="form-group">
+          <label>ชื่อร้านค้า</label>
+          <input type="text" [(ngModel)]="systemConfig.shopName">
+        </div>
+        <div class="form-group">
+          <label>ค่าขนส่ง (บาท)</label>
+          <input type="number" [(ngModel)]="systemConfig.shippingFee">
+        </div>
+        <div class="form-group">
+          <label>แจ้งเตือนสต็อกต่ำกว่า</label>
+          <input type="number" [(ngModel)]="systemConfig.lowStockAlert">
+        </div>
+        <button class="save-btn" (click)="saveSettings()">บันทึกข้อมูล</button>
+      </div>
+    </div>
+  </main>
 </div>

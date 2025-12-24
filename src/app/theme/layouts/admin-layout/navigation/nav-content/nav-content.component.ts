@@ -71,6 +71,12 @@ export class NavContentComponent implements OnInit {
       (document.querySelector('.coded-navbar') as HTMLDivElement).classList.add('menupos-static');
     }
   }
+  ngAfterViewInit() {
+    const element = document.querySelector('.some-class'); // จุดที่ระบุในบรรทัด 71
+    if (element) {
+      element.classList.add('active');
+    }
+  }
 
   fireOutClick() {
     let current_url = this.location.path();
@@ -98,11 +104,11 @@ export class NavContentComponent implements OnInit {
   }
 
   navMob() {
-  const navElement = document.querySelector('app-navigation.coded-navbar');
+    const navElement = document.querySelector('app-navigation.coded-navbar');
 
-  // ตรวจสอบว่า Element มีอยู่ (ไม่เป็น null) ก่อนใช้งาน
-  if (navElement && this.windowWidth < 1025 && navElement.classList.contains('mob-open')) {
-    this.NavCollapsedMob.emit();
+    // ตรวจสอบว่า Element มีอยู่ (ไม่เป็น null) ก่อนใช้งาน
+    if (navElement && this.windowWidth < 1025 && navElement.classList.contains('mob-open')) {
+      this.NavCollapsedMob.emit();
+    }
   }
-}
 }
