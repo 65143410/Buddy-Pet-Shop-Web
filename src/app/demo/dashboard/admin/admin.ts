@@ -22,8 +22,11 @@ export class Admin implements OnInit {
   productLogs: ProductLog[] = [];
   logsByProduct: ProductLog[] = [];
   selectedProductDetail: Product | null = null;
+  selectedOrderDetail: Order | null = null;
   showAddStaffForm = false;
+  selectedStatusFilter: string = 'ทั้งหมด';
   isLoadingLogs: boolean = false;
+  isSortAscending: boolean = true;
   quantityToAdd: number = 0;
   temp_img_url = 'https://s359.kapook.com/pagebuilder/ba154685-db18-4ac7-b318-a4a2b15b9d4c.jpg';
   selectedCategory: Category | null = null;
@@ -148,18 +151,21 @@ export class Admin implements OnInit {
       this.adminService.verifyOrder(order.orderId, true).subscribe({
         next: (res) => {
           alert(res.message);
-          this.loadInitialData();
+          this.loadInitialData(); // อัปเดตข้อมูลในตารางหลัก
+          this.closeOrderDetails(); // 🔥 เพิ่มบรรทัดนี้: เพื่อให้หน้าต่างปิดลงทันทีที่ทำรายการเสร็จ
         },
         error: (err) => alert('เกิดข้อผิดพลาด: ' + err.error)
       });
     }
   }
+
   rejectPayment(order: Order): void {
     if (confirm(`ยืนยันการปฏิเสธสลิปออเดอร์ #${order.orderId}?`)) {
       this.adminService.verifyOrder(order.orderId, false).subscribe({
         next: (res) => {
           alert(res.message);
-          this.loadInitialData();
+          this.loadInitialData(); // อัปเดตข้อมูลในตารางหลัก
+          this.closeOrderDetails(); // 🔥 เพิ่มบรรทัดนี้: เพื่อให้หน้าต่างปิดลงทันทีที่ทำรายการเสร็จ
         },
         error: (err) => alert('เกิดข้อผิดพลาด: ' + err.error)
       });
@@ -368,11 +374,8 @@ export class Admin implements OnInit {
     this.isLoadingLogs = true;
     this.adminService.getProductLogs().subscribe({
       next: (data) => {
-        this.productLogs = data.sort((a, b) =>
-        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-      );
+        this.productLogs = data.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
         this.isLoadingLogs = false;
-
       },
       error: (err) => {
         console.error('โหลดประวัติไม่สำเร็จ:', err);
@@ -420,5 +423,31 @@ export class Admin implements OnInit {
       error: () => (this.isLoadingLogs = false)
     });
   }
+  viewOrderDetails(order: Order): void {
+    this.selectedOrderDetail = order;
+  }
 
+  closeOrderDetails(): void {
+    this.selectedOrderDetail = null;
+  }
+
+  get filteredOrders() {
+    if (this.selectedStatusFilter === 'ทั้งหมด') {
+      return this.orders;
+    }
+    return this.orders.filter((o) => o.status.statusName === this.selectedStatusFilter);
+  }
+
+  sortByStatus(): void {
+    this.isSortAscending = !this.isSortAscending;
+    this.orders.sort((a, b) => {
+      const statusA = a.status.statusName.toLowerCase();
+      const statusB = b.status.statusName.toLowerCase();
+      if (this.isSortAscending) {
+        return statusA.localeCompare(statusB);
+      } else {
+        return statusB.localeCompare(statusA);
+      }
+    });
+  }
 }
