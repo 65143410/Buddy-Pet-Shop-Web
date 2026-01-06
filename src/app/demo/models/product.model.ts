@@ -109,3 +109,14 @@ export interface TopSeller {
   totalSold: number;
   revenue?: number;
 }
+export interface ProductLog {
+  logId?: number;
+  productId: number;
+  productName: string;
+  action: 'ADD' | 'UPDATE' | 'DELETE' | 'STOCK_ADJUST';
+  quantityChange: number;
+  finalStock?: number;
+  staffName: string;
+  notes?: string;
+  timestamp: string | Date;
+}

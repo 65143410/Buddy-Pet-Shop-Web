@@ -11,7 +11,8 @@ import {
   Category,
   VerifyOrderPayload,
   MessageResponse,
-  TopSeller
+  TopSeller,
+  ProductLog
 } from '../demo/models/product.model';
 
 @Injectable({ providedIn: 'root' })
@@ -122,4 +123,7 @@ export class AdminApiService {
   getOrdersByCustomer(id: number): Observable<Order[]> {
     return this.http.get<Order[]>(`${this.apiUrl}/customer/${id}/orders`);
   }
+  getProductLogs(): Observable<ProductLog[]> {
+  return this.http.get<ProductLog[]>(`${this.apiUrl}/product/logs`);
+}
 }

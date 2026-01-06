@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminApiService } from 'src/app/services/admin-api.service';
-import { Staff, Customer, Order, DashboardStat, SystemConfig, Product, Category } from '../../models/product.model';
+import { Staff, Customer, Order, DashboardStat, SystemConfig, Product, Category, ProductLog } from '../../models/product.model';
 
 @Component({
   selector: 'app-admin',
@@ -19,7 +19,9 @@ export class Admin implements OnInit {
   orders: Order[] = [];
   stats: DashboardStat[] = [];
   categories: Category[] = [];
+  productLogs: ProductLog[] = [];
   showAddStaffForm = false;
+  isLoadingLogs: boolean = false;
   temp_img_url = 'https://s359.kapook.com/pagebuilder/ba154685-db18-4ac7-b318-a4a2b15b9d4c.jpg';
   selectedCategory: Category | null = null;
   systemConfig: SystemConfig = {
@@ -53,6 +55,7 @@ export class Admin implements OnInit {
   ngOnInit(): void {
     this.loadInitialData();
     this.loadCategories();
+    this.loadProductLogs();
   }
   saveStaff(): void {
     if (!this.newStaff.name || !this.newStaff.email) {
@@ -352,5 +355,18 @@ export class Admin implements OnInit {
   }
   countProductsInCategory(categoryId: number): number {
     return this.products.filter((p) => p.category?.categoryId === categoryId).length;
+  }
+  loadProductLogs() {
+    this.isLoadingLogs = true;
+    this.adminService.getProductLogs().subscribe({
+      next: (data) => {
+        this.productLogs = data;
+        this.isLoadingLogs = false;
+      },
+      error: (err) => {
+        console.error('โหลดประวัติไม่สำเร็จ:', err);
+        this.isLoadingLogs = false;
+      }
+    });
   }
 }

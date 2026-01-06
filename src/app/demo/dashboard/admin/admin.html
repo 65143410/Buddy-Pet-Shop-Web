@@ -132,7 +132,40 @@
             </tr>
           </tbody>
         </table>
-
+        <div class="history-section"
+          style="margin-top: 30px; background: #fdfdfd; padding: 20px; border-radius: 8px; border: 1px solid #eee;">
+          <h3>🕒 ประวัติความเคลื่อนไหวสต็อกล่าสุด</h3>
+          <table class="data-table" style="font-size: 13px;">
+            <thead>
+              <tr style="background: #f1f1f1;">
+                <th>วัน-เวลา</th>
+                <th>สินค้า</th>
+                <th>การดำเนินการ</th>
+                <th>จำนวน</th>
+                <th>จำนวนคงเหลือ</th>
+                <th>ผู้ดำเนินการ</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let log of productLogs">
+                <td>{{ log.timestamp | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td><strong>{{ log.productName }}</strong></td>
+                <td>
+                  <span [style.color]="log.action === 'ADD' ? '#4CAF50' : '#2196F3'" style="font-weight: bold;">
+                    {{ log.action }}
+                  </span>
+                </td>
+                <td>
+                  <span [class]="log.quantityChange > 0 ? 'text-success' : 'text-danger'">
+                    {{ log.quantityChange > 0 ? '+' : '' }}{{ log.quantityChange }} ชิ้น
+                  </span>
+                </td>
+                <td>{{ log.finalStock }} ชิ้น</td>
+                <td>{{ log.staffName }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         <div *ngIf="filteredProducts.length === 0" style="text-align: center; padding: 40px; color: #999;">
           ยังไม่มีสินค้าในหมวดหมู่นี้
         </div>
