@@ -124,6 +124,10 @@ export class AdminApiService {
     return this.http.get<Order[]>(`${this.apiUrl}/customer/${id}/orders`);
   }
   getProductLogs(): Observable<ProductLog[]> {
-  return this.http.get<ProductLog[]>(`${this.apiUrl}/product/logs`);
-}
+    return this.http.get<ProductLog[]>(`${this.apiUrl}/product/logs`);
+  }
+
+  getProductLogsById(productId: number): Observable<ProductLog[]> {
+    return this.http.get<ProductLog[]>(`${this.apiUrl}/product/logs/${productId}`);
+  }
 }

@@ -20,8 +20,11 @@ export class Admin implements OnInit {
   stats: DashboardStat[] = [];
   categories: Category[] = [];
   productLogs: ProductLog[] = [];
+  logsByProduct: ProductLog[] = [];
+  selectedProductDetail: Product | null = null;
   showAddStaffForm = false;
   isLoadingLogs: boolean = false;
+  quantityToAdd: number = 0;
   temp_img_url = 'https://s359.kapook.com/pagebuilder/ba154685-db18-4ac7-b318-a4a2b15b9d4c.jpg';
   selectedCategory: Category | null = null;
   systemConfig: SystemConfig = {
@@ -177,13 +180,13 @@ export class Admin implements OnInit {
   //     alert('ยังไม่มีการแจ้งชำระเงิน');
   //   }
   // }
- viewPaymentSlip(): void {
-  const imageWindow = window.open('', '_blank', 'width=600,height=800');
+  viewPaymentSlip(): void {
+    const imageWindow = window.open('', '_blank', 'width=600,height=800');
 
-  if (imageWindow) {
-    const src = this.temp_img_url;
+    if (imageWindow) {
+      const src = this.temp_img_url;
 
-    imageWindow.document.write(`
+      imageWindow.document.write(`
       <html>
         <head>
           <title>ตรวจสอบหลักฐานการชำระเงิน</title>
@@ -241,9 +244,9 @@ export class Admin implements OnInit {
         </body>
       </html>
     `);
-    imageWindow.document.close();
+      imageWindow.document.close();
+    }
   }
-}
 
   updateStatus(order: Order): void {
     const newStatus = order.status.statusName;
@@ -289,6 +292,8 @@ export class Admin implements OnInit {
       next: (res) => {
         console.log('Stock updated for:', product.productName);
         product.stock = res.stock;
+        this.fetchLogsForProduct(product.productId);
+        this.loadProductLogs();
         alert('อัปเดตสต็อกสำเร็จ!');
       },
       error: (err) => {
@@ -298,15 +303,18 @@ export class Admin implements OnInit {
     });
   }
   deleteProductData(product: Product): void {
-    if (confirm(`คุณต้องการลบสินค้า "${product.productName}" ออกจากระบบใช่หรือไม่?`)) {
+    if (confirm(`คุณต้องการลบ "${product.productName}" ใช่หรือไม่?`)) {
       this.adminService.deleteProduct(product.productId).subscribe({
         next: () => {
-          alert('ลบข้อมูลออกจากฐานข้อมูลสำเร็จ!');
-          this.loadInitialData();
+          this.products = this.products.filter((p) => p.productId !== product.productId);
+
+          this.loadProductLogs();
+
+          alert('ลบสินค้าสำเร็จ!');
+          this.closeProductDetails();
         },
         error: (err) => {
-          console.error('Delete error:', err);
-          alert('ไม่สามารถลบข้อมูลได้: ' + (err.error?.message || 'Server Error'));
+          alert('ลบไม่สำเร็จ: ' + (err.error?.message || 'Server Error'));
         }
       });
     }
@@ -360,8 +368,11 @@ export class Admin implements OnInit {
     this.isLoadingLogs = true;
     this.adminService.getProductLogs().subscribe({
       next: (data) => {
-        this.productLogs = data;
+        this.productLogs = data.sort((a, b) =>
+        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+      );
         this.isLoadingLogs = false;
+
       },
       error: (err) => {
         console.error('โหลดประวัติไม่สำเร็จ:', err);
@@ -369,4 +380,45 @@ export class Admin implements OnInit {
       }
     });
   }
+  viewProductDetails(product: Product): void {
+    this.selectedProductDetail = product;
+    this.isLoadingLogs = true;
+    this.logsByProduct = [];
+    this.adminService.getProductLogsById(product.productId).subscribe({
+      next: (logs) => {
+        this.logsByProduct = logs;
+        this.isLoadingLogs = false;
+      },
+      error: (err) => {
+        console.error('Error loading product logs', err);
+        this.isLoadingLogs = false;
+      }
+    });
+  }
+  confirmAddStock(): void {
+    if (this.selectedProductDetail && this.quantityToAdd > 0) {
+      const originalStock = this.selectedProductDetail.stock;
+      this.selectedProductDetail.stock = originalStock + this.quantityToAdd;
+      this.updateStockValue(this.selectedProductDetail);
+
+      this.quantityToAdd = 0;
+    } else {
+      alert('กรุณากรอกจำนวนที่ต้องการเพิ่ม (ต้องมากกว่า 0)');
+    }
+  }
+  closeProductDetails(): void {
+    this.selectedProductDetail = null;
+    this.logsByProduct = [];
+  }
+  fetchLogsForProduct(productId: number) {
+    this.isLoadingLogs = true;
+    this.adminService.getProductLogsById(productId).subscribe({
+      next: (logs) => {
+        this.logsByProduct = logs;
+        this.isLoadingLogs = false;
+      },
+      error: () => (this.isLoadingLogs = false)
+    });
+  }
+
 }

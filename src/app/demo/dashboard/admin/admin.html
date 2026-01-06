@@ -103,39 +103,127 @@
               <th>ชื่อสินค้า</th>
               <th>ราคา</th>
               <th>สต็อกปัจจุบัน</th>
-              <th>ปรับปรุงรวดเร็ว</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let p of filteredProducts">
-              <td>{{ p.productName }}</td>
+            <tr *ngFor="let p of filteredProducts" (click)="viewProductDetails(p)" style="cursor: pointer;"
+              class="hover-row">
+              <td><strong>{{ p.productName }}</strong></td>
               <td>{{ p.price | number:'1.2-2' }} ฿</td>
               <td [class.low-stock]="p.stock < systemConfig.lowStockAlert">
                 <strong>{{ p.stock }}</strong>
               </td>
-              <td>
-                <div style="display: flex; gap: 5px; align-items: center;">
-                  <input type="number" [(ngModel)]="p.stock" min="0"
-                    style="width: 80px; padding: 6px; border: 1px solid #ccc; border-radius: 4px; text-align: center;">
-
-                  <button class="qty-btn" (click)="updateStockValue(p)"
-                    style="background-color: #2196F3; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">
-                    อัปเดต
-                  </button>
-
-                  <button class="qty-btn" (click)="deleteProductData(p)"
-                    style="background-color: red; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">
-                    ลบ
-                  </button>
-                </div>
-              </td>
             </tr>
           </tbody>
         </table>
+
+        <p style="font-size: 12px; color: #888; margin-top: 10px;">* คลิกที่แถวเพื่อดูประวัติและจัดการสินค้า</p>
+        <div class="detail-overlay" *ngIf="selectedProductDetail" (click)="closeProductDetails()">
+          <div class="detail-card" (click)="$event.stopPropagation()" style="max-width: 800px;">
+            <div class="detail-header">
+              <h3>📦 รายละเอียดสินค้า: {{ selectedProductDetail.productName }}</h3>
+              <button class="close-btn" (click)="closeProductDetails()">&times;</button>
+            </div>
+
+            <div class="detail-body">
+              <div
+                style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; background: #f9f9f9; padding: 15px; border-radius: 8px;">
+                <div><label style="font-size: 12px; color: #666;">ราคาปัจจุบัน</label>
+                  <p><strong>{{ selectedProductDetail.price }} ฿</strong></p>
+                </div>
+                <div><label style="font-size: 12px; color: #666;">สต็อกปัจจุบัน</label>
+                  <p><strong>{{ selectedProductDetail.stock }} ชิ้น</strong></p>
+                </div>
+                <div><label style="font-size: 12px; color: #666;">หมวดหมู่</label>
+                  <p>{{ selectedCategory?.categoryName }}</p>
+                </div>
+              </div>
+              <div class="stock-action-zone"
+                style="background: #e8f5e9; padding: 20px; border-radius: 12px; border: 1px solid #4CAF50; margin-bottom: 25px;">
+                <h4 style="margin-top: 0; color: #2e7d32; display: flex; align-items: center; gap: 8px;">
+                  📥 เพิ่มสต็อกสินค้า (เติมของ)
+                </h4>
+
+                <div style="display: flex; gap: 10px; align-items: center;">
+                  <div style="flex: 1;">
+                    <label
+                      style="display: block; font-size: 12px; color: #666; margin-bottom: 5px;">จำนวนที่นำมาเพิ่ม</label>
+                    <input type="number" [(ngModel)]="quantityToAdd" placeholder="ระบุจำนวน..."
+                      style="width: 100%; padding: 12px; border: 2px solid #4CAF50; border-radius: 8px; font-size: 16px; text-align: center;">
+                  </div>
+
+                  <button (click)="confirmAddStock()"
+                    style="background: #4CAF50; color: white; border: none; padding: 0 30px; border-radius: 8px; cursor: pointer; font-size: 24px; font-weight: bold; height: 48px; display: flex; align-items: center; justify-content: center; margin-top: 20px;">
+                    +
+                  </button>
+                </div>
+
+                <p style="font-size: 12px; color: #43a047; margin-top: 8px;">
+                  * สต็อกปัจจุบัน: <strong>{{ selectedProductDetail?.stock }}</strong>
+                  <span *ngIf="quantityToAdd > 0"> ➡️ สต็อกใหม่จะเป็น: <strong>{{ (selectedProductDetail?.stock || 0) +
+                      quantityToAdd }}</strong></span>
+                </p>
+              </div>
+
+              <div class="detail-footer"
+                style="padding: 20px 0 0 0; border-top: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+                <button class="action-btn danger"
+                  (click)="deleteProductData(selectedProductDetail!); closeProductDetails()"
+                  style="background: none; color: #f44336; border: 1px solid #f44336; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-size: 13px;">
+                  🗑️ ลบสินค้านี้
+                </button>
+              </div>
+              <hr class="divider">
+
+              <h4>🕒 ประวัติความเคลื่อนไหว (Stock Logs)</h4>
+              <div *ngIf="isLoadingLogs" style="text-align: center; padding: 20px;">กำลังโหลดประวัติ...</div>
+
+              <div class="table-container" *ngIf="!isLoadingLogs">
+                <table class="history-table">
+                  <thead>
+                    <tr style="background: #f1f1f1;">
+                      <th>วัน-เวลา</th>
+                      <th>สินค้า</th>
+                      <th>การดำเนินการ</th>
+                      <th>จำนวน</th>
+                      <th>จำนวนคงเหลือ</th>
+                      <th>ผู้ดำเนินการ</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let log of logsByProduct">
+                      <td>{{ log.timestamp | date:'dd/MM/yyyy HH:mm' }}</td>
+                      <td><strong>{{ log.productName }}</strong></td>
+                      <td>
+                        <span [style.color]="log.action === 'ADD' ? '#4CAF50' : log.action === 'DELETE' ? '#f44336' :  '#2196F3'" style="font-weight: bold;">
+                          {{ log.action }}
+                        </span>
+                      </td>
+                      <td>
+                        <span [class]="log.quantityChange > 0 ? 'text-success' : 'text-danger'">
+                          {{ log.quantityChange > 0 ? '+' : '' }}{{ log.quantityChange }} ชิ้น
+                        </span>
+                      </td>
+                      <td>{{ log.finalStock }} ชิ้น</td>
+                      <td>{{ log.staffName }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div *ngIf="logsByProduct.length === 0" style="text-align: center; padding: 20px; color: #999;">
+                  ยังไม่มีประวัติสำหรับสินค้านี้
+                </div>
+              </div>
+            </div>
+
+            <div class="detail-footer">
+              <button class="action-btn secondary" (click)="closeProductDetails()">ปิดหน้าต่าง</button>
+            </div>
+          </div>
+        </div>
         <div class="history-section"
           style="margin-top: 30px; background: #fdfdfd; padding: 20px; border-radius: 8px; border: 1px solid #eee;">
           <h3>🕒 ประวัติความเคลื่อนไหวสต็อกล่าสุด</h3>
-          <table class="data-table" style="font-size: 13px;">
+          <table class="history-table" style="font-size: 13px;">
             <thead>
               <tr style="background: #f1f1f1;">
                 <th>วัน-เวลา</th>
@@ -151,7 +239,7 @@
                 <td>{{ log.timestamp | date:'dd/MM/yyyy HH:mm' }}</td>
                 <td><strong>{{ log.productName }}</strong></td>
                 <td>
-                  <span [style.color]="log.action === 'ADD' ? '#4CAF50' : '#2196F3'" style="font-weight: bold;">
+                  <span [style.color]="log.action === 'ADD' ? '#4CAF50' :log.action === 'DELETE' ? '#f44336' : '#2196F3'" style="font-weight: bold;">
                     {{ log.action }}
                   </span>
                 </td>
