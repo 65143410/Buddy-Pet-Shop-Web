@@ -130,4 +130,8 @@ export class AdminApiService {
   getProductLogsById(productId: number): Observable<ProductLog[]> {
     return this.http.get<ProductLog[]>(`${this.apiUrl}/product/logs/${productId}`);
   }
+
+  updateStaff(staff: Staff): Observable<Staff> {
+  return this.http.put<Staff>(`${this.apiUrl}/staff/${staff.staffId}`, staff);
+}
 }

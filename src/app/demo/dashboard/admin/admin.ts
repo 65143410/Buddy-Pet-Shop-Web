@@ -151,8 +151,8 @@ export class Admin implements OnInit {
       this.adminService.verifyOrder(order.orderId, true).subscribe({
         next: (res) => {
           alert(res.message);
-          this.loadInitialData(); // อัปเดตข้อมูลในตารางหลัก
-          this.closeOrderDetails(); // 🔥 เพิ่มบรรทัดนี้: เพื่อให้หน้าต่างปิดลงทันทีที่ทำรายการเสร็จ
+          this.loadInitialData();
+          this.closeOrderDetails();
         },
         error: (err) => alert('เกิดข้อผิดพลาด: ' + err.error)
       });
@@ -164,8 +164,8 @@ export class Admin implements OnInit {
       this.adminService.verifyOrder(order.orderId, false).subscribe({
         next: (res) => {
           alert(res.message);
-          this.loadInitialData(); // อัปเดตข้อมูลในตารางหลัก
-          this.closeOrderDetails(); // 🔥 เพิ่มบรรทัดนี้: เพื่อให้หน้าต่างปิดลงทันทีที่ทำรายการเสร็จ
+          this.loadInitialData();
+          this.closeOrderDetails();
         },
         error: (err) => alert('เกิดข้อผิดพลาด: ' + err.error)
       });
@@ -448,6 +448,18 @@ export class Admin implements OnInit {
       } else {
         return statusB.localeCompare(statusA);
       }
+    });
+  }
+  saveStaffChanges(staff: Staff | null): void {
+    if (!staff || !staff.staffId) return;
+
+    this.adminService.updateStaff(staff).subscribe({
+      next: () => {
+        alert('บันทึกข้อมูลพนักงานสำเร็จ!');
+        this.loadInitialData();
+        this.selectedStaff = null;
+      },
+      error: (err) => alert('เกิดข้อผิดพลาด: ' + err.message)
     });
   }
 }

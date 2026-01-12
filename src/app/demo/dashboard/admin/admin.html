@@ -9,7 +9,6 @@
       <button (click)="setPage('orders')" [class.active]="currentPage === 'orders'">📦 คำสั่งซื้อ</button>
       <button (click)="setPage('customers')" [class.active]="currentPage === 'customers'">👥 รายชื่อลูกค้า</button>
       <button (click)="setPage('staff')" [class.active]="currentPage === 'staff'">👥 จัดการพนักงาน</button>
-      <button (click)="setPage('settings')" [class.active]="currentPage === 'settings'">⚙️ ตั้งค่าระบบ</button>
     </nav>
   </aside>
 
@@ -532,6 +531,10 @@
           <div style="display: flex; gap: 10px;">
             <input type="password" [(ngModel)]="newStaff.password" placeholder="กำหนดรหัสผ่าน"
               style="flex: 1; padding: 8px;">
+            <select [(ngModel)]="newStaff.position" style="flex: 1; padding: 8px;">
+              <option value="SALES">🛒 พนักงานขาย (Sales)</option>
+              <option value="DELIVERY">🚚 พนักงานจัดส่ง (Delivery)</option>
+            </select>
             <button (click)="saveStaff()"
               style="background-color: #2196F3; color: white; padding: 8px 40px; border: none; border-radius: 4px; cursor: pointer;">
               บันทึกข้อมูลพนักงาน
@@ -598,15 +601,26 @@
               </div>
 
               <div class="info-item">
-                <label>ตำแหน่ง</label>
-                <p>{{ selectedStaff.position || 'ไม่ได้ระบุ' }}</p>
+                <label>ตำแหน่งหน้าที่</label>
+                <select [(ngModel)]="selectedStaff.position" class="form-select">
+                  <option value="SALES">🛒 พนักงานขาย (Sales)</option>
+                  <option value="DELIVERY">🚚 พนักงานจัดส่ง (Delivery)</option>
+                </select>
               </div>
 
-              <div class="info-item">
-                <label>สิทธิ์การเข้าถึง (Role)</label>
-                <p class="role-badge">{{ selectedStaff.role || 'STAFF' }}</p>
+              <div class="info-item full"
+                style="background: #f0f4ff; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                <label>🛠️ สิทธิ์การใช้งานปัจจุบัน:</label>
+                <ul style="font-size: 13px; margin-top: 5px;" *ngIf="selectedStaff.position === 'SALES'">
+                  <li>✅ จัดการสต็อกสินค้า / เพิ่ม-ลดสินค้า</li>
+                  <li>✅ ยืนยันยอดชำระเงินจากลูกค้า</li>
+                </ul>
+                <ul style="font-size: 13px; margin-top: 5px;" *ngIf="selectedStaff.position === 'DELIVERY'">
+                  <li>✅ ดูรายการที่ต้องจัดส่ง / ที่อยู่ลูกค้า</li>
+                  <li>✅ อัปเดตสถานะการส่งสินค้า</li>
+                  <li>❌ ไม่สามารถเข้าถึงยอดเงินในระบบได้</li>
+                </ul>
               </div>
-
               <div class="info-item">
                 <label>สถานะปัจจุบัน</label>
                 <span [class.status-active]="selectedStaff.status === 'ACTIVE'"
@@ -618,6 +632,10 @@
           </div>
 
           <div class="detail-footer">
+            <button class="action-btn" (click)="saveStaffChanges(selectedStaff)"
+              style="background-color: #4A90E2; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
+              💾 บันทึกการเปลี่ยนแปลง
+            </button>
             <button class="action-btn secondary" (click)="closeDetails()">ปิดหน้าต่าง</button>
             <button class="action-btn" (click)="toggleStaffStatus(selectedStaff)">
               {{ selectedStaff.status === 'ACTIVE' ? '🚫 ระงับการเข้าใช้งาน' : '✅ เปิดใช้งานอีกครั้ง' }}
@@ -626,23 +644,6 @@
         </div>
       </div>
     </div>
-    <div class="content-area" *ngIf="currentPage === 'settings'">
-      <h2>⚙️ ตั้งค่าระบบ</h2>
-      <div class="settings-container">
-        <div class="form-group">
-          <label>ชื่อร้านค้า</label>
-          <input type="text" [(ngModel)]="systemConfig.shopName">
-        </div>
-        <div class="form-group">
-          <label>ค่าขนส่ง (บาท)</label>
-          <input type="number" [(ngModel)]="systemConfig.shippingFee">
-        </div>
-        <div class="form-group">
-          <label>แจ้งเตือนสต็อกต่ำกว่า</label>
-          <input type="number" [(ngModel)]="systemConfig.lowStockAlert">
-        </div>
-        <button class="save-btn" (click)="saveSettings()">บันทึกข้อมูล</button>
-      </div>
-    </div>
+
   </main>
 </div>
