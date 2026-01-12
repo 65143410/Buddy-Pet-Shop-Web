@@ -45,12 +45,15 @@ export class Admin implements OnInit {
     password: '',
     status: 'ACTIVE'
   };
+
   showAddProductForm = false;
   newProduct: Partial<Product> = {
     productName: '',
     price: 0,
     stock: 0,
     description: '',
+    targetPetType: 'ALL',      // ✨ เพิ่ม: ค่าเริ่มต้นคือสัตว์ทุกชนิด
+    suitableForDisease: 'NONE', // ✨ เพิ่ม: ค่าเริ่มต้นคือสุขภาพปกติ
     category: {
       categoryId: null
     }

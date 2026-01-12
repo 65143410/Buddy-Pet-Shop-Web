@@ -78,6 +78,28 @@
               <label style="font-size: 12px;">ราคา (฿)</label>
               <input type="number" [(ngModel)]="newProduct.price" style="width: 100%; padding: 8px;">
             </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+              <div>
+                <label style="font-size: 12px;">🎯 สำหรับสัตว์ชนิดใด</label>
+                <select [(ngModel)]="newProduct.targetPetType"
+                  style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                  <option value="ALL">🌟 ทั้งหมด (All)</option>
+                  <option value="DOG">🐕 สุนัข (Dog)</option>
+                  <option value="CAT">🐈 แมว (Cat)</option>
+                  <option value="BIRD">🦜 นก (Bird)</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size: 12px;">🏥 สำหรับโรค/ภาวะพิเศษ</label>
+                <select [(ngModel)]="newProduct.suitableForDisease"
+                  style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                  <option value="NONE">✅ สุขภาพปกติ (None)</option>
+                  <option value="SKIN_ALLERGY">🩹 โรคผิวหนัง/แพ้ง่าย</option>
+                  <option value="KIDNEY_DISEASE">🥩 โรคไต</option>
+                  <option value="WEIGHT_CONTROL">🎾 ควบคุมน้ำหนัก</option>
+                </select>
+              </div>
+            </div>
             <div>
               <label style="font-size: 12px;">สต็อก</label>
               <input type="number" [(ngModel)]="newProduct.stock" style="width: 100%; padding: 8px;">
@@ -126,7 +148,7 @@
 
             <div class="detail-body">
               <div
-                style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; background: #f9f9f9; padding: 15px; border-radius: 8px;">
+                style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; background: #f9f9f9; padding: 15px; border-radius: 8px;">
                 <div><label style="font-size: 12px; color: #666;">ราคาปัจจุบัน</label>
                   <p><strong>{{ selectedProductDetail.price }} ฿</strong></p>
                 </div>
@@ -135,6 +157,17 @@
                 </div>
                 <div><label style="font-size: 12px; color: #666;">หมวดหมู่</label>
                   <p>{{ selectedCategory?.categoryName }}</p>
+                </div>
+
+                <div><label style="font-size: 12px; color: #666;">ชนิดสัตว์</label>
+                  <p><span class="badge"
+                      style="background: #e3f2fd; color: #1976d2; padding: 2px 8px; border-radius: 10px;">{{
+                      selectedProductDetail.targetPetType }}</span></p>
+                </div>
+                <div><label style="font-size: 12px; color: #666;">กลุ่มเป้าหมาย</label>
+                  <p><span class="badge"
+                      style="background: #f1f8e9; color: #388e3c; padding: 2px 8px; border-radius: 10px;">{{
+                      selectedProductDetail.suitableForDisease }}</span></p>
                 </div>
               </div>
               <div class="stock-action-zone"

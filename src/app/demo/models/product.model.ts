@@ -9,6 +9,8 @@ export interface Product {
   price: number;
   stock: number;
   description: string;
+  targetPetType: string;
+  suitableForDisease: string;
   category: {
     categoryId: number;
     categoryName?: string;
