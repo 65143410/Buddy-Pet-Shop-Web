@@ -45,6 +45,7 @@ export interface Customer {
   email: string;
   phone: string;
   address?: string;
+  pets?: Pet[];
   orders?: Order[];
 }
 
@@ -121,4 +122,11 @@ export interface ProductLog {
   staffName: string;
   notes?: string;
   timestamp: string | Date;
+}
+
+export interface Pet {
+  petId?: number;
+  petName: string;
+  petType: string;
+  congenitalDisease?: string;
 }
