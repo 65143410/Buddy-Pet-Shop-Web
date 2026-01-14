@@ -212,6 +212,7 @@
               <thead>
                 <tr class="text-muted">
                   <th>สินค้า</th>
+                  <th class="text-center">ราคา/ชิ้น</th>
                   <th class="text-end">จำนวน</th>
                   <th class="text-end">รวม</th>
                 </tr>
@@ -219,6 +220,7 @@
               <tbody>
                 <tr *ngFor="let item of selectedOrderDetail.orderDetails" class="border-bottom">
                   <td>{{ item.product?.productName }}</td>
+                  <td class="text-center">{{ item.product?.price | currency:'THB' }}</td>
                   <td class="text-end">x{{ item.quantity }}</td>
                   <td class="text-end">{{ (item.product?.price * item.quantity) | currency:'THB' }}</td>
                 </tr>
