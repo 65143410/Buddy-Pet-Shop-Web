@@ -1,4 +1,5 @@
 import { Component, inject, input, output } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -29,7 +30,7 @@ import { OrderService } from 'src/app/services/order.service';
 
 @Component({
   selector: 'app-nav-right',
-  imports: [IconDirective, RouterModule, FormsModule, NgScrollbarModule, NgbNavModule, NgbDropdownModule, CartList],
+  imports: [CommonModule, IconDirective, RouterModule, FormsModule, NgScrollbarModule, NgbNavModule, NgbDropdownModule, CartList],
   templateUrl: './nav-right.component.html',
   styleUrls: ['./nav-right.component.scss']
 })
@@ -96,6 +97,8 @@ export class NavRightComponent {
   readNotification(id: number) {
     console.log("Reading notification ID:", id);
   }
+  selectedOrderDetail: any = null;
+
   loadOrderNotifications() {
     if (this.currentUser && this.currentUser.customerId) {
       this.orderService.getOrdersByCustomer(this.currentUser.customerId).subscribe(orders => {
@@ -105,11 +108,20 @@ export class NavRightComponent {
           color: order.status.statusName.includes('สำเร็จ') ? 'bg-light-success' : 'bg-light-primary',
           time: order.orderDate,
           content: `ออเดอร์ <b>#${order.invoiceNo || order.orderId}</b>: ${order.status.statusName}`,
-          date: 'สถานะล่าสุด'
+          date: 'สถานะล่าสุด',
+          originalOrder: order // Store full order object
         })).slice(0, 5);
         this.unreadCount = this.notifications.length;
       });
     }
+  }
+
+  viewOrderDetails(order: any) {
+    this.selectedOrderDetail = order;
+  }
+
+  closeOrderDetails() {
+    this.selectedOrderDetail = null;
   }
   profile = [
     { icon: 'edit', title: 'Edit Profile', fn: 'edit-profile' },

@@ -20,7 +20,8 @@
         <div class="dropdown-header p-0 text-wrap header-notification-scroll">
           <div class="list-group list-group-flush w-100">
             @for (item of notifications; track item.id) {
-            <a href="javascript:" class="list-group-item list-group-item-action" (click)="readNotification(item.id)">
+            <a href="javascript:" class="list-group-item list-group-item-action"
+              (click)="viewOrderDetails(item.originalOrder)">
               <div class="d-flex">
                 <div class="flex-shrink-0">
                   <div class="user-avatar" [class]="item.color">
@@ -28,7 +29,7 @@
                   </div>
                 </div>
                 <div class="flex-grow-1 ms-3">
-                  <span class="float-end text-muted f-12">{{ item.time }}</span>
+                  <span class="float-end text-muted f-12">{{ item.time | date:'HH:mm' }}</span>
                   <p class="text-body mb-0" [innerHTML]="item.content"></p>
                   <span class="text-muted f-12">{{ item.date }}</span>
                 </div>
@@ -172,10 +173,14 @@
                 Back</button>
               <h6>ประวัติการสั่งซื้อ</h6>
               <div class="list-group list-group-flush" style="max-height: 250px; overflow-y: auto;">
-                @for (order of notifications; track order.id) {
-                <div class="f-12 border-bottom py-1">
-                  <b>#{{order.id}}</b> - {{order.time}} <br>
-                  <span class="text-primary">{{order.content}}</span>
+                @for (item of notifications; track item.id) {
+                <div class="f-12 border-bottom py-2 pointer-hover" (click)="viewOrderDetails(item.originalOrder)"
+                  style="cursor: pointer;">
+                  <div class="d-flex justify-content-between">
+                    <b>#{{item.id}}</b>
+                    <span class="text-muted">{{item.time | date:'dd/MM/yy HH:mm'}}</span>
+                  </div>
+                  <span class="text-primary" [innerHTML]="item.content"></span>
                 </div>
                 }
               </div>
@@ -189,3 +194,60 @@
     </div>
   </li>
 </ul>
+
+<!-- Order Detail Overlay -->
+<div class="detail-overlay" *ngIf="selectedOrderDetail" (click)="closeOrderDetails()">
+  <div class="detail-card" (click)="$event.stopPropagation()">
+    <div class="detail-header">
+      <h5 class="m-0 text-white">📋 รายละเอียดออเดอร์ #{{ selectedOrderDetail.orderId }}</h5>
+      <button class="close-btn" (click)="closeOrderDetails()">&times;</button>
+    </div>
+
+    <div class="detail-body p-3">
+      <div class="row">
+        <div class="col-md-7">
+          <h6 class="border-bottom pb-2">🛍️ รายการสินค้า</h6>
+          <div class="table-responsive" style="max-height: 200px; overflow-y: auto;">
+            <table class="table table-sm table-borderless">
+              <thead>
+                <tr class="text-muted">
+                  <th>สินค้า</th>
+                  <th class="text-end">จำนวน</th>
+                  <th class="text-end">รวม</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of selectedOrderDetail.orderDetails" class="border-bottom">
+                  <td>{{ item.product?.productName }}</td>
+                  <td class="text-end">x{{ item.quantity }}</td>
+                  <td class="text-end">{{ (item.product?.price * item.quantity) | currency:'THB' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="text-end mt-2">
+            <span class="h5 text-primary">ยอดรวม: {{ selectedOrderDetail.totalAmount | currency:'THB' }}</span>
+          </div>
+        </div>
+
+        <div class="col-md-5">
+          <h6 class="border-bottom pb-2">สถานะ</h6>
+          <span class="badge" [ngClass]="{
+             'bg-success': selectedOrderDetail.status.statusName === 'ชำระเงินแล้ว' || selectedOrderDetail.status.statusName === 'จัดส่งสำเร็จ',
+             'bg-warning text-dark': selectedOrderDetail.status.statusName === 'รอตรวจสอบยอดเงิน',
+             'bg-secondary': selectedOrderDetail.status.statusName === 'รอชำระเงิน',
+             'bg-danger': selectedOrderDetail.status.statusName === 'ยกเลิก/สลิปไม่ถูกต้อง'
+           }">
+            {{ selectedOrderDetail.status.statusName }}
+          </span>
+
+          <div class="mt-3" *ngIf="selectedOrderDetail.payments && selectedOrderDetail.payments.length > 0">
+            <small class="text-muted d-block mb-1">หลักฐานการชำระเงิน</small>
+            <img src="https://s359.kapook.com/pagebuilder/ba154685-db18-4ac7-b318-a4a2b15b9d4c.jpg"
+              class="img-fluid rounded border" style="max-height: 120px;">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
