@@ -1,81 +1,122 @@
-<div class="auth-main">
+<div class="auth-main petshop-bg">
   <div class="auth-wrapper v3">
     <div class="auth-form">
-      <div class="auth-header">
-        <a href="javascript:"><img src="assets/images/logo-dark.svg" alt="logo img" /></a>
+      <div class="auth-header text-center mb-4">
+        <div class="pet-logo-circle mb-2">
+          <i class="fas fa-paw fa-3x text-orange"></i>
+        </div>
+        <h1 class="shop-title">Buddy Petshop</h1>
+        <p class="text-muted">มาร่วมเป็นส่วนหนึ่งของครอบครัวเรากันเถอะ 🐾</p>
       </div>
-      <div class="card my-5">
-        <div class="card-body">
+
+      <div class="card auth-card shadow-sm">
+        <div class="card-body p-4 p-md-5">
           <div class="d-flex justify-content-between align-items-end mb-4">
-            <h3 class="mb-0"><b>Sign up</b></h3>
-            <a [routerLink]="['/login']" class="link-primary">Already have an account?</a>
+            <h3 class="mb-0 fw-bold color-primary">สมัครสมาชิก</h3>
+            <a [routerLink]="['/login']" class="link-secondary small">มีบัญชีอยู่แล้ว? เข้าสู่ระบบ</a>
           </div>
+
+          <div class="section-title mb-3">
+            <h5 class="mb-0 text-orange"><i class="fas fa-user-circle me-2"></i>ข้อมูลส่วนตัว</h5>
+          </div>
+
+          <div class="form-group mb-3">
+            <label class="form-label fw-bold">ชื่อ-นามสกุล*</label>
+            <input type="text" class="form-control rounded-pill" placeholder="ชื่อของคุณ"
+              [(ngModel)]="registerData.customerName" name="customerName"
+              [class.is-invalid]="errorMessage && !registerData.customerName" />
+          </div>
+
           <div class="row">
             <div class="col-md-6">
               <div class="form-group mb-3">
-                <label class="form-label" for="firstName">First Name*</label>
-                <input type="text" class="form-control" id="firstName" placeholder="First Name" />
+                <label class="form-label fw-bold">อีเมล*</label>
+                <input type="email" class="form-control rounded-pill" placeholder="example@mail.com"
+                  [(ngModel)]="registerData.email" name="email"
+                  [class.is-invalid]="errorMessage && !registerData.email" />
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-group mb-3">
-                <label class="form-label" for="lastName">Last Name*</label>
-                <input type="text" class="form-control" id="lastName" placeholder="Last Name" />
+                <label class="form-label fw-bold">เบอร์โทรศัพท์</label>
+                <input type="text" class="form-control rounded-pill" placeholder="08x-xxxxxxx"
+                  [(ngModel)]="registerData.phone" name="phone" />
               </div>
             </div>
           </div>
+
           <div class="form-group mb-3">
-            <label class="form-label" for="company">Company</label>
-            <input type="text" class="form-control" id="company" placeholder="Company" />
+            <label class="form-label fw-bold">รหัสผ่าน*</label>
+            <input type="password" class="form-control rounded-pill" placeholder="กำหนดรหัสผ่านของคุณ"
+              [(ngModel)]="registerData.password" name="password"
+              [class.is-invalid]="errorMessage && !registerData.password" />
           </div>
+
           <div class="form-group mb-3">
-            <label class="form-label" for="emailAddress">Email Address*</label>
-            <input type="email" class="form-control" id="emailAddress" placeholder="Email Address" />
+            <label class="form-label fw-bold">ที่อยู่สำหรับจัดส่ง</label>
+            <textarea class="form-control rounded-20" rows="2" placeholder="บ้านเลขที่, ถนน, แขวง/ตำบล..."
+              [(ngModel)]="registerData.address" name="address"></textarea>
           </div>
+
+          <hr class="my-4 dashed-line">
+
+          <div class="section-title mb-3">
+            <h5 class="mb-0 text-success"><i class="fas fa-dog me-2"></i>ข้อมูลน้องสัตว์เลี้ยง</h5>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label class="form-label fw-bold">ชื่อสัตว์เลี้ยง</label>
+                <input type="text" class="form-control rounded-pill" placeholder="ชื่อน้องๆ"
+                  [(ngModel)]="registerData.petName" name="petName" />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label class="form-label fw-bold">ประเภทสัตว์</label>
+                <select class="form-select rounded-pill" [(ngModel)]="registerData.petType" name="petType">
+                  <option value="DOG">🐶 สุนัข</option>
+                  <option value="CAT">🐱 แมว</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
           <div class="form-group mb-3">
-            <label class="form-label" for="password">Password</label>
-            <input type="password" class="form-control" id="password" placeholder="Password" />
+            <label class="form-label fw-bold">โรคประจำตัว (ถ้ามี)</label>
+            <input type="text" class="form-control rounded-pill" placeholder="เช่น ภูมิแพ้อาหาร หรือไม่มี..."
+              [(ngModel)]="registerData.congenitalDisease" name="congenitalDisease" />
           </div>
-          <p class="mt-4 text-sm text-muted">
-            By Signing up, you agree to our
-            <a href="javascript:" class="text-primary">Terms of Service</a>
-            and
-            <a href="javascript:" class="text-primary">Privacy Policy</a>
+
+          @if (errorMessage) {
+          <div class="alert alert-danger-soft mt-3" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i> {{ errorMessage }}
+          </div>
+          }
+
+          <p class="mt-4 text-center small text-muted">
+            การสมัครสมาชิกถือว่าคุณยอมรับ
+            <a href="javascript:" class="text-orange text-decoration-none">เงื่อนไขการใช้งาน</a> และ
+            <a href="javascript:" class="text-orange text-decoration-none">นโยบายความเป็นส่วนตัว</a>
           </p>
-          <div class="d-grid mt-3">
-            <button type="button" class="btn btn-primary" (click)="goToHome()">Create Account</button>
-          </div>
-          <div class="saprator mt-3">
-            <span>Sign up with</span>
-          </div>
-          <div class="row">
-            @for (item of SignUpOptions; track item) {
-              <div class="col-4">
-                <div class="d-grid">
-                  <button type="button" class="btn mt-2 btn-light-primary bg-light text-muted">
-                    <img src="{{ item.image }}" alt="google img" />
-                    <span class="d-none d-sm-inline-block">{{ item.name }}</span>
-                  </button>
-                </div>
-              </div>
-            }
+
+          <div class="d-grid mt-4">
+            <button type="button" class="btn btn-pet-primary btn-lg rounded-pill shadow-sm py-3" (click)="onRegister()"
+              [disabled]="isLoading">
+              @if (isLoading) {
+              <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+              กำลังพาเข้าบ้าน...
+              } @else {
+              สมัครสมาชิก <i class="fas fa-paw ms-2"></i>
+              }
+            </button>
           </div>
         </div>
       </div>
-      <div class="auth-footer row">
-        <div class="col my-1">
-          <p class="m-0">
-            Copyright ©
-            <a href="https://codedthemes.com/" target="_blank">CodedThemes</a>
-          </p>
-        </div>
-        <div class="col-auto my-1">
-          <ul class="list-inline footer-link mb-0">
-            <li class="list-inline-item"><a href="https://codedthemes.com/" target="_blank">Home</a></li>
-            <li class="list-inline-item"><a href="https://codedthemes.com/privacy-policy/" target="_blank">Privacy Policy</a></li>
-            <li class="list-inline-item"><a href="https://codedthemes.support-hub.io/" target="_blank">Contact us</a></li>
-          </ul>
-        </div>
+
+      <div class="text-center mt-4">
+        <small class="text-muted">ยินดีต้อนรับเพื่อนรักสี่ขาของท่าน ❤️</small>
       </div>
     </div>
   </div>

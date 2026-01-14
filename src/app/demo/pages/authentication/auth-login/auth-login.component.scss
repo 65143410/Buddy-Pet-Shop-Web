@@ -1,112 +1,101 @@
-@import '../../../../../scss/settings/color-variables.scss';
-
-.auth-main {
-  position: relative;
-
-  .auth-wrapper {
-    height: 100%;
-    width: 100%;
-    min-height: 100vh;
-
-    .saprator {
-      position: relative;
-      display: flex;
-      align-self: center;
-      justify-content: center;
-
-      &:after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 0;
-        width: 100%;
-        height: 1px;
-        background: var(--bs-border-color);
-        z-index: 1;
-      }
-
-      span {
-        font-size: 0.875rem;
-        padding: 8px 24px;
-        background: $white;
-        z-index: 5;
-        text-transform: capitalize;
-        color: $gray-800;
-        font-weight: 500;
-      }
-    }
-
-    &.v3 {
-      display: flex;
-      align-items: center;
-
-      .auth-form {
-        flex-direction: column;
-        background: url('../../../../../assets/images/authentication/img-auth-bg.svg');
-        min-height: 100vh;
-        padding: 24px;
-        background-repeat: no-repeat;
-        background-size: auto 82%;
-        background-position: left bottom;
-        position: relative;
-        justify-content: space-between;
-        > * {
-          position: relative;
-          z-index: 5;
-        }
-        &:after {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: rgba($white, 0.2);
-          backdrop-filter: blur(16px);
-        }
-      }
-    }
-    .auth-form {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-grow: 1;
-
-      .card {
-        width: 100%;
-        max-width: 495px;
-        box-shadow: none;
-      }
-
-      img + span {
-        padding-left: 15px;
-      }
-
-      h5 {
-        span {
-          text-decoration: underline;
-        }
-      }
-    }
-    .auth-footer,
-    .auth-header {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-  }
-}
-
-form i {
-  display: inline-flex;
+.petshop-bg {
+  background:
+    radial-gradient(circle at 2px 2px, rgba(255, 159, 67, 0.05) 1px, transparent 0);
+  background-size: 32px 32px;
+  /* ลายจุดจางๆ */
+  background-color: #fff9e3;
+  min-height: 100vh;
+  display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0px -12px 0px 0px;
-  cursor: pointer;
-  padding: 12px;
-  font-size: 18px;
-  position: absolute;
-  top: 203px;
-  right: 45px;
+  padding: 20px;
+}
+
+.auth-form {
+  width: 100%;
+  max-width: 450px;
+  /* กำหนดความกว้างสูงสุดเพื่อให้ดูสวย ไม่กว้างเกินไป */
+}
+
+/* 3. ทำให้ wrapper ขยายเต็มพื้นที่ */
+.auth-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+/* หัวข้อร้าน */
+.shop-title {
+  font-family: 'Kanit', sans-serif;
+  /* หรือฟอนต์หัวมนๆ */
+  color: #ff9f43;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.text-orange {
+  color: #ff9f43;
+}
+
+.color-primary {
+  color: #576574;
+}
+
+/* การ์ดให้ดูนุ่มนวล */
+.auth-card {
+  border: none;
+  border-radius: 25px;
+  /* โค้งมนดูน่ารัก */
+  overflow: hidden;
+}
+
+/* ปรับแต่ง Input */
+.form-control {
+  border: 2px solid #f1f2f6;
+  padding: 12px 20px;
+}
+
+.form-control:focus {
+  border-color: #ff9f43;
+  /* เปลี่ยนจาก red(...) เป็น rgba(...) และเพิ่มหน่วย rem */
+  box-shadow: 0 0 0 0.25rem rgba(255, 159, 67, 0.25);
+  outline: 0;
+}
+
+/* ปุ่มกดสไตล์ Pet Shop */
+.btn-pet-primary {
+  background-color: #ff9f43;
+  border: none;
+  color: white;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-pet-primary:hover {
+  background-color: #ee5253;
+  /* เปลี่ยนเป็นสีออกแดงชมพูเวลานำเมาส์ไปวาง */
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255, 159, 67, 0.4);
+}
+
+/* สไตล์ Alert แบบนุ่มๆ */
+.alert-danger-soft {
+  background-color: #ffeded;
+  color: #eb4d4b;
+  border-radius: 15px;
+  border: none;
+  font-size: 0.9rem;
+}
+
+/* วงกลมโลโก้ */
+.pet-logo-circle {
+  background: white;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }

@@ -1,99 +1,112 @@
-@import '../../../../../scss/settings/color-variables.scss';
+/* 1. จัดกึ่งกลางเป๊ะๆ ทั้งแนวตั้งและแนวนอน */
+.auth-main.petshop-bg {
+  background: #fff9e3;
+  /* สีครีมนวลๆ ทั่วทั้งหน้าจอ */
+  background-image:
+    radial-gradient(#ff9f43 0.5px, transparent 0.5px);
+  background-size: 24px 24px;
+  /* ลายจุดเล็กๆ เพิ่มความน่ารัก */
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  /* กึ่งกลางแนวตั้ง */
+  justify-content: center;
+  /* กึ่งกลางแนวนอน */
+  padding: 40px 20px;
+  /* กันขอบเวลาเปิดในมือถือ */
+}
 
-.auth-main {
-  position: relative;
+.auth-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
 
-  .auth-wrapper {
-    height: 100%;
-    width: 100%;
-    min-height: 100vh;
+.auth-form {
+  width: 100%;
+  max-width: 600px;
+  /* ขนาดกำลังสวยสำหรับหน้าสมัครสมาชิก */
+}
 
-    .saprator {
-      position: relative;
-      display: flex;
-      align-self: center;
-      justify-content: center;
+/* 2. ปรับการ์ดให้ไม่ขาววอกจนเกินไป */
+.auth-card {
+  border: none;
+  border-radius: 30px;
+  background-color: #fffdf7;
+  /* สีขาวนวล (Off-white) สบายตากว่าขาวล้วน */
+  box-shadow: 0 10px 30px rgba(255, 159, 67, 0.15) !important;
+  border: 2px solid #ff9f431a;
+  /* เส้นขอบจางๆ */
+}
 
-      &:after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 0;
-        width: 100%;
-        height: 1px;
-        background: var(--bs-border-color);
-        z-index: 1;
-      }
+/* 3. ส่วนหัวข้อและเส้นแบ่ง */
+.shop-title {
+  color: #ff9f43;
+  font-weight: 800;
+  margin-top: 10px;
+}
 
-      span {
-        font-size: 0.875rem;
-        padding: 8px 24px;
-        background: $white;
-        z-index: 5;
-        text-transform: capitalize;
-        color: $gray-800;
-        font-weight: 500;
-      }
-    }
+.section-title {
+  padding: 8px 15px;
+  background: rgba(255, 159, 67, 0.1);
+  /* ไฮไลท์แถบสีจางๆ หลังหัวข้อ */
+  border-radius: 10px;
+  border-left: 5px solid #ff9f43;
+  margin-bottom: 20px;
+}
 
-    &.v3 {
-      display: flex;
-      align-items: center;
+.dashed-line {
+  border-top: 2px dashed #ff9f4333;
+  margin: 30px 0;
+}
 
-      .auth-form {
-        flex-direction: column;
-        background: url('../../../../../assets/images/authentication/img-auth-bg.svg');
-        min-height: 100vh;
-        padding: 24px;
-        background-repeat: no-repeat;
-        background-size: auto 82%;
-        background-position: left bottom;
-        position: relative;
-        justify-content: space-between;
-        > * {
-          position: relative;
-          z-index: 5;
-        }
-        &:after {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: rgba($white, 0.2);
-          backdrop-filter: blur(16px);
-        }
-      }
-    }
-    .auth-form {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-grow: 1;
+/* 4. ปรับ Input ให้ดูเป็นมิตร */
+.form-control,
+.form-select {
+  background-color: #ffffff;
+  border: 2px solid #f1f2f6;
+  padding: 12px 20px;
+  border-radius: 50px !important;
+  /* มนแบบแคปซูล */
 
-      .card {
-        width: 100%;
-        max-width: 495px;
-        box-shadow: none;
-      }
-
-      img + span {
-        padding-left: 15px;
-      }
-
-      h5 {
-        span {
-          text-decoration: underline;
-        }
-      }
-    }
-    .auth-footer,
-    .auth-header {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
+  &:focus {
+    background-color: #fff;
+    border-color: #ff9f43;
+    box-shadow: 0 0 0 4px rgba(255, 159, 67, 0.1);
+    outline: none;
   }
+}
+
+/* ปรับ Textarea ให้ขอบมนพอดีๆ */
+textarea.form-control {
+  border-radius: 20px !important;
+}
+
+/* 5. ปุ่มกด */
+.btn-pet-primary {
+  background: linear-gradient(45deg, #ff9f43, #ffb367);
+  border: none;
+  color: white;
+  font-weight: bold;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(255, 159, 67, 0.3);
+    color: white;
+  }
+}
+
+/* วงกลมโลโก้ */
+.pet-logo-circle {
+  background: white;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 5px 15px rgba(255, 159, 67, 0.2);
 }

@@ -1,64 +1,64 @@
-<div class="auth-main">
+<div class="auth-main petshop-bg">
   <div class="auth-wrapper v3">
     <div class="auth-form">
-      <div class="auth-header">
-        <a href="javascript:"><img src="assets/images/logo-dark.svg" alt="logo" /></a>
+      <div class="auth-header text-center mb-4">
+        <div class="pet-logo-circle mb-2">
+          <i class="fas fa-paw fa-3x text-orange"></i>
+        </div>
+        <h1 class="shop-title">Buddy Petshop</h1>
+        <p class="text-muted">ยินดีต้อนรับคนรักสัตว์ทุกท่านครับ 🐶🐱</p>
       </div>
-      <div class="card my-5">
-        <div class="card-body">
+
+      <div class="card auth-card shadow-sm">
+        <div class="card-body p-4">
           <div class="d-flex justify-content-between align-items-end mb-4">
-            <h3 class="mb-0"><b>Login</b></h3>
-            <a [routerLink]="['/register']" class="link-primary">Don't have an account?</a>
+            <h3 class="mb-0 fw-bold color-primary">เข้าสู่ระบบ</h3>
+            <a [routerLink]="['/register']" class="link-secondary small">ยังไม่มีสมาชิก? สมัครเลย</a>
           </div>
+
           <div class="form-group mb-3">
-            <label class="form-label" for="email">Email Address</label>
-            <input type="email" class="form-control" id="email" placeholder="Email Address" value="info@codedthemes.com" />
+            <label class="form-label fw-bold" for="email"><i class="fas fa-envelope me-1"></i> อีเมล</label>
+            <input type="email" class="form-control rounded-pill" id="email" placeholder="example@email.com"
+              [(ngModel)]="loginRequest.email" name="email" [class.is-invalid]="errorMessage" />
           </div>
+
           <div class="form-group mb-3">
-            <label class="form-label" for="password">Password</label>
-            <input type="password" class="form-control" id="password" placeholder="Password" value="123456789" />
+            <label class="form-label fw-bold" for="password"><i class="fas fa-lock me-1"></i> รหัสผ่าน</label>
+            <input type="password" class="form-control rounded-pill" id="password" placeholder="ใส่รหัสผ่านที่นี่"
+              [(ngModel)]="loginRequest.password" name="password" [class.is-invalid]="errorMessage" />
           </div>
-          <div class="d-flex mt-1 justify-content-between">
+
+          @if (errorMessage) {
+          <div class="alert alert-danger-soft mt-2" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i> {{ errorMessage }}
+          </div>
+          }
+
+          <div class="d-flex mt-1 justify-content-between align-items-center">
             <div class="form-check">
-              <input class="form-check-input input-primary" type="checkbox" id="customCheckc1" checked="" />
-              <label class="form-check-label text-muted" for="customCheckc1">Keep me sign in</label>
+              <input class="form-check-input" type="checkbox" id="customCheckc1" />
+              <label class="form-check-label text-muted small" for="customCheckc1">จดจำฉันไว้</label>
             </div>
-            <h5 class="text-secondary f-w-400"><a href="javascript:">Forgot Password?</a></h5>
+            <a href="javascript:" class="text-muted small">ลืมรหัสผ่าน?</a>
           </div>
+
           <div class="d-grid mt-4">
-            <button type="button" class="btn btn-primary"  (click)="goToHome()">Login</button>
+            <button type="button" class="btn btn-pet-primary btn-lg rounded-pill shadow-sm" (click)="onLogin()"
+              [disabled]="isLoading">
+              @if (isLoading) {
+              <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+              กำลังเดินเข้าหน้าเว็ป...
+              } @else {
+              เข้าบ้าน Buddy <i class="fas fa-home ms-1"></i>
+              }
+            </button>
           </div>
-          <div class="saprator mt-3">
-            <span>Login with</span>
-          </div>
-          <div class="row">
-            @for (item of SignInOptions; track item) {
-              <div class="col-4">
-                <div class="d-grid">
-                  <button type="button" class="btn mt-2 btn-light-primary bg-light text-muted">
-                    <img src="{{ item.image }}" alt="google img" />
-                    <span class="d-none d-sm-inline-block">{{ item.name }}</span>
-                  </button>
-                </div>
-              </div>
-            }
-          </div>
+
         </div>
       </div>
-      <div class="auth-footer row">
-        <div class="col my-1">
-          <p class="m-0">
-            Copyright ©
-            <a href="https://codedthemes.com/" target="_blank">CodedThemes</a>
-          </p>
-        </div>
-        <div class="col-auto my-1">
-          <ul class="list-inline footer-link mb-0">
-            <li class="list-inline-item"><a href="https://codedthemes.com/" target="_blank">Home</a></li>
-            <li class="list-inline-item"><a href="https://codedthemes.com/privacy-policy/" target="_blank">Privacy Policy</a></li>
-            <li class="list-inline-item"><a href="https://codedthemes.support-hub.io/" target="_blank">Contact us</a></li>
-          </ul>
-        </div>
+
+      <div class="text-center mt-4">
+        <small class="text-muted">Made with ❤️ for your best friends</small>
       </div>
     </div>
   </div>
