@@ -1,8 +1,10 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router'; // Import Router
 import { CartProduct } from 'src/app/demo/models/product.model';
 import { CartService } from 'src/app/services/cart.service';
+import { OrderService } from 'src/app/services/order.service'; // Import OrderService
 
 @Component({
   selector: 'app-cart-list',
@@ -14,16 +16,25 @@ import { CartService } from 'src/app/services/cart.service';
 export class CartList implements OnInit {
   count: number = 0;
   isOpen: boolean = false;
+
+  // Steps Flags
   previewFlag: boolean = false;
+  addressFlag: boolean = false;
   paymentFlag: boolean = false;
+
   inVoiceNo: number | undefined;
   totalAmount: number = 0;
   selectedFile: File | null = null;
   imagePreview: string | ArrayBuffer | null = null;
 
-  cartService = inject(CartService);
+  shippingAddress: string = '';
+  currentUser: any = null;
 
-  constructor() {}
+  cartService = inject(CartService);
+  private router = inject(Router); // Inject Router
+  private orderService = inject(OrderService); // Inject OrderService
+
+  constructor() { }
 
   ngOnInit() {
     this.cartService.cartUpdates$.subscribe(() => {
@@ -47,15 +58,21 @@ export class CartList implements OnInit {
 
   openCart(): void {
     this.isOpen = true;
-    this.previewFlag = false;
-    this.paymentFlag = false;
+    this.resetFlags();
     this.calculateTotal();
   }
 
   closeCart(): void {
     this.isOpen = false;
+    this.resetFlags();
+  }
+
+  resetFlags() {
     this.previewFlag = false;
+    this.addressFlag = false;
     this.paymentFlag = false;
+    this.imagePreview = null;
+    this.selectedFile = null;
   }
 
   removeProduct(item: CartProduct): void {
@@ -66,19 +83,42 @@ export class CartList implements OnInit {
     this.updateCartData();
   }
 
-  preview(): void {
+  // Step 1: Check Login -> Go to Preview
+  checkout(): void {
+    const userJson = localStorage.getItem('currentUser');
+    if (!userJson) {
+      alert('กรุณาเข้าสู่ระบบก่อนทำการสั่งซื้อ');
+      this.closeCart();
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    this.currentUser = JSON.parse(userJson);
     this.previewFlag = true;
-    this.inVoiceNo = this.getRandomInt(23443, 23432555);
+    this.inVoiceNo = this.getRandomInt(100000, 999999);
     this.calculateTotal();
+  }
+
+  // Step 2: Confirm Items -> Go to Address
+  confirmItems(): void {
+    this.addressFlag = true;
+    this.previewFlag = false;
+    // Pre-fill address from profile if available
+    this.shippingAddress = this.currentUser.address || '';
+  }
+
+  // Step 3: Confirm Address -> Go to Payment
+  confirmAddress(): void {
+    if (!this.shippingAddress || this.shippingAddress.trim() === '') {
+      alert('กรุณาระบุที่อยู่จัดส่ง');
+      return;
+    }
+    this.addressFlag = false;
+    this.paymentFlag = true;
   }
 
   getRandomInt(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
-
-  confirmOrder(): void {
-    this.paymentFlag = true;
-    this.previewFlag = false;
   }
 
   onFileSelected(event: Event): void {
@@ -95,16 +135,47 @@ export class CartList implements OnInit {
   }
 
   submitPayment(): void {
-  if (!this.selectedFile) {
-    alert('กรุณาอัปโหลดสลิปการโอนเงิน');
-    return;
+    // Note: จริงๆ ควรส่งรูปสลิปไป Backend ด้วย แต่ใน MVP นี้อาจจะส่งแค่ Order Data ก่อน
+    // หรือถ้า Backend รองรับ Upload ก็ต้องใช้ FormData
+
+    const orderData = {
+      customerId: this.currentUser.customerId,
+      orderDate: new Date(),
+      totalAmount: this.totalAmount,
+      status: { statusId: 1 }, // 1 = Pending Payment/Verification
+      address: this.shippingAddress,
+      invoiceNo: 'INV-' + this.inVoiceNo,
+      orderDetails: this.cartService.cartItems.map(item => ({
+        product: { productId: item.productId },
+        quantity: item.qty,
+        price: item.price
+      }))
+    };
+
+    console.log('Creating Order:', orderData);
+
+    this.orderService.createOrder(orderData).subscribe({
+      next: (res) => {
+        alert('สั่งซื้อสำเร็จ! ขอบคุณที่ใช้บริการครับ');
+        this.cartService.clearCart();
+        this.closeCart();
+      },
+      error: (err) => {
+        console.error(err);
+        alert('เกิดข้อผิดพลาดในการสั่งซื้อ: ' + (err.error?.message || err.message));
+      }
+    });
+
   }
-  console.log('Sending slip for Invoice:', this.inVoiceNo);
-  alert('ส่งหลักฐานการชำระเงินเรียบร้อย!');
-  this.cartService.clearCart();
-  this.closeCart();
-  this.paymentFlag = false;
-  this.imagePreview = null;
-  this.selectedFile = null;
-}
+  goBack() {
+    if (this.paymentFlag) {
+      this.paymentFlag = false;
+      this.addressFlag = true;
+    } else if (this.addressFlag) {
+      this.addressFlag = false;
+      this.previewFlag = true;
+    } else {
+      this.previewFlag = false;
+    }
+  }
 }

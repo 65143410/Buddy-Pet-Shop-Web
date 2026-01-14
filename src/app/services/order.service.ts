@@ -10,4 +10,8 @@ export class OrderService {
     getOrdersByCustomer(customerId: number): Observable<any[]> {
         return this.http.get<any[]>(`${this.apiUrl}/customer/${customerId}`);
     }
+
+    createOrder(orderData: any): Observable<any> {
+        return this.http.post(`${this.apiUrl}`, orderData);
+    }
 }

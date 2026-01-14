@@ -1,89 +1,202 @@
 <button
-  class="btn pc-head-link me-0 bg-gray-200 position-relative border-0 d-flex align-items-center justify-content-center"
-  (click)="openCart()"
-  style="width: 38px; height: 38px; padding: 0;"> <i class="fas fa-shopping-cart text-secondary" style="font-size: 1.1rem;"></i>
+  class="btn pc-head-link me-0 bg-gray-200 position-relative border-0 d-flex align-items-center justify-content-center shadow-sm"
+  (click)="openCart()" style="width: 42px; height: 42px; border-radius: 12px; overflow: visible;"> <i
+    class="fas fa-shopping-cart text-dark" style="font-size: 1.2rem;"></i>
 
-  <span
-    class="badge bg-danger rounded-pill position-absolute"
-    *ngIf="count > 0"
-    style="
-      top: -2px;
-      right: -2px;
-      font-size: 10px;
-      padding: 2px 5px;
-      min-width: 18px;
-      border: 2px solid #fff; /* เพิ่มขอบสีขาวเพื่อให้ดูเด่นและไม่โดนกลืน */
-      z-index: 10;
-    ">
-    {{ count }}
+  <span class="badge bg-danger rounded-pill position-absolute" *ngIf="count > 0" style="
+      top: -1px; 
+      right: -1px; 
+      font-size: 10px; 
+      padding: 3px 6px; 
+      border: 2px solid #fff;
+      z-index: 999; 
+      transform: translate(25%, -25%);
+    "> {{ count }}
   </span>
 </button>
 
 <div class="modal fade" [ngClass]="{'show d-block': isOpen}" tabindex="-1" *ngIf="isOpen">
   <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content border-0 shadow-lg">
+    <div class="modal-content shadow-2xl">
 
-      <div class="modal-header bg-light">
-        <h5 class="modal-title">
-          <i class="fas" [ngClass]="{'fa-shopping-cart': !previewFlag && !paymentFlag, 'fa-file-invoice-dollar': previewFlag, 'fa-image': paymentFlag}"></i>
-          {{ paymentFlag ? 'แจ้งชำระเงิน' : (previewFlag ? 'รายละเอียด CheckOut' : 'รายการในตะกร้า') }}
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold">
+          <i class="fas fa-shopping-bag me-2 text-primary"></i> ดำเนินการสั่งซื้อ
         </h5>
         <button type="button" class="btn-close" (click)="closeCart()"></button>
       </div>
 
-      <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+      <div class="checkout-stepper">
+        <div class="step" [class.active]="!previewFlag && !paymentFlag && !addressFlag">
+          <div class="step-icon"><i class="fas fa-shopping-cart"></i></div>
+          <div class="step-label">ตะกร้า</div>
+        </div>
+        <div class="step" [class.active]="previewFlag && !addressFlag">
+          <div class="step-icon"><i class="fas fa-file-invoice"></i></div>
+          <div class="step-label">ตรวจสอบ</div>
+        </div>
+        <div class="step" [class.active]="addressFlag">
+          <div class="step-icon"><i class="fas fa-map-marker-alt"></i></div>
+          <div class="step-label">ที่อยู่</div>
+        </div>
+        <div class="step" [class.active]="paymentFlag">
+          <div class="step-icon"><i class="fas fa-credit-card"></i></div>
+          <div class="step-label">ชำระเงิน</div>
+        </div>
+      </div>
 
-        <ng-container *ngIf="!previewFlag && !paymentFlag">
+      <div class="modal-body bg-light-subtle" style="max-height: 60vh; overflow-y: auto; padding: 1.5rem;">
+
+        <ng-container *ngIf="!previewFlag && !paymentFlag && !addressFlag">
           <div *ngIf="count > 0">
-            <div class="row align-items-center border-bottom py-2" *ngFor="let item of cartService.cartItems; let i = index">
-              <div class="col-6"><strong>{{ item.productName }}</strong></div>
-              <div class="col-3">
-                <input type="number" class="form-control form-control-sm" [(ngModel)]="item.qty" (ngModelChange)="chngQuantity()">
+            <div class="cart-item-row row align-items-center shadow-sm mx-0" *ngFor="let item of cartService.cartItems">
+              <div class="col-6">
+                <div class="fw-bold text-dark">{{ item.productName }}</div>
+                <small class="text-muted">{{ item.price | currency:'THB' }} / ชิ้น</small>
               </div>
-              <div class="col-3 text-end">{{ (item.price * item.qty) | currency }}</div>
+              <div class="col-3">
+                <input type="number" class="form-control form-control-sm qty-input mx-auto" [(ngModel)]="item.qty"
+                  (ngModelChange)="chngQuantity()" min="1">
+              </div>
+              <div class="col-2 text-end">
+                <div class="fw-bold text-primary">{{ (item.price * item.qty) | currency:'THB' }}</div>
+              </div>
+              <div class="col-1 text-center">
+                <button class="btn btn-link text-danger p-0" (click)="removeProduct(item)">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </div>
             </div>
-            <div class="text-end mt-3 fw-bold text-danger">รวมสุทธิ: {{ totalAmount | currency }}</div>
+            <div class="text-end mt-4 p-3 bg-white rounded-3 shadow-sm">
+              <span class="text-muted me-2">ยอดรวมทั้งสิ้น:</span>
+              <span class="h4 fw-bold text-danger">{{ totalAmount | currency:'THB' }}</span>
+            </div>
           </div>
-          <div *ngIf="count === 0" class="text-center my-4 text-muted">ไม่มีสินค้าในตะกร้า</div>
+
+          <div *ngIf="count === 0" class="text-center py-5">
+            <div class="mb-3 text-gray-300">
+              <i class="fas fa-shopping-basket fa-4x"></i>
+            </div>
+            <h5 class="text-muted">ไม่มีสินค้าในตะกร้าของคุณ</h5>
+            <button class="btn btn-primary mt-3" (click)="closeCart()">ไปเลือกซื้อสินค้า</button>
+          </div>
         </ng-container>
 
-        <ng-container *ngIf="previewFlag">
-           <div class="alert alert-primary">เลขที่ใบสั่งซื้อ: {{ inVoiceNo }}</div>
-           <ul class="list-group">
-             <li class="list-group-item d-flex justify-content-between" *ngFor="let item of cartService.cartItems">
-               {{ item.productName }} x{{ item.qty }}
-               <span>{{ (item.price * item.qty) | currency }}</span>
-             </li>
-           </ul>
-           <div class="text-end mt-3 h5">ยอดชำระ: {{ totalAmount | currency }}</div>
+        <ng-container *ngIf="previewFlag && !addressFlag">
+          <div class="card border-0 shadow-sm mb-3">
+            <div class="card-header bg-white py-3">
+              <span class="text-muted">เลขที่ใบสั่งซื้อ:</span>
+              <span class="fw-bold text-primary ms-2">{{ inVoiceNo }}</span>
+            </div>
+            <div class="card-body p-0">
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item p-3" *ngFor="let item of cartService.cartItems">
+                  <div class="row align-items-center g-0 w-100">
+                    <div class="col-7">
+                      <div class="fw-bold text-dark text-truncate">{{ item.productName }}</div>
+                      <small class="text-muted">{{ item.price | currency:'THB' }} x {{ item.qty }}</small>
+                    </div>
+                    <div class="col-5 text-end px-0">
+                      <span class="fw-bold text-primary" style="font-size: 1.1rem; display: block;">
+                        {{ (item.price * item.qty) | currency:'THB' }}
+                      </span>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="card-footer bg-primary-subtle text-end py-3">
+              <span class="h5 mb-0 fw-bold text-primary">ยอดชำระสุทธิ: {{ totalAmount | currency:'THB' }}</span>
+            </div>
+          </div>
+        </ng-container>
+
+        <ng-container *ngIf="addressFlag">
+          <div class="bg-white p-4 rounded-3 shadow-sm">
+            <h6 class="fw-bold mb-3"><i class="fas fa-truck me-2"></i> ข้อมูลการจัดส่ง</h6>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label small text-muted">ชื่อผู้รับ</label>
+                <input type="text" class="form-control bg-light" [value]="currentUser?.customerName" disabled>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small text-muted">เบอร์โทรศัพท์</label>
+                <input type="text" class="form-control bg-light" [value]="currentUser?.phone" disabled>
+              </div>
+              <div class="col-12">
+                <label class="form-label fw-bold">ระบุที่อยู่จัดส่ง</label>
+                <textarea class="form-control" rows="3" [(ngModel)]="shippingAddress"
+                  placeholder="บ้านเลขที่, ถนน, แขวง/ตำบล..."></textarea>
+                <div class="form-text text-warning mt-2">
+                  <i class="fas fa-exclamation-circle me-1"></i> ตรวจสอบที่อยู่ให้ถูกต้องเพื่อความรวดเร็วในการส่ง
+                </div>
+              </div>
+            </div>
+          </div>
         </ng-container>
 
         <ng-container *ngIf="paymentFlag">
-          <div class="card bg-light p-3 text-center mb-3">
-            <p>ธนาคารกสิกรไทย: <strong>012-3-45678-9</strong></p>
-            <p class="mb-0 text-danger fw-bold">ยอดที่ต้องโอน: {{ totalAmount | currency }}</p>
-          </div>
-          <input type="file" class="form-control" (change)="onFileSelected($event)" accept="image/*">
-          <div *ngIf="imagePreview" class="mt-3 text-center">
-            <img [src]="imagePreview" class="img-fluid rounded border" style="max-height: 200px;">
+          <div class="text-center">
+            <div class="qr-container d-inline-block mb-4">
+              <h5 class="mb-3 fw-bold">Scan QR Code เพื่อชำระเงิน</h5>
+              <img src="assets/images/qr-payment-mock.png"
+                onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=BuddyPetShopPayment'"
+                class="img-fluid rounded mb-3" style="width: 180px;">
+              <div class="h4 fw-bold text-success mb-0">{{ totalAmount | currency:'THB' }}</div>
+            </div>
+
+            <div class="bank-info text-start mx-auto" style="max-width: 400px;">
+              <div class="d-flex align-items-center mb-2">
+                <div class="bg-primary rounded-circle p-2 me-3 text-white">
+                  <i class="fas fa-university"></i>
+                </div>
+                <div>
+                  <div class="fw-bold">ธนาคารกสิกรไทย (K-Bank)</div>
+                  <div class="text-primary fw-bold">123-4-56789-0</div>
+                </div>
+              </div>
+              <div class="small text-muted ps-5">ชื่อบัญชี: บจก. บัดดี้ เพ็ทช็อป</div>
+            </div>
+
+            <div class="mt-4 text-start">
+              <label class="form-label fw-bold">อัปโหลดสลิปหลักฐานการโอน</label>
+              <div class="input-group">
+                <input type="file" class="form-control" (change)="onFileSelected($event)" accept="image/*">
+              </div>
+              <div *ngIf="imagePreview" class="mt-3 text-center bg-white p-2 border rounded shadow-sm">
+                <img [src]="imagePreview" class="img-fluid rounded" style="max-height: 200px;">
+              </div>
+            </div>
           </div>
         </ng-container>
 
       </div>
 
-      <div class="modal-footer bg-light">
-        <button type="button" class="btn btn-secondary" (click)="closeCart()">ปิด</button>
-
-        <button *ngIf="!previewFlag && !paymentFlag && count > 0" class="btn btn-success" (click)="preview()">
-          CheckOut
+      <div class="modal-footer shadow-sm">
+        <button *ngIf="previewFlag || addressFlag || paymentFlag" type="button"
+          class="btn btn-outline-secondary rounded-pill px-4 me-auto" (click)="goBack()">
+          <i class="fas fa-chevron-left me-2"></i> ย้อนกลับ
         </button>
 
-        <button *ngIf="previewFlag" class="btn btn-primary" (click)="confirmOrder()">
-          ยืนยันสั่งซื้อ
+        <button type="button" class="btn btn-light rounded-pill px-4" (click)="closeCart()">ยกเลิก</button>
+
+        <button *ngIf="!previewFlag && !paymentFlag && !addressFlag && count > 0"
+          class="btn btn-success rounded-pill px-4 shadow-sm" (click)="checkout()">
+          สั่งซื้อสินค้า <i class="fas fa-chevron-right ms-2"></i>
         </button>
 
-        <button *ngIf="paymentFlag" class="btn btn-success" (click)="submitPayment()">
-          ส่งหลักฐานการโอน
+        <button *ngIf="previewFlag && !addressFlag" class="btn btn-primary rounded-pill px-4 shadow-sm"
+          (click)="confirmItems()">
+          ยืนยันรายการ <i class="fas fa-chevron-right ms-2"></i>
+        </button>
+
+        <button *ngIf="addressFlag" class="btn btn-primary rounded-pill px-4 shadow-sm" (click)="confirmAddress()">
+          ไปที่หน้าชำระเงิน <i class="fas fa-chevron-right ms-2"></i>
+        </button>
+
+        <button *ngIf="paymentFlag" class="btn btn-success rounded-pill px-5 shadow-sm fw-bold"
+          (click)="submitPayment()">
+          <i class="fas fa-paper-plane me-2"></i> แจ้งโอนเงินเรียบร้อย
         </button>
       </div>
 
