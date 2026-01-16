@@ -3,50 +3,7 @@
     <app-cart-list></app-cart-list>
   </li>
 
-  <li class="dropdown pc-h-item" ngbDropdown>
-    <a href="javascript:" class="pc-head-link dropdown-toggle arrow-none me-0 bg-gray-200" ngbDropdownToggle>
-      <i antIcon type="bell" theme="outline"></i>
-      <span class="badge bg-primary pc-h-badge">{{ notifications.length }}</span>
-    </a>
-    <div class="dropdown-menu dropdown-notification dropdown-menu-end pc-h-dropdown" ngbDropdownMenu>
-      <div class="dropdown-header d-flex align-items-center justify-content-between">
-        <h5 class="m-0">Notification</h5>
-        <a href="javascript:" class="bg-transparent" (click)="markAllAsRead()">
-          <i class="text-success d-flex f-20" antIcon theme="outline" type="check-circle"></i>
-        </a>
-      </div>
-      <div class="dropdown-divider mb-0"></div>
-      <ng-scrollbar style="min-height: 280px" visibility="hover">
-        <div class="dropdown-header p-0 text-wrap header-notification-scroll">
-          <div class="list-group list-group-flush w-100">
-            @for (item of notifications; track item.id) {
-            <a href="javascript:" class="list-group-item list-group-item-action"
-              (click)="viewOrderDetails(item.originalOrder)">
-              <div class="d-flex">
-                <div class="flex-shrink-0">
-                  <div class="user-avatar" [class]="item.color">
-                    <i class="d-flex" antIcon theme="outline" [type]="item.icon"></i>
-                  </div>
-                </div>
-                <div class="flex-grow-1 ms-3">
-                  <span class="float-end text-muted f-12">{{ item.time | date:'HH:mm' }}</span>
-                  <p class="text-body mb-0" [innerHTML]="item.content"></p>
-                  <span class="text-muted f-12">{{ item.date }}</span>
-                </div>
-              </div>
-            </a>
-            } @empty {
-            <div class="p-3 text-center">ไม่มีการแจ้งเตือนใหม่</div>
-            }
-          </div>
-        </div>
-      </ng-scrollbar>
-      <div class="dropdown-divider mt-0"></div>
-      <div class="text-center py-2">
-        <a [routerLink]="['/notifications']" class="link-primary">View all</a>
-      </div>
-    </div>
-  </li>
+
 
   <li class="dropdown pc-h-item header-user-profile" ngbDropdown [autoClose]="'outside'">
     <a href="javascript:" class="pc-head-link dropdown-toggle arrow-none me-0" ngbDropdownToggle>

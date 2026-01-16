@@ -65,6 +65,7 @@ export class CartList implements OnInit {
   closeCart(): void {
     this.isOpen = false;
     this.resetFlags();
+    this.router.navigate(['/dashboard/home']);
   }
 
   resetFlags() {
