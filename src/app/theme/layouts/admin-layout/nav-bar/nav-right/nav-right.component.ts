@@ -26,7 +26,7 @@ import {
 } from '@ant-design/icons-angular/icons';
 import { NgbDropdownModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgScrollbarModule } from 'ngx-scrollbar';
-import { CartList } from 'src/app/demo/dashboard/home/cart-list/cart-list';
+import { CartList } from 'src/app/demo/dashboard/cart-list/cart-list';
 import { OrderService } from 'src/app/services/order.service';
 
 @Component({

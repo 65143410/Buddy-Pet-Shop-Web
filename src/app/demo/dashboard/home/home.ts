@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { RouterOutlet, Router } from "@angular/router";
-import { Category } from './category/category';
+import { Category } from '../category/category';
 import { IconDirective } from '@ant-design/icons-angular';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common'; // Import CommonModule for ngIf/ngFor

@@ -7,9 +7,9 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { AdminComponent } from './theme/layouts/admin-layout/admin-layout.component';
 import { GuestLayoutComponent } from './theme/layouts/guest-layout/guest-layout.component';
-import { ProductList } from './demo/dashboard/home/product-list/product-list';
+import { ProductList } from './demo/dashboard/product-list/product-list';
 import { Admin } from './demo/dashboard/admin/admin';
-import { ProductDetail } from './demo/dashboard/home/product-detail/product-detail';
+import { ProductDetail } from './demo/dashboard/product-detail/product-detail';
 
 export const routes: Routes = [
   {
