@@ -1,4 +1,5 @@
 import { Component, inject, input, output } from '@angular/core';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -28,6 +29,7 @@ import { NgbDropdownModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { CartList } from 'src/app/demo/dashboard/cart-list/cart-list';
 import { OrderService } from 'src/app/services/order.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-nav-right',
@@ -38,8 +40,10 @@ import { OrderService } from 'src/app/services/order.service';
 export class NavRightComponent {
   private iconService = inject(IconService);
   private orderService = inject(OrderService);
+  private sanitizer = inject(DomSanitizer);
   styleSelectorToggle = input<boolean>();
   private http = inject(HttpClient);
+  private userService = inject(UserService);
   Customize = output();
   windowWidth: number;
   screenFull: boolean = true;
@@ -54,8 +58,10 @@ export class NavRightComponent {
   currentUser: any = null;
   constructor() {
     this.windowWidth = window.innerWidth;
-    this.loadUserInfo();
-    this.loadOrderNotifications();
+    this.userService.currentUser$.subscribe(user => {
+      this.currentUser = user;
+      this.loadOrderNotifications();
+    });
     // this.loadUserPets();
     this.iconService.addIcon(
       ...[
@@ -88,8 +94,7 @@ export class NavRightComponent {
   }
 
   logout() {
-    localStorage.removeItem('currentUser');
-    this.currentUser = null;
+    this.userService.logout();
     this.router.navigate(['/login']);
   }
   markAllAsRead() {
@@ -150,5 +155,32 @@ export class NavRightComponent {
     if (param === 'view-profile') {
       this.router.navigate(['/dashboard/profile']);
     }
+  }
+
+  getProfileImage(): SafeUrl | string {
+    let img = this.currentUser?.image;
+    if (!img) return 'assets/images/user/avatar-2.jpg';
+
+    // 1. Initial Clean
+    img = img.replace(/[\n\r\s]/g, '');
+
+    // Debug
+    console.log('Profile Image Check [Nav-Right]:', { length: img.length, start: img.substring(0, 30) });
+
+    // 2. Check HTTP
+    if (img.startsWith('http')) {
+      return this.sanitizer.bypassSecurityTrustUrl(img);
+    }
+
+    // 3. Check Data URI
+    if (img.startsWith('data:')) {
+      if (img.includes('base64') && !img.includes('base64,')) {
+        img = img.replace('base64', 'base64,');
+      }
+      return this.sanitizer.bypassSecurityTrustUrl(img);
+    }
+
+    // 4. Raw Base64
+    return this.sanitizer.bypassSecurityTrustUrl(`data:image/jpeg;base64,${img}`);
   }
 }

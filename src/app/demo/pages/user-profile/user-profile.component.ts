@@ -1,10 +1,12 @@
 import { Component, inject, OnInit } from '@angular/core';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { OrderService } from 'src/app/services/order.service';
 import { HttpClient } from '@angular/common/http';
 import { Customer, Order } from 'src/app/demo/models/product.model';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-user-profile',
@@ -18,8 +20,7 @@ import { Customer, Order } from 'src/app/demo/models/product.model';
           <div class="card shadow-sm border-0">
             <div class="card-body text-center">
               <div class="avatar-circle mx-auto mb-3 bg-primary text-white d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; font-size: 32px; border-radius: 50%; overflow: hidden;">
-                <img *ngIf="currentUser?.image" [src]="currentUser?.image" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">
-                <i *ngIf="!currentUser?.image" class="fas fa-user"></i>
+                <img [src]="getProfileImage()" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">
               </div>
               
               <div *ngIf="!isEditMode">
@@ -43,6 +44,14 @@ import { Customer, Order } from 'src/app/demo/models/product.model';
                  <div class="mb-2">
                   <label class="small text-muted">ที่อยู่</label>
                   <textarea class="form-control form-control-sm" rows="2" [(ngModel)]="editUser.address"></textarea>
+                </div>
+                <!-- Image Upload for User -->
+                <div class="mb-2">
+                  <label class="small text-muted">รูปโปรไฟล์</label>
+                  <input type="file" class="form-control form-control-sm" (change)="onFileSelected($event, 'user')" accept="image/*">
+                  <div *ngIf="editUser.image" class="mt-2">
+                    <img [src]="editUser.image" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">
+                  </div>
                 </div>
                 <div class="d-flex gap-2 mt-3">
                   <button class="btn btn-sm btn-success w-50" (click)="saveProfile()">บันทึก</button>
@@ -111,6 +120,14 @@ import { Customer, Order } from 'src/app/demo/models/product.model';
                       <option value="MALE">ตัวผู้</option>
                       <option value="FEMALE">ตัวเมีย</option>
                    </select>
+                </div>
+                <!-- Image Upload for Pet -->
+                <div class="col-md-12">
+                   <label class="small mb-1">รูปสัตว์เลี้ยง</label>
+                   <input type="file" class="form-control form-control-sm" (change)="onFileSelected($event, 'pet')" accept="image/*">
+                   <div *ngIf="newPet.image" class="mt-2">
+                      <img [src]="newPet.image" style="width: 60px; height: 60px; object-fit: cover; border-radius: 5px;">
+                   </div>
                 </div>
                 <div class="col-md-4">
                    <label class="small mb-1">การทำหมัน</label>
@@ -289,24 +306,30 @@ export class UserProfileComponent implements OnInit {
   orderService = inject(OrderService);
   router = inject(Router);
   http = inject(HttpClient);
+  sanitizer = inject(DomSanitizer);
+  userService = inject(UserService);
 
   ngOnInit() {
+    this.userService.currentUser$.subscribe(user => {
+      this.currentUser = user;
+      if (this.currentUser) {
+        this.loadOrders(this.currentUser.customerId);
+      } else {
+        // Maybe redirect if not logged in, but better to check in refreshUserData logic
+      }
+    });
     this.refreshUserData();
   }
 
   refreshUserData() {
-    const userJson = localStorage.getItem('currentUser');
-    if (userJson) {
-      this.currentUser = JSON.parse(userJson);
-      // Reload fresh data from API to ensure pets are up to date
-      if (this.currentUser?.customerId) {
-        this.http.get(`http://localhost:8080/api/customer/${this.currentUser.customerId}`).subscribe({
+    const currentUser = this.userService.getCurrentUserValue();
+    if (currentUser) {
+      if (currentUser.customerId) {
+        this.http.get(`http://localhost:8080/api/customer/${currentUser.customerId}`).subscribe({
           next: (res: any) => {
-            this.currentUser = res;
-            localStorage.setItem('currentUser', JSON.stringify(res));
-            this.loadOrders(this.currentUser!.customerId);
+            this.userService.updateUser(res);
           },
-          error: () => this.loadOrders(this.currentUser!.customerId) // Fallback
+          error: () => this.loadOrders(currentUser.customerId)
         });
       }
     } else {
@@ -376,9 +399,17 @@ export class UserProfileComponent implements OnInit {
     // Let's assume standard 'add' endpoint for now or check if there is an update one.
     // If backend only has /add, we might need adjustments.
     // Re-using logic from NavRight:
-    const url = 'http://localhost:8080/api/pets/add';
+    // Use correct endpoint based on mode
+    let url = 'http://localhost:8080/api/pets/add';
+    let method = 'post';
 
-    this.http.post(url, petData).subscribe({
+    if (this.isEditPetMode && this.newPet.petId) {
+      url = `http://localhost:8080/api/pets/update/${this.newPet.petId}`;
+      method = 'put';
+    }
+
+    // @ts-ignore
+    this.http[method](url, petData).subscribe({
       next: () => {
         alert(this.isEditPetMode ? 'อัปเดตข้อมูลสัตว์เลี้ยงสำเร็จ!' : 'เพิ่มสัตว์เลี้ยงสำเร็จ!');
         this.isPetFormVisible = false;
@@ -401,7 +432,53 @@ export class UserProfileComponent implements OnInit {
   }
 
   logout() {
-    localStorage.removeItem('currentUser');
+    this.userService.logout();
     this.router.navigate(['/login']);
+  }
+
+  getProfileImage(): SafeUrl | string {
+    let img = this.currentUser?.image;
+    if (!img) return 'assets/images/user/avatar-2.jpg';
+
+    // 1. Initial Clean: remove whitespace
+    img = img.replace(/[\n\r\s]/g, '');
+
+    // Debug: Log length to detect truncation
+    console.log('Profile Image Check [User-Profile]:', { length: img.length, start: img.substring(0, 30), end: img.substring(img.length - 10) });
+
+    // 2. Already HTTP Check
+    if (img.startsWith('http')) {
+      return this.sanitizer.bypassSecurityTrustUrl(img);
+    }
+
+    // 3. Handle Data URI
+    if (img.startsWith('data:')) {
+      // Re-validate structure: data:[<mediatype>][;base64],<data>
+      if (img.includes('base64') && !img.includes('base64,')) {
+        console.warn('Fixing malformed data URI (missing comma)');
+        img = img.replace('base64', 'base64,');
+      }
+      return this.sanitizer.bypassSecurityTrustUrl(img);
+    }
+
+    // 4. Raw Base64 Handling
+    const prefix = 'data:image/jpeg;base64,';
+    return this.sanitizer.bypassSecurityTrustUrl(prefix + img);
+  }
+
+  onFileSelected(event: any, target: 'user' | 'pet') {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        const base64 = e.target.result;
+        if (target === 'user') {
+          this.editUser.image = base64;
+        } else if (target === 'pet') {
+          this.newPet.image = base64;
+        }
+      };
+      reader.readAsDataURL(file);
+    }
   }
 }
