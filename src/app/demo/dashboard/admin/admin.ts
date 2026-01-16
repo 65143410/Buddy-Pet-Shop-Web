@@ -47,6 +47,7 @@ export class Admin implements OnInit {
     name: '',
     email: '',
     password: '',
+    phone: '',
     status: 'ACTIVE'
   };
 

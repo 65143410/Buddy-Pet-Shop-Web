@@ -604,6 +604,7 @@
           <div style="display: flex; gap: 10px;">
             <input type="text" [(ngModel)]="newStaff.name" placeholder="ชื่อ-นามสกุล" style="flex: 1; padding: 8px;">
             <input type="email" [(ngModel)]="newStaff.email" placeholder="อีเมล" style="flex: 1; padding: 8px;">
+            <input type="text" [(ngModel)]="newStaff.phone" placeholder="เบอร์โทรศัพท์" style="flex: 1; padding: 8px;">
           </div>
           <div style="display: flex; gap: 10px;">
             <input type="password" [(ngModel)]="newStaff.password" placeholder="กำหนดรหัสผ่าน"
@@ -626,6 +627,7 @@
             <th>รหัส</th>
             <th>ชื่อ</th>
             <th>อีเมล</th>
+            <th>เบอร์โทร</th>
             <th>สถานะ</th>
             <th>จัดการ</th>
           </tr>
@@ -635,6 +637,7 @@
             <td>#{{ s.staffId }}</td>
             <td>{{ s.name }}</td>
             <td>{{ s.email }}</td>
+            <td>{{ s.phone || '-' }}</td>
             <td>
               <span [class.status-active]="s.status === 'ACTIVE'" [class.status-inactive]="s.status !== 'ACTIVE'">
                 {{ s.status === 'ACTIVE' ? 'กำลังทำงาน' : 'พ้นสภาพ/ระงับ' }}
@@ -674,7 +677,7 @@
 
               <div class="info-item">
                 <label>เบอร์โทรศัพท์</label>
-                <p>{{ selectedStaff.phone || '-' }}</p>
+                <input type="text" [(ngModel)]="selectedStaff.phone" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
               </div>
 
               <div class="info-item">
