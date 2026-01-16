@@ -15,12 +15,14 @@ import {
   ProductLog
 } from '../demo/models/product.model';
 
+import { environment } from 'src/environments/environment';
+
 @Injectable({ providedIn: 'root' })
 export class AdminApiService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8080/api';
+  private apiUrl = environment.apiUrl;
 
-  constructor() {}
+  constructor() { }
 
   getDashboardStats(): Observable<DashboardStat[]> {
     return this.http.get<DashboardStat[]>(`${this.apiUrl}/admin/stats`);
@@ -132,6 +134,6 @@ export class AdminApiService {
   }
 
   updateStaff(staff: Staff): Observable<Staff> {
-  return this.http.put<Staff>(`${this.apiUrl}/staff/${staff.staffId}`, staff);
-}
+    return this.http.put<Staff>(`${this.apiUrl}/staff/${staff.staffId}`, staff);
+  }
 }

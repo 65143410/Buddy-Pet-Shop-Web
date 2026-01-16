@@ -29,8 +29,10 @@ export class AuthRegisterComponent {
     password: '',
     petName: '',
     petType: 'DOG',
-    congenitalDisease: ''
+    congenitalDisease: 'ไม่มี'
   };
+
+  diseases = ['ไม่มี', 'ภูมิแพ้', 'โรคผิวหนัง', 'โรคหัวใจ', 'โรคไต', 'อื่นๆ'];
 
   onRegister() {
     this.errorMessage = '';

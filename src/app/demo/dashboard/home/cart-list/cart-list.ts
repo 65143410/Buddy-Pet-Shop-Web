@@ -135,28 +135,34 @@ export class CartList implements OnInit {
   }
 
   submitPayment(): void {
-    // Note: จริงๆ ควรส่งรูปสลิปไป Backend ด้วย แต่ใน MVP นี้อาจจะส่งแค่ Order Data ก่อน
-    // หรือถ้า Backend รองรับ Upload ก็ต้องใช้ FormData
+    if (!this.selectedFile) {
+      alert('กรุณาอัปโหลดสลิปหลักฐานการโอนเงิน');
+      return;
+    }
 
     const orderData = {
-      customerId: this.currentUser.customerId,
-      orderDate: new Date(),
-      totalAmount: this.totalAmount,
-      status: { statusId: 1 }, // 1 = Pending Payment/Verification
-      address: this.shippingAddress,
-      invoiceNo: 'INV-' + this.inVoiceNo,
-      orderDetails: this.cartService.cartItems.map(item => ({
+      order: {
+        customer: { customerId: this.currentUser.customerId }, // Correct: Nested object
+        // orderDate: new Date(), // Remove: Let backend handle LocalDate
+        totalAmount: this.totalAmount,
+        status: { statusId: 2 }, // 2 = รอตรวจสอบ
+        address: this.shippingAddress,
+        invoiceNo: 'INV-' + this.inVoiceNo
+      },
+      details: this.cartService.cartItems.map(item => ({
         product: { productId: item.productId },
         quantity: item.qty,
-        price: item.price
-      }))
+        unitPrice: item.price // Correct: Match entity field name
+      })),
+      slipImage: this.imagePreview
     };
 
-    console.log('Creating Order:', orderData);
+    console.log('Creating Order with Slip (Base64):', orderData);
 
-    this.orderService.createOrder(orderData).subscribe({
+    // Call service with JSON object (no FormData)
+    this.orderService.createOrderWithSlip(orderData).subscribe({
       next: (res) => {
-        alert('สั่งซื้อสำเร็จ! ขอบคุณที่ใช้บริการครับ');
+        alert('สั่งซื้อและแจ้งชำระเงินสำเร็จ! ขอบคุณที่ใช้บริการครับ');
         this.cartService.clearCart();
         this.closeCart();
       },

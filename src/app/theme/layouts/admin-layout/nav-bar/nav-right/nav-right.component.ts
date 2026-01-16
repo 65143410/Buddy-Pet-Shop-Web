@@ -21,6 +21,7 @@ import {
   CommentOutline,
   UnorderedListOutline,
   ArrowRightOutline,
+  ArrowLeftOutline,
   GithubOutline
 } from '@ant-design/icons-angular/icons';
 import { NgbDropdownModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
@@ -46,7 +47,8 @@ export class NavRightComponent {
   unreadCount = 0;
   activeSubPage: string = 'default';
   userPets: any[] = [];
-  newPet: any = { petName: '', petType: 'DOG', congenitalDisease: '' };
+  newPet: any = { petName: '', petType: 'DOG', congenitalDisease: 'ไม่มี' };
+  diseases = ['ไม่มี', 'ภูมิแพ้', 'โรคผิวหนัง', 'โรคหัวใจ', 'โรคไต', 'อื่นๆ'];
   isEditPetMode: boolean = false;
   private router = inject(Router);
   currentUser: any = null;
@@ -71,6 +73,7 @@ export class NavRightComponent {
         CommentOutline,
         UnorderedListOutline,
         ArrowRightOutline,
+        ArrowLeftOutline,
         BellOutline,
         GithubOutline,
         WalletOutline
@@ -126,7 +129,7 @@ export class NavRightComponent {
   profile = [
     { icon: 'edit', title: 'Edit Profile', fn: 'edit-profile' },
     { icon: 'user', title: 'View Profile', fn: 'view-profile' },
-    { icon: 'unordered-list', title: 'History', fn: 'history' },
+    { icon: 'unordered-list', title: 'Order History', fn: 'history' },
     { icon: 'logout', title: 'Logout', fn: 'logout' },
   ];
 
@@ -165,7 +168,7 @@ export class NavRightComponent {
     this.http.post('http://localhost:8080/api/pets/add', petData).subscribe({
       next: () => {
         alert('เพิ่มสัตว์เลี้ยงสำเร็จ!');
-        this.newPet = { petName: '', petType: 'DOG', congenitalDisease: '' }; // reset form
+        this.newPet = { petName: '', petType: 'DOG', congenitalDisease: 'ไม่มี' }; // reset form
         this.loadUserPets(); // refresh list
         this.activeSubPage = 'view-profile';
       },
@@ -222,7 +225,7 @@ export class NavRightComponent {
   }
 
   resetPetForm() {
-    this.newPet = { petName: '', petType: 'DOG', congenitalDisease: '' };
+    this.newPet = { petName: '', petType: 'DOG', congenitalDisease: 'ไม่มี' };
     this.isEditPetMode = false;
     this.loadUserPets();
     this.activeSubPage = 'edit-profile'; // กลับไปหน้าแก้ไขหลัก
@@ -233,10 +236,15 @@ export class NavRightComponent {
     if (!param) return;
     if (param === 'logout') return this.logout();
 
+    // Redirect 'history' and 'view-profile' to the full Dashboard Page
+    if (param === 'history' || param === 'view-profile') {
+      this.router.navigate(['/dashboard/profile']);
+      return;
+    }
+
     this.activeSubPage = param;
-    if (['view-profile', 'edit-profile', 'manage-pet-form'].includes(param)) {
+    if (['edit-profile', 'manage-pet-form'].includes(param)) {
       this.loadUserPets();
     }
   }
 }
-

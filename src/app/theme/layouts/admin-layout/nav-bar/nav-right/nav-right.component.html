@@ -163,7 +163,11 @@
               </div>
               <div class="mb-3">
                 <label class="f-11">โรคประจำตัว</label>
-                <input type="text" class="form-control form-control-sm" [(ngModel)]="newPet.congenitalDisease">
+                <select class="form-control form-control-sm" [(ngModel)]="newPet.congenitalDisease">
+                  @for (d of diseases; track d) {
+                  <option [value]="d">{{ d }}</option>
+                  }
+                </select>
               </div>
               <button class="btn btn-success btn-sm w-100" (click)="savePet()">ตกลง</button>
             </div>

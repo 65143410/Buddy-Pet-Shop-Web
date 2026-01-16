@@ -1,5 +1,6 @@
 import { Staff } from './demo/dashboard/staff/staff';
 import { Home } from './demo/dashboard/home/home';
+import { authGuard } from './auth/auth.guard';
 
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
@@ -14,6 +15,7 @@ export const routes: Routes = [
   {
     path: '',
     component: AdminComponent,
+    canActivate: [authGuard], // Protect all children routes
     children: [
       {
         path: '',
@@ -39,6 +41,10 @@ export const routes: Routes = [
       {
         path: 'dashboard/home',
         component: Home
+      },
+      {
+        path: 'dashboard/profile',
+        loadComponent: () => import('./demo/pages/user-profile/user-profile.component').then(c => c.UserProfileComponent)
       },
       {
         path: 'dashboard/admin',
@@ -80,4 +86,4 @@ export const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

@@ -189,67 +189,44 @@ export class Admin implements OnInit {
   //     alert('ยังไม่มีการแจ้งชำระเงิน');
   //   }
   // }
-  viewPaymentSlip(): void {
-    const imageWindow = window.open('', '_blank', 'width=600,height=800');
+  viewPaymentSlip(order: Order): void {
+    if (!order.payments || order.payments.length === 0) {
+      alert('ยังไม่มีข้อมูลการชำระเงินสำหรับออเดอร์นี้');
+      return;
+    }
 
+    const slip = order.payments[0].slipImage;
+    if (!slip) {
+      alert('ไม่พบรูปภาพสลิปในระบบ');
+      return;
+    }
+
+    const imageWindow = window.open('', '_blank', 'width=600,height=800');
     if (imageWindow) {
-      const src = this.temp_img_url;
+      // Logic: ถ้าเป็น URL เต็มให้ใช้เลย, ถ้าเป็น Base64 ให้ใช้เลย, ถ้าเป็นชื่อไฟล์ให้ต่อ Path
+      // (สมมติว่า Backend เก็บไฟล์ไว้ที่ /uploads และเปิดให้เข้าถึงผ่าน http://localhost:8080/uploads/)
+      let src = slip;
+      if (!slip.startsWith('http') && !slip.startsWith('data:')) {
+        // Default Fallback: ลองเดาว่า Path คือ /uploads/
+        // ถ้า Backend คุณใช้ Path อื่น ต้องแก้ตรงนี้ หรือใช้ Base64 จาก Backend
+        src = `http://localhost:8080/uploads/${slip}`;
+      }
 
       imageWindow.document.write(`
       <html>
         <head>
-          <title>ตรวจสอบหลักฐานการชำระเงิน</title>
+          <title>ตรวจสอบหลักฐานการชำระเงิน #${order.orderId}</title>
           <style>
-            body {
-              margin: 0;
-              background-color: #f4f4f9;
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              font-family: 'Inter', sans-serif;
-              padding: 20px;
-            }
-            .header {
-              width: 100%;
-              max-width: 500px;
-              text-align: center;
-              margin-bottom: 20px;
-              color: #333;
-            }
-            .slip-container {
-              background: white;
-              padding: 15px;
-              border-radius: 12px;
-              box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-              max-width: 90%;
-            }
-            img {
-              max-width: 100%;
-              border-radius: 8px;
-              display: block;
-            }
-            .btn-print {
-              margin-top: 20px;
-              padding: 10px 25px;
-              background-color: #6366f1;
-              color: white;
-              border: none;
-              border-radius: 6px;
-              cursor: pointer;
-              font-weight: 600;
-            }
-            .btn-print:hover { background-color: #4f46e5; }
+            body { margin: 0; background: #f4f4f9; display: flex; flex-direction: column; align-items: center; font-family: sans-serif; padding: 20px; }
+            img { max-width: 100%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+            .btn { margin-top: 20px; padding: 10px 20px; cursor: pointer; background: #6366f1; color: white; border: none; border-radius: 4px; }
           </style>
         </head>
         <body>
-          <div class="header">
-            <h2>🐾 PetStore Admin</h2>
-            <p>หลักฐานการชำระเงิน (Mockup)</p>
-          </div>
-          <div class="slip-container">
-            <img src="${src}" alt="Slip">
-          </div>
-          <button class="btn-print" onclick="window.print()">🖨️ พิมพ์หลักฐาน</button>
+          <h2>หลักฐานการชำระเงิน (Order #${order.orderId})</h2>
+          <img src="${src}" alt="Slip Image" onerror="this.onerror=null;this.src='https://placehold.co/600x400?text=Image+Not+Found'; alert('ไม่สามารถโหลดรูปได้ URL อาจไม่ถูกต้อง');">
+          <p style="margin-top:10px; color:#666;">File Ref: ${slip}</p>
+          <button class="btn" onclick="window.print()">พิมพ์หลักฐาน</button>
         </body>
       </html>
     `);

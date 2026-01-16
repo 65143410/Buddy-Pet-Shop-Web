@@ -85,8 +85,12 @@
 
           <div class="form-group mb-3">
             <label class="form-label fw-bold">โรคประจำตัว (ถ้ามี)</label>
-            <input type="text" class="form-control rounded-pill" placeholder="เช่น ภูมิแพ้อาหาร หรือไม่มี..."
-              [(ngModel)]="registerData.congenitalDisease" name="congenitalDisease" />
+            <select class="form-select rounded-pill" [(ngModel)]="registerData.congenitalDisease"
+              name="congenitalDisease">
+              @for (d of diseases; track d) {
+              <option [value]="d">{{ d }}</option>
+              }
+            </select>
           </div>
 
           @if (errorMessage) {

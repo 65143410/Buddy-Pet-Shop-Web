@@ -1,6 +1,6 @@
 <section class="container category-selection-page py-5">
 
-  <div class="row mb-5">
+  <div class="row">
     <div class="col-12 text-center">
       <h1 class="display-5 fw-bold text-dark">เลือกประเภทสินค้าที่ต้องการ</h1>
       <p class="text-muted">เลือกหมวดหมู่สัตว์เลี้ยงที่คุณสนใจเพื่อดูสินค้าทั้งหมด</p>
@@ -8,9 +8,81 @@
     </div>
   </div>
 
-  <div class="row justify-content-center">
+
+
+  <div class="row justify-content-center mb-5">
     <div class="col-12">
       <app-category></app-category>
+    </div>
+  </div>
+  <!-- Recommendation Section -->
+  <div class="row mb-5" *ngIf="allPets.length > 0">
+    <div class="col-12">
+      <div class="card border-0 shadow-sm bg-light-primary">
+        <div class="card-body p-4">
+          <!-- Pet Selector pills -->
+          <div class="d-flex justify-content-center mb-4" *ngIf="allPets.length > 1">
+            <ul class="nav nav-pills bg-white rounded-pill p-1 shadow-sm border">
+              <li class="nav-item" *ngFor="let pet of allPets">
+                <a class="nav-link rounded-pill cursor-pointer fw-bold px-4"
+                  [class.active]="selectedPet?.petId === pet.petId"
+                  [class.text-muted]="selectedPet?.petId !== pet.petId" style="cursor: pointer;"
+                  (click)="onSelectPet(pet)">
+                  <span *ngIf="pet.petType === 'DOG'">🐕</span>
+                  <span *ngIf="pet.petType === 'CAT'">🐈</span>
+                  {{ pet.petName }}
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <h4 class="fw-bold mb-3 text-primary">
+            <i class="fas fa-star me-2"></i> แนะนำสำหรับน้อง {{ selectedPet?.petName }} 🐶🐱
+          </h4>
+
+          <div class="alert alert-info text-center" *ngIf="recommendedProducts.length === 0">
+            <i class="bi bi-info-circle me-2"></i> ไม่พบสินค้าแนะนำที่เจาะจงสำหรับน้องตัวนี้
+            แต่ลองดูสินค้าหมวดทั่วไปด้านล่างได้เลยครับ
+          </div>
+
+          <div class="row" *ngIf="recommendedProducts.length > 0">
+            <div class="col-6 col-md-4 col-lg-3 mb-4"
+              *ngFor="let item of recommendedProducts; trackBy: trackByProductId">
+              <a class="card h-100 product-card shadow-sm product-link"
+                (click)="handleCardClick($event, item.productId)">
+                <div class="product-image-container">
+                  <!-- <img class="card-img-top" [src]="item.image || temp_img_url" [alt]="item.productName" loading="lazy"> -->
+                  <img class="card-img-top" [src]="temp_img_url" [alt]="item.productName" loading="lazy">
+                </div>
+                <div class="card-body d-flex flex-column">
+                  <div class="mb-2">
+                    <span *ngIf="item.targetPetType !== 'ALL'" class="badge rounded-pill bg-info text-dark me-1"
+                      style="font-size: 0.7rem;">
+                      {{ item.targetPetType === 'DOG' ? '🐕 สุนัข' : item.targetPetType === 'CAT' ? '🐈 แมว' :
+                      item.targetPetType
+                      }}
+                    </span>
+                    <span *ngIf="item.suitableForDisease !== 'NONE'" class="badge rounded-pill bg-warning text-dark"
+                      style="font-size: 0.7rem;">
+                      ✨ สูตร: {{ item.suitableForDisease }}
+                    </span>
+                  </div>
+                  <h5 class="card-title product-title">{{ item.productName }}</h5>
+
+                  <p class="card-text mt-auto">
+                    <strong class="text-success h5">{{ item.price | currency: 'THB': 'symbol': '1.0-2' }}</strong>
+                  </p>
+
+                  <button type="button" (click)="addToCart(item); $event.stopPropagation()"
+                    class="btn btn-primary mt-2 add-to-cart-btn">
+                    <i class="bi bi-cart-plus-fill me-1"></i> เพิ่มลงตะกร้า
+                  </button>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 

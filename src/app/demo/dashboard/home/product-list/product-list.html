@@ -1,17 +1,27 @@
 <div class="row mb-4 align-items-center">
-  <div class="col">
-    <h2 class="h4 text-muted">
-      สินค้าทั้งหมด ({{ selectedCatList.length }} รายการ)
+  <div class="col-md-6 mb-2 mb-md-0">
+    <h2 class="h4 text-muted mb-0">
+      <i class="fas fa-paw text-primary me-2"></i>สินค้าทั้งหมด ({{ selectedCatList.length }} รายการ)
     </h2>
   </div>
 
-  <div class="col-auto ms-auto">
-    <select class="form-select form-select-sm d-inline-block w-auto" (change)="onSortChange($event)">
-      <option value="recommended" selected>เรียงตาม: แนะนำ</option>
-      <option value="price_asc">ราคาน้อยไปมาก</option>
-      <option value="price_desc">ราคามากไปน้อย</option>
-      <option value="newest">สินค้ามาใหม่</option>
-    </select>
+  <div class="col-md-6">
+    <div class="d-flex gap-2 justify-content-md-end">
+      <!-- Search Box -->
+      <div class="input-group" style="max-width: 250px;">
+        <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
+        <input type="text" class="form-control border-start-0 ps-0" placeholder="ค้นหาสินค้า..."
+          (keyup)="onSearch($event)">
+      </div>
+
+      <!-- Sort Select -->
+      <select class="form-select form-select-sm d-inline-block w-auto" (change)="onSortChange($event)">
+        <option value="recommended" selected>เรียงตาม: แนะนำ</option>
+        <option value="price_asc">ราคาน้อยไปมาก</option>
+        <option value="price_desc">ราคามากไปน้อย</option>
+        <option value="newest">สินค้ามาใหม่</option>
+      </select>
+    </div>
   </div>
 </div>
 

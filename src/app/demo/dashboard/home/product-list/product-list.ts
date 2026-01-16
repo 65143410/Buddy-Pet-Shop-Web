@@ -26,7 +26,7 @@ export class ProductList implements OnInit {
   productService = inject(ProductService);
 
   temp_img_url = "https://www.prachachat.net/wp-content/uploads/2023/05/%E0%B8%94%E0%B8%B5%E0%B9%84%E0%B8%8B%E0%B8%99%E0%B9%8C%E0%B8%97%E0%B8%B5%E0%B9%88%E0%B8%A2%E0%B8%B1%E0%B8%87%E0%B9%84%E0%B8%A1%E0%B9%88%E0%B9%84%E0%B8%94%E0%B9%89%E0%B8%95%E0%B8%B1%E0%B9%89%E0%B8%87%E0%B8%8A%E0%B8%B7%E0%B9%88%E0%B8%AD-6.jpg";
-  constructor() {}
+  constructor() { }
 
   ngOnInit() {
     const idParam = this.route.snapshot.paramMap.get('id');
@@ -48,6 +48,19 @@ export class ProductList implements OnInit {
       });
     } else {
       this.selectedCatList = [];
+    }
+  }
+
+  public onSearch(event: Event): void {
+    const searchTerm = (event.target as HTMLInputElement).value.toLowerCase().trim();
+
+    if (!searchTerm) {
+      this.selectedCatList = [...this.originalCatList];
+    } else {
+      this.selectedCatList = this.originalCatList.filter(p =>
+        p.productName.toLowerCase().includes(searchTerm) ||
+        (p.description && p.description.toLowerCase().includes(searchTerm))
+      );
     }
   }
 
@@ -91,6 +104,6 @@ export class ProductList implements OnInit {
   }
 
   trackByProductId(index: number, item: Product): string | number {
-  return item.productId;
-}
+    return item.productId;
+  }
 }

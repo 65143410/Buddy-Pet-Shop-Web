@@ -385,13 +385,14 @@
               <h4 style="margin-top: 0;">🖼️ หลักฐานการโอนเงิน</h4>
 
               <div *ngIf="selectedOrderDetail.payments && selectedOrderDetail.payments.length > 0; else noSlip">
-                <img [src]="temp_img_url">
-                <!-- <img [src]="selectedOrderDetail.payments[0].slipImage?.startsWith('http')
-                        ? selectedOrderDetail.payments[0].slipImage
-                        : 'data:image/png;base64,' + selectedOrderDetail.payments[0].slipImage"
-                  style="max-width: 100%; max-height: 400px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); cursor: zoom-in;"
-                  (click)="viewPaymentSlip()"> -->
-                <p style="font-size: 12px; color: #666; margin-top: 10px;">คลิกที่รูปเพื่อขยายใหญ่</p>
+                <div (click)="viewPaymentSlip(selectedOrderDetail)"
+                  style="cursor: pointer; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: white; transition: 0.3s;"
+                  onmouseover="this.style.borderColor='#6366f1'; this.style.boxShadow='0 4px 12px rgba(99, 102, 241, 0.2)'"
+                  onmouseout="this.style.borderColor='#ddd'; this.style.boxShadow='none'">
+                  <i class="fas fa-file-invoice-dollar fa-4x text-primary"></i>
+                  <p class="mt-3 mb-0 fw-bold text-primary">📄 คลิกเพื่อตรวจสอบสลิป</p>
+                  <small class="text-muted">มีการแนบไฟล์หลักฐานแล้ว</small>
+                </div>
               </div>
 
               <ng-template #noSlip>
