@@ -136,4 +136,15 @@ export class AdminApiService {
   updateStaff(staff: Staff): Observable<Staff> {
     return this.http.put<Staff>(`${this.apiUrl}/staff/${staff.staffId}`, staff);
   }
+  getMonthlySales(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/orders/report/monthly-sales`);
+  }
+
+  getWeeklyOrders(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/orders/report/weekly-orders`);
+  }
+
+  getDailyRevenue(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/orders/report/daily-revenue`);
+  }
 }

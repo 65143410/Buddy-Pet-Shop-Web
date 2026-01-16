@@ -3,11 +3,15 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminApiService } from 'src/app/services/admin-api.service';
 import { Staff, Customer, Order, DashboardStat, SystemConfig, Product, Category, ProductLog } from '../../models/product.model';
+import { MonthlyBarChartComponent } from 'src/app/theme/shared/apexchart/monthly-bar-chart/monthly-bar-chart.component';
+import { IncomeOverviewChartComponent } from 'src/app/theme/shared/apexchart/income-overview-chart/income-overview-chart.component';
+import { AnalyticsChartComponent } from 'src/app/theme/shared/apexchart/analytics-chart/analytics-chart.component';
+import { SalesReportChartComponent } from 'src/app/theme/shared/apexchart/sales-report-chart/sales-report-chart.component';
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MonthlyBarChartComponent, IncomeOverviewChartComponent, AnalyticsChartComponent, SalesReportChartComponent],
   templateUrl: './admin.html',
   styleUrl: './admin.scss'
 })

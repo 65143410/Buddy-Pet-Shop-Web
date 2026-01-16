@@ -1,5 +1,6 @@
 // angular import
-import { Component, viewChild } from '@angular/core';
+import { Component, viewChild, inject } from '@angular/core';
+import { AdminApiService } from 'src/app/services/admin-api.service';
 
 // project import
 
@@ -18,67 +19,59 @@ export class AnalyticsChartComponent {
   chartOptions!: Partial<ApexOptions>;
 
   //  constructor
+  private adminService = inject(AdminApiService);
+
   constructor() {
-    this.chartOptions = {
-      chart: {
-        type: 'line',
-        height: 340,
-        toolbar: {
-          show: false
-        },
-        background: 'transparent'
-      },
-      plotOptions: {
-        bar: {
-          columnWidth: '45%',
-          borderRadius: 4
-        }
-      },
-      colors: ['#FFB814'],
-      stroke: {
-        curve: 'smooth',
-        width: 1.5
-      },
-      grid: {
-        strokeDashArray: 4,
-        borderColor: '#f5f5f5'
-      },
-      series: [
-        {
-          data: [58, 90, 38, 83, 63, 75, 35, 55]
-        }
-      ],
-      xaxis: {
-        type: 'datetime',
-        categories: [
-          '2018-05-19T00:00:00.000Z',
-          '2018-06-19T00:00:00.000Z',
-          '2018-07-19T01:30:00.000Z',
-          '2018-08-19T02:30:00.000Z',
-          '2018-09-19T03:30:00.000Z',
-          '2018-10-19T04:30:00.000Z',
-          '2018-11-19T05:30:00.000Z',
-          '2018-12-19T06:30:00.000Z'
-        ],
-        labels: {
-          format: 'MMM',
-          style: {
-            colors: ['#222', '#222', '#222', '#222', '#222', '#222', '#222']
+    this.adminService.getDailyRevenue().subscribe({
+      next: (data) => {
+        const dates = data.map((d) => d.date);
+        const revenues = data.map((d) => d.revenue);
+
+        this.chartOptions = {
+          chart: {
+            type: 'area', // Changed to area for better visualization
+            height: 340,
+            toolbar: { show: false },
+            background: 'transparent'
+          },
+          stroke: { curve: 'smooth', width: 2 }, // Thicker line
+          colors: ['#FFB814'],
+          grid: {
+            strokeDashArray: 4,
+            borderColor: '#f5f5f5'
+          },
+          series: [
+            {
+              name: 'รายได้ (บาท)',
+              data: revenues
+            }
+          ],
+          xaxis: {
+            type: 'datetime',
+            categories: dates,
+            labels: {
+              format: 'dd MMM', // Show Day + Month e.g., 18 Jan
+              style: {
+                colors: '#8c8c8c'
+              }
+            },
+            axisBorder: { show: false },
+            axisTicks: { show: false }
+          },
+          yaxis: { show: false },
+          tooltip: { theme: 'light' },
+          fill: {
+            type: 'gradient',
+            gradient: {
+              shadeIntensity: 1,
+              opacityFrom: 0.7,
+              opacityTo: 0.9,
+              stops: [0, 90, 100]
+            }
           }
-        },
-        axisBorder: {
-          show: false
-        },
-        axisTicks: {
-          show: false
-        }
+        };
       },
-      yaxis: {
-        show: false
-      },
-      tooltip: {
-        theme: 'light'
-      }
-    };
+      error: (err) => console.error('Error loading revenue trend:', err)
+    });
   }
 }

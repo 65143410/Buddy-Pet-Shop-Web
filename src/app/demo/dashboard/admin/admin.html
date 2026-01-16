@@ -26,6 +26,25 @@
           </div>
         </div>
       </div>
+
+      <!-- Added Monthly Bar Chart -->
+      <div class="row mt-4">
+        <div class="col-md-8">
+          <app-monthly-bar-chart></app-monthly-bar-chart>
+        </div>
+        <div class="col-md-4">
+          <app-income-overview-chart></app-income-overview-chart>
+        </div>
+      </div>
+
+      <div class="row mt-4">
+        <div class="col-md-8">
+          <app-analytics-chart></app-analytics-chart>
+        </div>
+        <div class="col-md-4">
+          <app-sales-report-chart></app-sales-report-chart>
+        </div>
+      </div>
     </div>
     <div class="content-area" *ngIf="currentPage === 'products'">
 
