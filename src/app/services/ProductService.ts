@@ -10,7 +10,7 @@ export class ProductService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:8080/api/product';
   private apiUrlCategory = 'http://localhost:8080/api/category';
-  constructor() {}
+  constructor() { }
   getProducts(): Observable<Product[]> {
     return this.http.get<Product[]>(`${this.apiUrl}/get-all-product`);
   }
@@ -20,5 +20,9 @@ export class ProductService {
   }
   getCategories(): Observable<Category[]> {
     return this.http.get<Category[]>(`${this.apiUrlCategory}/get-all`);
+  }
+
+  getRecommendedProducts(petType: string, disease: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/recommend?type=${petType}&disease=${disease}`);
   }
 }

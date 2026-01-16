@@ -4,7 +4,7 @@ import { Category } from '../category/category';
 import { IconDirective } from '@ant-design/icons-angular';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common'; // Import CommonModule for ngIf/ngFor
-import { ProductService } from '../services/product.service';
+import { ProductService } from 'src/app/services/ProductService';
 import { CartService } from 'src/app/services/cart.service';
 
 @Component({
