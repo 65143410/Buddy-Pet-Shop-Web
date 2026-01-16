@@ -135,44 +135,44 @@ export class CartList implements OnInit {
   }
 
   submitPayment(): void {
-    if (!this.selectedFile) {
-      alert('กรุณาอัปโหลดสลิปหลักฐานการโอนเงิน');
-      return;
-    }
+    // Determine Status: 1 = Waiting for Payment (No Slip), 2 = Pending Verification (With Slip)
+    const statusId = this.imagePreview ? 2 : 1;
 
     const orderData = {
       order: {
-        customer: { customerId: this.currentUser.customerId }, // Correct: Nested object
-        // orderDate: new Date(), // Remove: Let backend handle LocalDate
+        customer: { customerId: this.currentUser.customerId },
         totalAmount: this.totalAmount,
-        status: { statusId: 2 }, // 2 = รอตรวจสอบ
+        status: { statusId: statusId },
         shippingAddress: this.shippingAddress,
         invoiceNo: 'INV-' + this.inVoiceNo
       },
       details: this.cartService.cartItems.map(item => ({
         product: { productId: item.productId },
         quantity: item.qty,
-        unitPrice: item.price // Correct: Match entity field name
+        unitPrice: item.price
       })),
-      slipImage: this.imagePreview
+      slipImage: this.imagePreview // Can be null now
     };
 
-    console.log('Creating Order with Slip (Base64):', orderData);
+    console.log('Creating Order:', orderData);
 
-    // Call service with JSON object (no FormData)
     this.orderService.createOrderWithSlip(orderData).subscribe({
       next: (res) => {
-        alert('สั่งซื้อและแจ้งชำระเงินสำเร็จ! ขอบคุณที่ใช้บริการครับ');
+        const msg = this.imagePreview
+          ? 'แจ้งชำระเงินเรียบร้อย! เราจะตรวจสอบและจัดส่งโดยเร็วที่สุด'
+          : 'บันทึกคำสั่งซื้อเรียบร้อย! กรุณาชำระเงินและแจ้งโอนที่เมนู "ติดตามสถานะคำสั่งซื้อ"';
+        alert(msg);
         this.cartService.clearCart();
         this.closeCart();
       },
       error: (err) => {
         console.error(err);
-        alert('เกิดข้อผิดพลาดในการสั่งซื้อ: ' + (err.error?.message || err.message));
+        const errorMsg = typeof err.error === 'string' ? err.error : (err.error?.message || err.message);
+        alert('เกิดข้อผิดพลาดในการสั่งซื้อ: ' + errorMsg);
       }
     });
-
   }
+
   goBack() {
     if (this.paymentFlag) {
       this.paymentFlag = false;
