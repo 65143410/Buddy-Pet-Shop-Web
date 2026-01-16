@@ -3,12 +3,15 @@
         <p>กำลังโหลดหมวดหมู่...</p>
     </div>
 
-    <div class="col-6 col-md-4 col-lg-3"
-         *ngFor="let category of categories; trackBy: trackByCatId"
-         (click)="goToProducts(category.categoryId)">
-        <div class="card h-100 category-tile shadow-sm clickable-card">
+    <div class="col-6 col-md-4 col-lg-3" *ngFor="let category of categories; trackBy: trackByCatId"
+        (click)="goToProducts(category.categoryId)">
+        <div class="card h-100 category-tile shadow-sm clickable-card" [title]="category.description || ''">
             <div class="card-body text-center d-flex flex-column align-items-center justify-content-center">
                 <h5 class="card-title mb-1 fw-bold">{{ category.categoryName }}</h5>
+                <small *ngIf="category.description" class="text-muted mt-1 d-none d-md-block"
+                    style="font-size: 0.8rem;">
+                    {{ category.description }}
+                </small>
             </div>
         </div>
     </div>

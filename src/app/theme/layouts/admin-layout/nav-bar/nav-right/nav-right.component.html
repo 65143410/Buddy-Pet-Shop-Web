@@ -69,132 +69,17 @@
         </div>
       </div>
 
-      <ul ngbNav #nav="ngbNav" class="nav drp-tabs nav-fill nav-tabs">
-        <li ngbNavItem="1">
-          <a ngbNavLink><i antIcon theme="outline" type="user" class="me-2"></i> Profile</a>
-          <ng-template ngbNavContent>
+      <div class="list-group list-group-flush w-100">
+        <a href="javascript:" class="list-group-item list-group-item-action" (click)="test('view-profile')">
+          <i class="me-2 text-muted" antIcon theme="outline" type="user"></i>
+          <span>View Profile</span>
+        </a>
+        <a href="javascript:" class="list-group-item list-group-item-action" (click)="test('logout')">
+          <i class="me-2 text-muted" antIcon theme="outline" type="logout"></i>
+          <span>Logout</span>
+        </a>
+      </div>
 
-            @if (activeSubPage === 'default') {
-            @for (task of profile; track task) {
-            <a href="javascript:" class="dropdown-item" (click)="test(task.fn)">
-              <i class="text-muted" antIcon theme="outline" [type]="task.icon"></i>
-              <span>{{ task.title }}</span>
-            </a>
-            }
-            }
-
-            @else if (activeSubPage === 'view-profile') {
-            <div class="p-3">
-              <button (click)="goBack()" class="btn btn-sm btn-link p-0 mb-2"><i antIcon type="arrow-left"></i>
-                Back</button>
-              <div class="text-center mb-3">
-                <img src="assets/images/user/avatar-2.jpg" class="user-avatar wid-60 mb-2 shadow-sm" />
-                <h5 class="mb-0">{{ currentUser?.customerName }}</h5>
-                <small class="text-muted">{{ currentUser?.email }}</small>
-              </div>
-
-              <div class="f-12 bg-light p-2 rounded mb-3">
-                <p class="mb-1"><b>เบอร์โทร:</b> {{ currentUser?.phone || '-' }}</p>
-                <p class="mb-0"><b>ที่อยู่:</b> {{ currentUser?.address || '-' }}</p>
-              </div>
-
-              <h6 class="f-12 border-bottom pb-1 mb-2"><i class="fas fa-paw"></i> สัตว์เลี้ยง ({{ userPets.length }})
-              </h6>
-              <div class="list-group list-group-flush" style="max-height: 120px; overflow-y: auto;">
-                @for (pet of userPets; track pet.petId) {
-                <div class="py-1 f-12 border-bottom">
-                  <span class="fw-bold">{{ pet.petName }}</span>
-                  <span class="badge bg-light text-dark ms-2">{{ pet.petType }}</span>
-                </div>
-                } @empty {
-                <p class="text-muted f-11 text-center py-2">ไม่มีข้อมูลสัตว์เลี้ยง</p>
-                }
-              </div>
-            </div>
-            }
-
-            @else if (activeSubPage === 'edit-profile') {
-            <div class="p-3">
-              <button (click)="goBack()" class="btn btn-sm btn-link p-0 mb-2"><i antIcon type="arrow-left"></i>
-                Back</button>
-              <h6 class="mb-3">แก้ไขข้อมูลส่วนตัว</h6>
-              <input type="text" class="form-control form-control-sm mb-2" [(ngModel)]="currentUser.customerName"
-                placeholder="ชื่อ">
-              <input type="text" class="form-control form-control-sm mb-3" [(ngModel)]="currentUser.phone"
-                placeholder="เบersโทร">
-              <button class="btn btn-primary btn-sm w-100 mb-3" (click)="saveProfile()">บันทึกชื่อ/เบอร์</button>
-
-              <h6 class="f-12 border-bottom pb-1 mb-2 d-flex justify-content-between">
-                <span>จัดการสัตว์เลี้ยง</span>
-                <a href="javascript:" class="text-success"
-                  (click)="activeSubPage = 'manage-pet-form'; isEditPetMode = false">+ เพิ่ม</a>
-              </h6>
-              <div class="list-group list-group-flush">
-                @for (pet of userPets; track pet.petId) {
-                <div class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 f-12 border-0">
-                  <span>{{ pet.petName }}</span>
-                  <div>
-                    <a href="javascript:" class="text-primary me-2" (click)="prepareEditPet(pet)"><i antIcon
-                        type="edit"></i></a>
-                    <a href="javascript:" class="text-danger" (click)="deletePet(pet.petId)"><i antIcon
-                        type="logout"></i></a>
-                  </div>
-                </div>
-                }
-              </div>
-            </div>
-            }
-
-            @else if (activeSubPage === 'manage-pet-form') {
-            <div class="p-3">
-              <button (click)="activeSubPage = 'edit-profile'" class="btn btn-sm btn-link p-0 mb-2"><i antIcon
-                  type="arrow-left"></i> ยกเลิก</button>
-              <h6>{{ isEditPetMode ? 'แก้ไขข้อมูล' : 'เพิ่มสัตว์เลี้ยง' }}</h6>
-              <div class="mb-2">
-                <label class="f-11">ชื่อสัตว์เลี้ยง</label>
-                <input type="text" class="form-control form-control-sm" [(ngModel)]="newPet.petName">
-              </div>
-              <div class="mb-2">
-                <label class="f-11">ประเภท</label>
-                <select class="form-control form-control-sm" [(ngModel)]="newPet.petType">
-                  <option value="DOG">สุนัข</option>
-                  <option value="CAT">แมว</option>
-                </select>
-              </div>
-              <div class="mb-3">
-                <label class="f-11">โรคประจำตัว</label>
-                <select class="form-control form-control-sm" [(ngModel)]="newPet.congenitalDisease">
-                  @for (d of diseases; track d) {
-                  <option [value]="d">{{ d }}</option>
-                  }
-                </select>
-              </div>
-              <button class="btn btn-success btn-sm w-100" (click)="savePet()">ตกลง</button>
-            </div>
-            }@else if (activeSubPage === 'history') {
-            <div class="p-2">
-              <button (click)="goBack()" class="btn btn-sm btn-link p-0 mb-2"><i antIcon type="arrow-left"></i>
-                Back</button>
-              <h6>ประวัติการสั่งซื้อ</h6>
-              <div class="list-group list-group-flush" style="max-height: 250px; overflow-y: auto;">
-                @for (item of notifications; track item.id) {
-                <div class="f-12 border-bottom py-2 pointer-hover" (click)="viewOrderDetails(item.originalOrder)"
-                  style="cursor: pointer;">
-                  <div class="d-flex justify-content-between">
-                    <b>#{{item.id}}</b>
-                    <span class="text-muted">{{item.time | date:'dd/MM/yy HH:mm'}}</span>
-                  </div>
-                  <span class="text-primary" [innerHTML]="item.content"></span>
-                </div>
-                }
-              </div>
-            </div>
-            }
-
-          </ng-template>
-        </li>
-      </ul>
-      <div [ngbNavOutlet]="nav"></div>
     </div>
   </li>
 </ul>

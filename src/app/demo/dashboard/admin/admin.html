@@ -76,6 +76,8 @@
               ⬅️ กลับ
             </button>
             <h2 style="margin: 0;">🦴 หมวดหมู่: {{ selectedCategory.categoryName }}</h2>
+            <small class="text-muted ms-2" *ngIf="selectedCategory.description">({{ selectedCategory.description
+              }})</small>
           </div>
 
           <button class="add-btn" (click)="showAddProductForm = !showAddProductForm"
@@ -87,6 +89,25 @@
         <div class="add-product-card" *ngIf="showAddProductForm"
           style="background: #fff3e0; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ffcc80;">
           <p style="font-size: 12px; color: #666;">* กำลังเพิ่มสินค้าในหมวด: {{selectedCategory.categoryName}}</p>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+            <div>
+              <label style="font-size: 12px;">แบรนด์</label>
+              <input type="text" [(ngModel)]="newProduct.brand" style="width: 100%; padding: 8px;">
+            </div>
+            <div>
+              <label style="font-size: 12px;">ปริมาณ/น้ำหนัก</label>
+              <input type="text" [(ngModel)]="newProduct.weightVolume" style="width: 100%; padding: 8px;">
+            </div>
+            <div style="display: flex; align-items: center; gap: 5px;">
+              <label style="font-size: 12px;">สถานะขาย</label>
+              <label class="switch">
+                <input type="checkbox" [(ngModel)]="newProduct.isActive">
+                <span class="slider round"></span>
+              </label>
+              <span style="font-size: 12px;">{{ newProduct.isActive ? 'เปิดขาย' : 'ปิด' }}</span>
+            </div>
+          </div>
 
           <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px; margin-bottom: 10px;">
             <div>
@@ -105,7 +126,7 @@
                   <option value="ALL">🌟 ทั้งหมด (All)</option>
                   <option value="DOG">🐕 สุนัข (Dog)</option>
                   <option value="CAT">🐈 แมว (Cat)</option>
-                  <option value="BIRD">🦜 นก (Bird)</option>
+                  <option value="GUINEA_PIG">🐹 หนูตะเภา (Guinea Pig)</option>
                 </select>
               </div>
               <div>
@@ -116,6 +137,9 @@
                   <option value="SKIN_ALLERGY">🩹 โรคผิวหนัง/แพ้ง่าย</option>
                   <option value="KIDNEY_DISEASE">🥩 โรคไต</option>
                   <option value="WEIGHT_CONTROL">🎾 ควบคุมน้ำหนัก</option>
+                  <option value="OBESITY">🩺 โรคอ้วน</option>
+                  <option value="JOINT_ISSUES">🦴 โรคข้อเสื่อม</option>
+                  <option value="DIGESTIVE_ISSUES">🥣 โรคระบบทางเดินอาหาร</option>
                 </select>
               </div>
             </div>
@@ -397,6 +421,34 @@
                 ยอดรวม: <strong style="color: #6366f1;">{{ selectedOrderDetail.totalAmount | number:'1.2-2' }}
                   ฿</strong>
               </div>
+
+              <div style="margin-top: 20px; padding-top: 20px; border-top: 2px dashed #eee;">
+                <h4 style="margin-bottom: 15px;">🚚 ข้อมูลการจัดส่ง</h4>
+                <div
+                  style="margin-bottom: 15px; padding: 10px; background: #fafafa; border: 1px solid #eee; border-radius: 4px;">
+                  <label style="font-size: 12px; color: #666;">📍 ที่อยู่จัดส่ง (Shipping Address)</label>
+                  <p style="margin: 5px 0;">{{ selectedOrderDetail.shippingAddress || 'ไม่ระบุ' }}</p>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                  <div>
+                    <label style="font-size: 12px; color: #666;">Tracking Number</label>
+                    <input type="text" [(ngModel)]="selectedOrderDetail.trackingNumber" placeholder="เลขพัสดุ"
+                      style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                  </div>
+                  <div>
+                    <label style="font-size: 12px; color: #666;">ค่าจัดส่ง (Shipping Cost)</label>
+                    <input type="number" [(ngModel)]="selectedOrderDetail.shippingCost" placeholder="0.00"
+                      style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                  </div>
+                </div>
+                <div style="text-align: right; margin-top: 10px;">
+                  <button class="action-btn" (click)="saveShippingInfo(selectedOrderDetail)"
+                    style="background: #6366f1; color: white; border: none; padding: 6px 15px; border-radius: 4px; font-size: 13px; cursor: pointer;">
+                    บันทึกข้อมูลจัดส่ง
+                  </button>
+                </div>
+              </div>
+
             </div>
 
             <div class="payment-slip-zone"
@@ -487,9 +539,14 @@
 
           <div class="detail-body">
             <div class="info-grid">
-              <div class="info-item full">
-                <label>ID ลูกค้า</label>
-                <p>#{{ selectedCustomer.customerId }}</p>
+              <!-- Image & ID -->
+              <div class="info-item full" style="display: flex; align-items: center; gap: 15px;">
+                <img [src]="selectedCustomer.image || 'assets/images/user/avatar-2.jpg'"
+                  style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid #ddd;">
+                <div>
+                  <label>ID ลูกค้า</label>
+                  <p>#{{ selectedCustomer.customerId }}</p>
+                </div>
               </div>
 
               <div class="info-item">
@@ -508,8 +565,8 @@
               </div>
 
               <div class="info-item">
-                <label>สถานะสมาชิก</label>
-                <p><span class="status-active">ปกติ</span></p>
+                <label>สมัครเมื่อ</label>
+                <p>{{ selectedCustomer.createdAt ? (selectedCustomer.createdAt | date:'dd/MM/yyyy') : '-' }}</p>
               </div>
 
               <div class="info-item full">
@@ -523,15 +580,28 @@
               <h4><i class="fas fa-paw"></i> สัตว์เลี้ยงในความดูแล</h4>
 
               <div class="pets-grid" *ngIf="selectedCustomer.pets && selectedCustomer.pets.length > 0">
-                <div class="pet-tag" *ngFor="let pet of selectedCustomer.pets">
-                  <div class="pet-icon">
-                    <i class="fas" [ngClass]="pet.petType === 'DOG' ? 'fa-dog' : 'fa-cat'"></i>
-                  </div>
-                  <div class="pet-details">
-                    <span class="pet-name">{{ pet.petName }}</span>
-                    <span class="pet-breed">{{ pet.petType }}</span>
-                    <div class="pet-note" *ngIf="pet.congenitalDisease && pet.congenitalDisease !== 'NONE'">
-                      <i class="fas fa-exclamation-circle"></i> {{ pet.congenitalDisease }}
+                <div class="pet-tag" *ngFor="let pet of selectedCustomer.pets"
+                  style="display: flex; gap: 10px; align-items: flex-start; padding: 10px; border: 1px solid #eee; border-radius: 8px;">
+                  <img
+                    [src]="pet.image || (pet.petType === 'DOG' ? 'assets/dog-default.png' : 'assets/cat-default.png')"
+                    style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+                  <div class="pet-details" style="flex: 1;">
+                    <div style="font-weight: bold; font-size: 14px;">{{ pet.petName }} <span
+                        class="badge bg-light text-dark border">{{ pet.petType }}</span></div>
+                    <div style="font-size: 12px; color: #555; margin-top: 4px;">
+                      <span *ngIf="pet.breed">พันธุ์: {{ pet.breed }}</span>
+                      <span *ngIf="pet.gender"> | {{ pet.gender }}</span>
+                      <span *ngIf="pet.weight"> | {{ pet.weight }}kg</span>
+                      <span *ngIf="pet.birthdate"> | 🎂 {{ pet.birthdate | date:'dd/MM/yy' }}</span>
+                    </div>
+                    <div *ngIf="pet.isSterilized !== undefined" style="font-size: 12px; margin-top: 2px;">
+                      <i class="fas"
+                        [ngClass]="pet.isSterilized ? 'fa-check-circle text-success' : 'fa-times-circle text-danger'"></i>
+                      {{ pet.isSterilized ? 'ทำหมันแล้ว' : 'ยังไม่ทำหมัน' }}
+                    </div>
+                    <div class="pet-note" *ngIf="pet.congenitalDisease && pet.congenitalDisease !== 'NONE'"
+                      style="font-size: 12px; color: orange; margin-top: 4px;">
+                      <i class="fas fa-exclamation-circle"></i> โรคประจำตัว: {{ pet.congenitalDisease }}
                     </div>
                   </div>
                 </div>
@@ -677,7 +747,8 @@
 
               <div class="info-item">
                 <label>เบอร์โทรศัพท์</label>
-                <input type="text" [(ngModel)]="selectedStaff.phone" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                <input type="text" [(ngModel)]="selectedStaff.phone"
+                  style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
               </div>
 
               <div class="info-item">

@@ -27,6 +27,12 @@
               [class.is-invalid]="errorMessage && !registerData.customerName" />
           </div>
 
+          <div class="form-group mb-3">
+            <label class="form-label fw-bold">รูปโปรไฟล์ (ถ้ามี)</label>
+            <input type="file" class="form-control rounded-pill" (change)="onFileSelected($event, 'image')"
+              accept="image/*" />
+          </div>
+
           <div class="row">
             <div class="col-md-6">
               <div class="form-group mb-3">
@@ -78,9 +84,57 @@
                 <select class="form-select rounded-pill" [(ngModel)]="registerData.petType" name="petType">
                   <option value="DOG">🐶 สุนัข</option>
                   <option value="CAT">🐱 แมว</option>
+                  <option value="GUINEA_PIG">🐹 หนูตะเภา</option>
                 </select>
               </div>
             </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label class="form-label fw-bold">วันเกิด</label>
+                <input type="date" class="form-control rounded-pill" [(ngModel)]="registerData.petBirthdate"
+                  name="petBirthdate">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label class="form-label fw-bold">น้ำหนัก (kg)</label>
+                <input type="number" step="0.1" class="form-control rounded-pill" [(ngModel)]="registerData.petWeight"
+                  name="petWeight">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label class="form-label fw-bold">เพศ</label>
+                <select class="form-select rounded-pill" [(ngModel)]="registerData.petGender" name="petGender">
+                  <option value="MALE">ผู้</option>
+                  <option value="FEMALE">เมีย</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label class="form-label fw-bold">สายพันธุ์</label>
+                <input type="text" class="form-control rounded-pill" placeholder="เช่น Golden Retriever"
+                  [(ngModel)]="registerData.petBreed" name="petBreed">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group mb-3">
+            <label class="form-label fw-bold">รูปน้องหมา/แมว (ถ้ามี)</label>
+            <input type="file" class="form-control rounded-pill" (change)="onFileSelected($event, 'petImage')"
+              accept="image/*" />
+          </div>
+
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" [(ngModel)]="registerData.petIsSterilized"
+              name="petIsSterilized" id="sterilizedCheck">
+            <label class="form-check-label" for="sterilizedCheck">
+              ทำหมันแล้ว
+            </label>
           </div>
 
           <div class="form-group mb-3">

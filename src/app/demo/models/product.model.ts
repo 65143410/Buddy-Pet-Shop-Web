@@ -1,6 +1,7 @@
 export interface Category {
   categoryId: number;
   categoryName: string;
+  description?: string;
 }
 
 export interface Product {
@@ -16,6 +17,9 @@ export interface Product {
     categoryName?: string;
   };
   image?: string;
+  isActive?: boolean;
+  brand?: string;
+  weightVolume?: string;
 }
 
 export interface CartProduct extends Product {
@@ -48,6 +52,9 @@ export interface Customer {
   address?: string;
   pets?: Pet[];
   orders?: Order[];
+  status?: string;
+  image?: string;
+  createdAt?: string;
 }
 
 export interface Payment {
@@ -64,9 +71,13 @@ export interface Order {
   totalAmount: number;
   customer: Customer;
   status: OrderStatus;
+  staff?: Staff;
   payments: Payment[];
   orderDetails: OrderDetail[];
   invoiceNo?: string;
+  shippingAddress?: string;
+  trackingNumber?: string;
+  shippingCost?: number;
 }
 
 export interface OrderStatus {
@@ -123,6 +134,8 @@ export interface ProductLog {
   staffName: string;
   notes?: string;
   timestamp: string | Date;
+  staffId?: number;
+  adminId?: number;
 }
 
 export interface Pet {
@@ -130,5 +143,11 @@ export interface Pet {
   petName: string;
   petType: string;
   congenitalDisease?: string;
+  birthdate?: string;
+  weight?: number;
+  gender?: string;
+  breed?: string;
+  image?: string;
+  isSterilized?: boolean;
 }
 

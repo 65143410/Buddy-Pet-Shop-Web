@@ -61,7 +61,10 @@ export class Admin implements OnInit {
     suitableForDisease: 'NONE', // ✨ เพิ่ม: ค่าเริ่มต้นคือสุขภาพปกติ
     category: {
       categoryId: null
-    }
+    },
+    isActive: true,
+    brand: '',
+    weightVolume: ''
   };
   readonly adminAllowedStatuses = ['รอตรวจสอบยอดเงิน', 'ชำระเงินแล้ว', 'ยกเลิก/สลิปไม่ถูกต้อง'];
   private adminService = inject(AdminApiService);
@@ -446,5 +449,26 @@ export class Admin implements OnInit {
       },
       error: (err) => alert('เกิดข้อผิดพลาด: ' + err.message)
     });
+  }
+
+  saveShippingInfo(order: Order): void {
+    if (!order || !order.orderId) return;
+
+    this.adminService.updateOrderShippingInfo(order.orderId, order.trackingNumber || '', order.shippingCost || 0)
+      .subscribe({
+        next: (updatedOrder) => {
+          alert('บันทึกข้อมูลการจัดส่งสำเร็จ!');
+          // Update local data
+          this.selectedOrderDetail = updatedOrder;
+          // Also update in the list
+          const index = this.orders.findIndex(o => o.orderId === updatedOrder.orderId);
+          if (index !== -1) {
+            this.orders[index] = updatedOrder;
+          }
+        },
+        error: (err) => {
+          alert('บันทึกไม่สำเร็จ: ' + (err.error?.message || 'Server Error'));
+        }
+      });
   }
 }

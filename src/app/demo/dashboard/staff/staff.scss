@@ -5,6 +5,7 @@
     min-height: 100vh;
     font-family: Arial, sans-serif;
 }
+
 /* 2. HEADER & STAFF INFO SECTION */
 .header {
     background-color: #ffffff;
@@ -47,6 +48,7 @@
     border-top: 1px dashed #ddd;
     margin: 10px 0;
 }
+
 .action-btn.edit {
     grid-column: 1 / -1;
     background-color: #2196f3;
@@ -64,6 +66,7 @@
 .action-btn.edit:hover {
     background-color: #1976d2;
 }
+
 /* 3. SECTION (ORDER TABLES) */
 .section {
     background-color: #ffffff;
@@ -89,6 +92,7 @@
     padding-left: 5px;
     border-left: 3px solid #ff9800;
 }
+
 .empty-state {
     padding: 20px;
     text-align: center;
@@ -99,6 +103,7 @@
     margin-top: 15px;
     font-style: italic;
 }
+
 /* 4. DATA TABLE STYLES */
 .data-table {
     width: 100%;
@@ -106,7 +111,8 @@
     margin-top: 15px;
 }
 
-.data-table th, .data-table td {
+.data-table th,
+.data-table td {
     border: 1px solid #eee;
     padding: 12px 15px;
     text-align: left;
@@ -128,15 +134,25 @@
     background-color: #e3f2fd;
     cursor: default;
 }
+
 .priority-number {
     font-weight: bold;
     color: #e91e63;
     font-size: 1.1rem;
     text-align: center !important;
 }
+
 /* 5. CHIPS & BUTTONS */
-.paid { color: #4caf50; font-weight: bold; }
-.unpaid { color: #f44336; font-weight: bold; }
+.paid {
+    color: #4caf50;
+    font-weight: bold;
+}
+
+.unpaid {
+    color: #f44336;
+    font-weight: bold;
+}
+
 .status-chip {
     padding: 4px 8px;
     border-radius: 12px;
@@ -145,10 +161,35 @@
     display: inline-block;
 }
 
-.chip-new { background-color: #e3f2fd; color: #2196f3; }
-.chip-shipping { background-color: #fff3e0; color: #ff9800; }
-.chip-success { background-color: #e8f5e9; color: #4caf50; }
-.chip-cancel { background-color: #ffebee; color: #f44336; }
+.chip-new {
+    background-color: #e3f2fd;
+    color: #2196f3;
+}
+
+.chip-payment {
+    background-color: #e1f5fe;
+    color: #03a9f4;
+}
+
+.chip-paid {
+    background-color: #e8f5e9;
+    color: #4caf50;
+}
+
+.chip-preparing {
+    background-color: #fff3e0;
+    color: #ff9800;
+}
+
+.chip-shipped {
+    background-color: #f3e5f5;
+    color: #9c27b0;
+}
+
+.chip-cancel {
+    background-color: #ffebee;
+    color: #f44336;
+}
 
 /* Action Button (ดำเนินการจัดส่ง) */
 .action-btn.update {
@@ -164,6 +205,21 @@
 
 .action-btn.update:hover {
     background-color: #fb8c00;
+}
+
+.action-btn.success {
+    background-color: #4caf50;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s;
+}
+
+.action-btn.success:hover {
+    background-color: #43a047;
 }
 
 .filter-actions {
@@ -182,12 +238,14 @@
     border-color: #3f51b5;
     outline: none;
 }
+
 /* --- 4.1 DETAIL & COLLAPSIBLE ROW STYLES --- */
 .data-table tr.active-row {
     background-color: #ffe0b2;
     border-bottom: 1px solid #ff9800;
     font-weight: 500;
 }
+
 .order-details-row {
     background-color: #f7f7f7 !important;
 }
@@ -211,13 +269,15 @@
     border-bottom: 1px dashed #ccc;
     padding-bottom: 5px;
 }
+
 .details-table {
     width: 100%;
     border-collapse: collapse;
     margin: 10px 0;
 }
 
-.details-table th, .details-table td {
+.details-table th,
+.details-table td {
     padding: 8px 10px;
     border: 1px solid #ddd;
     font-size: 0.9rem;
@@ -238,6 +298,7 @@
     font-size: 0.85rem;
     transition: background-color 0.3s;
 }
+
 .action-btn.view:hover {
     background-color: #e4e3e3;
 }

@@ -146,7 +146,7 @@ export class CartList implements OnInit {
         // orderDate: new Date(), // Remove: Let backend handle LocalDate
         totalAmount: this.totalAmount,
         status: { statusId: 2 }, // 2 = รอตรวจสอบ
-        address: this.shippingAddress,
+        shippingAddress: this.shippingAddress,
         invoiceNo: 'INV-' + this.inVoiceNo
       },
       details: this.cartService.cartItems.map(item => ({

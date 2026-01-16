@@ -27,12 +27,30 @@ export class AuthRegisterComponent {
     phone: '',
     address: '',
     password: '',
+    image: '',
     petName: '',
     petType: 'DOG',
-    congenitalDisease: 'ไม่มี'
+    congenitalDisease: 'ไม่มี',
+    petBirthdate: '',
+    petWeight: 0,
+    petGender: 'MALE',
+    petBreed: '',
+    petImage: '',
+    petIsSterilized: false
   };
 
-  diseases = ['ไม่มี', 'ภูมิแพ้', 'โรคผิวหนัง', 'โรคหัวใจ', 'โรคไต', 'อื่นๆ'];
+  diseases = ['ไม่มี', 'ภูมิแพ้', 'โรคผิวหนัง', 'โรคหัวใจ', 'โรคไต', 'โรคอ้วน', 'โรคข้อเสื่อม', 'โรคระบบทางเดินอาหาร', 'อื่นๆ'];
+
+  onFileSelected(event: any, field: 'image' | 'petImage') {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.registerData[field] = e.target.result; // Base64 string
+      };
+      reader.readAsDataURL(file);
+    }
+  }
 
   onRegister() {
     this.errorMessage = '';

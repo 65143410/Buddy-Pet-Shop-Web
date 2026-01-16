@@ -41,6 +41,7 @@
                   (click)="onSelectPet(pet)">
                   <span *ngIf="pet.petType === 'DOG'">🐕</span>
                   <span *ngIf="pet.petType === 'CAT'">🐈</span>
+                  <span *ngIf="pet.petType === 'GUINEA_PIG'">🐹</span>
                   {{ pet.petName }}
                 </a>
               </li>
@@ -48,7 +49,7 @@
           </div>
 
           <h4 class="fw-bold mb-3 text-primary">
-            <i class="fas fa-star me-2"></i> แนะนำสำหรับน้อง {{ selectedPet?.petName }} 🐶🐱
+            <i class="fas fa-star me-2"></i> แนะนำสำหรับน้อง {{ selectedPet?.petName }} 🐶🐱🐹
           </h4>
 
           <div class="alert alert-info text-center" *ngIf="recommendedProducts.length === 0">
@@ -70,12 +71,21 @@
                     <span *ngIf="item.targetPetType !== 'ALL'" class="badge rounded-pill bg-info text-dark me-1"
                       style="font-size: 0.7rem;">
                       {{ item.targetPetType === 'DOG' ? '🐕 สุนัข' : item.targetPetType === 'CAT' ? '🐈 แมว' :
+                      item.targetPetType === 'GUINEA_PIG' ? '🐹 หนูตะเภา' :
                       item.targetPetType
                       }}
                     </span>
                     <span *ngIf="item.suitableForDisease !== 'NONE'" class="badge rounded-pill bg-warning text-dark"
                       style="font-size: 0.7rem;">
                       ✨ สูตร: {{ item.suitableForDisease }}
+                    </span>
+                    <span *ngIf="item.brand" class="badge rounded-pill bg-light text-dark border ms-1"
+                      style="font-size: 0.7rem;">
+                      {{ item.brand }}
+                    </span>
+                    <span *ngIf="item.weightVolume" class="badge rounded-pill bg-light text-dark border ms-1"
+                      style="font-size: 0.7rem;">
+                      {{ item.weightVolume }}
                     </span>
                   </div>
                   <h5 class="card-title product-title">{{ item.productName }}</h5>

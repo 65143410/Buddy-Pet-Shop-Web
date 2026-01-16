@@ -96,9 +96,10 @@ export class Home implements OnInit {
   private normalizePetType(type: string): string {
     if (!type) return 'ALL';
     const t = type.trim();
-    // Normalize to Thai because Database uses Thai (สุนัข, แมว)
-    if (t.toUpperCase() === 'DOG' || t === 'สุนัข') return 'สุนัข';
-    if (t.toUpperCase() === 'CAT' || t === 'แมว') return 'แมว';
+    // Normalize to ENGLISH because Database/Admin now uses English (DOG, CAT, GUINEA_PIG)
+    if (t.toUpperCase() === 'DOG' || t === 'สุนัข') return 'DOG';
+    if (t.toUpperCase() === 'CAT' || t === 'แมว') return 'CAT';
+    if (t.toUpperCase() === 'GUINEA_PIG' || t === 'หนูตะเภา') return 'GUINEA_PIG';
     return t;
   }
 

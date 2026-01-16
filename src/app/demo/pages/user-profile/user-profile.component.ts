@@ -1,25 +1,58 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { OrderService } from 'src/app/services/order.service';
+import { HttpClient } from '@angular/common/http';
 import { Customer, Order } from 'src/app/demo/models/product.model';
 
 @Component({
-    selector: 'app-user-profile',
-    standalone: true,
-    imports: [CommonModule, RouterModule],
-    template: `
+  selector: 'app-user-profile',
+  standalone: true,
+  imports: [CommonModule, RouterModule, FormsModule],
+  template: `
     <div class="container mt-4">
       <div class="row">
         <!-- Sidebar Menu as a Card -->
         <div class="col-md-3 mb-4">
           <div class="card shadow-sm border-0">
             <div class="card-body text-center">
-              <div class="avatar-circle mx-auto mb-3 bg-primary text-white d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; font-size: 32px; border-radius: 50%;">
-                <i class="fas fa-user"></i>
+              <div class="avatar-circle mx-auto mb-3 bg-primary text-white d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; font-size: 32px; border-radius: 50%; overflow: hidden;">
+                <img *ngIf="currentUser?.image" [src]="currentUser?.image" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">
+                <i *ngIf="!currentUser?.image" class="fas fa-user"></i>
               </div>
-              <h5 class="fw-bold">{{ currentUser?.customerName }}</h5>
-              <p class="text-muted small">{{ currentUser?.email }}</p>
+              
+              <div *ngIf="!isEditMode">
+                <h5 class="fw-bold">{{ currentUser?.customerName }}</h5>
+                <p class="text-muted small mb-1">{{ currentUser?.email }}</p>
+                <p class="text-muted small mb-1">{{ currentUser?.phone || 'ไม่ระบุเบอร์โทร' }}</p>
+                <button class="btn btn-sm btn-outline-primary mt-2" (click)="toggleEditMode()">
+                  <i class="fas fa-edit"></i> แก้ไขข้อมูล
+                </button>
+              </div>
+
+              <div *ngIf="isEditMode" class="text-start mt-3">
+                <div class="mb-2">
+                  <label class="small text-muted">ชื่อ</label>
+                  <input type="text" class="form-control form-control-sm" [(ngModel)]="editUser.customerName">
+                </div>
+                <div class="mb-2">
+                  <label class="small text-muted">เบอร์โทร</label>
+                  <input type="text" class="form-control form-control-sm" [(ngModel)]="editUser.phone">
+                </div>
+                 <div class="mb-2">
+                  <label class="small text-muted">ที่อยู่</label>
+                  <textarea class="form-control form-control-sm" rows="2" [(ngModel)]="editUser.address"></textarea>
+                </div>
+                <div class="d-flex gap-2 mt-3">
+                  <button class="btn btn-sm btn-success w-50" (click)="saveProfile()">บันทึก</button>
+                  <button class="btn btn-sm btn-secondary w-50" (click)="toggleEditMode()">ยกเลิก</button>
+                </div>
+              </div>
+
+              <p *ngIf="currentUser?.createdAt && !isEditMode" class="text-muted small mt-3" style="font-size: 0.75rem;">
+                <i class="far fa-clock me-1"></i> สมาชิกตั้งแต่: {{ currentUser?.createdAt | date:'d MMM yyyy' }}
+              </p>
               <hr>
               <div class="text-start">
                   <a routerLink="/dashboard/home" class="d-block py-2 text-decoration-none text-dark"><i class="fas fa-home me-2 text-primary"></i> หน้าหลัก</a>
@@ -30,8 +63,113 @@ import { Customer, Order } from 'src/app/demo/models/product.model';
           </div>
         </div>
 
-        <!-- Main Content (Orders) -->
+        <!-- Main Content (Pets & Orders) -->
         <div class="col-md-9">
+
+          <!-- My Pets Section -->
+          <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+              <h5 class="mb-0 fw-bold text-success"><i class="fas fa-paw me-2"></i> สัตว์เลี้ยงของฉัน</h5>
+              <button class="btn btn-primary btn-sm rounded-pill" (click)="prepareAddPet()">
+                <i class="fas fa-plus"></i> เพิ่มสัตว์เลี้ยง
+              </button>
+            </div>
+            
+            <!-- Pet Form (Add/Edit) -->
+            <div *ngIf="isPetFormVisible" class="card-body bg-light mx-3 my-3 rounded border">
+              <h6 class="fw-bold mb-3">{{ isEditPetMode ? 'แก้ไขข้อมูลสัตว์เลี้ยง' : 'เพิ่มสัตว์เลี้ยงใหม่' }}</h6>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="small mb-1">ชื่อสัตว์เลี้ยง</label>
+                  <input type="text" class="form-control form-control-sm" [(ngModel)]="newPet.petName">
+                </div>
+                <div class="col-md-6">
+                  <label class="small mb-1">ประเภท</label>
+                  <select class="form-select form-select-sm" [(ngModel)]="newPet.petType">
+                    <option value="DOG">สุนัข</option>
+                    <option value="CAT">แมว</option>
+                    <option value="GUINEA_PIG">หนูตะเภา</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label class="small mb-1">โรคประจำตัว</label>
+                   <select class="form-select form-select-sm" [(ngModel)]="newPet.congenitalDisease">
+                      <option *ngFor="let d of diseases" [value]="d">{{ d }}</option>
+                   </select>
+                </div>
+                <div class="col-md-6">
+                   <label class="small mb-1">พันธุ์ (Breed)</label>
+                   <input type="text" class="form-control form-control-sm" [(ngModel)]="newPet.breed">
+                </div>
+                <div class="col-md-4">
+                   <label class="small mb-1">น้ำหนัก (kg)</label>
+                   <input type="number" class="form-control form-control-sm" [(ngModel)]="newPet.weight">
+                </div>
+                <div class="col-md-4">
+                   <label class="small mb-1">เพศ</label>
+                   <select class="form-select form-select-sm" [(ngModel)]="newPet.gender">
+                      <option value="MALE">ตัวผู้</option>
+                      <option value="FEMALE">ตัวเมีย</option>
+                   </select>
+                </div>
+                <div class="col-md-4">
+                   <label class="small mb-1">การทำหมัน</label>
+                   <select class="form-select form-select-sm" [(ngModel)]="newPet.isSterilized">
+                      <option [ngValue]="true">ทำแล้ว</option>
+                      <option [ngValue]="false">ยังไม่ทำ</option>
+                   </select>
+                </div>
+                <div class="col-12 text-end mt-3">
+                  <button class="btn btn-secondary btn-sm me-2" (click)="cancelPetForm()">ยกเลิก</button>
+                  <button class="btn btn-success btn-sm" (click)="savePet()">บันทึกข้อมูล</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-body">
+               <div *ngIf="!currentUser?.pets || currentUser?.pets?.length === 0" class="text-center py-4 text-muted">
+                  <p>ยังไม่มีข้อมูลสัตว์เลี้ยง</p>
+               </div>
+               <div class="row">
+                  <div class="col-md-6 mb-3" *ngFor="let pet of currentUser?.pets">
+                     <div class="d-flex align-items-center p-3 border rounded shadow-sm h-100 bg-light position-relative">
+                        <div class="position-absolute top-0 end-0 p-2">
+                           <button class="btn btn-link text-primary p-0 me-2" (click)="prepareEditPet(pet)"><i class="fas fa-edit"></i></button>
+                           <button class="btn btn-link text-danger p-0" (click)="deletePet(pet.petId)"><i class="fas fa-trash"></i></button>
+                        </div>
+                        <div class="flex-shrink-0">
+                           <img [src]="pet.image || (pet.petType === 'DOG' ? 'assets/dog-default.png' : 'assets/cat-default.png')" 
+                                class="rounded-circle" style="width: 70px; height: 70px; object-fit: cover; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                           <h5 class="mb-1 fw-bold">{{ pet.petName }}</h5>
+                           <p class="mb-1 small text-muted">
+                              <span class="badge bg-secondary me-1">{{ pet.petType === 'DOG' ? 'สุนัข' : 'แมว' }}</span>
+                              {{ pet.breed ? pet.breed : '' }}
+                           </p>
+                           <p class="mb-0 small" style="font-size: 13px;">
+                              <span *ngIf="pet.gender"><i class="fas fa-venus-mars"></i> {{ pet.gender === 'MALE' ? 'ผู้' : 'เมีย' }}</span>
+                              <span class="mx-2" *ngIf="pet.gender && pet.weight">|</span>
+                              <span *ngIf="pet.weight"><i class="fas fa-weight-hanging"></i> {{ pet.weight }} kg</span>
+                           </p>
+                           <p class="mb-0 small text-muted" style="font-size: 13px;">
+                              <span *ngIf="pet.birthdate">
+                                <i class="fas fa-birthday-cake me-1"></i>{{ pet.birthdate | date:'dd/MM/yyyy' }}
+                              </span>
+                              <span class="mx-2" *ngIf="pet.birthdate && pet.isSterilized !== undefined">|</span>
+                              <span *ngIf="pet.isSterilized !== undefined">
+                                <i class="fas" [ngClass]="pet.isSterilized ? 'fa-check text-success' : 'fa-times text-danger'"></i>
+                                {{ pet.isSterilized ? 'ทำหมันแล้ว' : 'ยังไม่ทำหมัน' }}
+                              </span>
+                           </p>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+          </div>
+
+          <!-- Order History Section -->
           <div class="card shadow-sm border-0">
             <div class="card-header bg-white py-3">
               <h5 class="mb-0 fw-bold"><i class="fas fa-box-open me-2 text-primary"></i> ประวัติการสั่งซื้อของฉัน</h5>
@@ -107,9 +245,22 @@ import { Customer, Order } from 'src/app/demo/models/product.model';
                    <span class="text-primary fw-bold">{{ (item.unitPrice * item.quantity) | currency:'THB' }}</span>
                 </li>
              </ul>
-             <div class="text-end mt-3 h5">
-                ยอดรวม: <span class="fw-bold text-primary">{{ selectedOrder.totalAmount | currency:'THB' }}</span>
-             </div>
+              <div class="text-end mt-3">
+                 <div *ngIf="selectedOrder.shippingCost" class="text-muted small">
+                    ค่าจัดส่ง: {{ selectedOrder.shippingCost | currency:'THB' }}
+                 </div>
+                 <h5 class="mt-2">
+                    ยอดรวมสุทธิ: <span class="fw-bold text-primary">{{ selectedOrder.totalAmount | currency:'THB' }}</span>
+                 </h5>
+              </div>
+
+              <div *ngIf="selectedOrder.trackingNumber" class="alert alert-info mt-3">
+                  <i class="fas fa-truck me-2"></i> เลขพัสดุ: <strong>{{ selectedOrder.trackingNumber }}</strong>
+              </div>
+              <div *ngIf="selectedOrder.shippingAddress" class="alert alert-light border mt-2">
+                  <small class="text-muted d-block"><i class="fas fa-map-marker-alt me-1"></i> ที่อยู่จัดส่ง:</small>
+                  {{ selectedOrder.shippingAddress }}
+              </div>
           </div>
           <div class="modal-footer">
              <button type="button" class="btn btn-secondary" (click)="selectedOrder = null">ปิด</button>
@@ -120,45 +271,137 @@ import { Customer, Order } from 'src/app/demo/models/product.model';
   `
 })
 export class UserProfileComponent implements OnInit {
-    currentUser: Customer | null = null;
-    orders: Order[] = [];
-    isLoading = true;
-    selectedOrder: Order | null = null;
+  currentUser: Customer | null = null;
+  orders: Order[] = [];
+  isLoading = true;
+  selectedOrder: Order | null = null;
 
-    orderService = inject(OrderService);
-    router = inject(Router);
+  // Edit Profile Mode
+  isEditMode = false;
+  editUser: any = {};
 
-    ngOnInit() {
-        const userJson = localStorage.getItem('currentUser');
-        if (userJson) {
-            this.currentUser = JSON.parse(userJson);
-            if (this.currentUser?.customerId) {
-                this.loadOrders(this.currentUser.customerId);
-            }
-        } else {
-            this.router.navigate(['/login']);
-        }
-    }
+  // Pet Management
+  isPetFormVisible = false;
+  isEditPetMode = false;
+  newPet: any = { petName: '', petType: 'DOG', congenitalDisease: 'ไม่มี' };
+  diseases = ['ไม่มี', 'ภูมิแพ้', 'โรคผิวหนัง', 'โรคหัวใจ', 'โรคไต', 'โรคอ้วน', 'โรคข้อเสื่อม', 'โรคระบบทางเดินอาหาร', 'อื่นๆ'];
 
-    loadOrders(customerId: number) {
-        this.orderService.getOrdersByCustomer(customerId).subscribe({
-            next: (data) => {
-                this.orders = data.sort((a, b) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime()); // Newest first
-                this.isLoading = false;
-            },
-            error: (err) => {
-                console.error('Error loading orders', err);
-                this.isLoading = false;
-            }
+  orderService = inject(OrderService);
+  router = inject(Router);
+  http = inject(HttpClient);
+
+  ngOnInit() {
+    this.refreshUserData();
+  }
+
+  refreshUserData() {
+    const userJson = localStorage.getItem('currentUser');
+    if (userJson) {
+      this.currentUser = JSON.parse(userJson);
+      // Reload fresh data from API to ensure pets are up to date
+      if (this.currentUser?.customerId) {
+        this.http.get(`http://localhost:8080/api/customer/${this.currentUser.customerId}`).subscribe({
+          next: (res: any) => {
+            this.currentUser = res;
+            localStorage.setItem('currentUser', JSON.stringify(res));
+            this.loadOrders(this.currentUser!.customerId);
+          },
+          error: () => this.loadOrders(this.currentUser!.customerId) // Fallback
         });
+      }
+    } else {
+      this.router.navigate(['/login']);
     }
+  }
 
-    viewDetail(order: Order) {
-        this.selectedOrder = order;
-    }
+  loadOrders(customerId: number) {
+    this.orderService.getOrdersByCustomer(customerId).subscribe({
+      next: (data) => {
+        this.orders = data.sort((a, b) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime());
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error loading orders', err);
+        this.isLoading = false;
+      }
+    });
+  }
 
-    logout() {
-        localStorage.removeItem('currentUser');
-        this.router.navigate(['/login']);
+  // --- Profile Edits ---
+  toggleEditMode() {
+    this.isEditMode = !this.isEditMode;
+    if (this.isEditMode) {
+      this.editUser = { ...this.currentUser };
     }
+  }
+
+  saveProfile() {
+    if (!this.currentUser?.customerId) return;
+    const url = `http://localhost:8080/api/customer/update/${this.currentUser.customerId}`;
+    this.http.put(url, this.editUser).subscribe({
+      next: (res: any) => {
+        alert('บันทึกข้อมูลสำเร็จ!');
+        this.isEditMode = false;
+        this.refreshUserData();
+      },
+      error: (err) => alert('เกิดข้อผิดพลาด: ' + (err.error?.message || err.message))
+    });
+  }
+
+  // --- Pet Management ---
+  prepareAddPet() {
+    this.newPet = { petName: '', petType: 'DOG', congenitalDisease: 'ไม่มี' };
+    this.isEditPetMode = false;
+    this.isPetFormVisible = true;
+  }
+
+  prepareEditPet(pet: any) {
+    this.newPet = { ...pet };
+    this.isEditPetMode = true;
+    this.isPetFormVisible = true;
+  }
+
+  cancelPetForm() {
+    this.isPetFormVisible = false;
+    this.newPet = {};
+  }
+
+  savePet() {
+    if (!this.newPet.petName) return alert('กรุณาระบุชื่อสัตว์เลี้ยง');
+    const petData = { ...this.newPet, customerId: this.currentUser?.customerId };
+
+    // Use same endpoint for add (and adapt for edit if API supports)
+    // Assuming backend handles update if ID is present or separate endpoint needed.
+    // Based on previous nav-right code, we used add endpoint for both or re-used logic.
+    // Let's assume standard 'add' endpoint for now or check if there is an update one.
+    // If backend only has /add, we might need adjustments.
+    // Re-using logic from NavRight:
+    const url = 'http://localhost:8080/api/pets/add';
+
+    this.http.post(url, petData).subscribe({
+      next: () => {
+        alert(this.isEditPetMode ? 'อัปเดตข้อมูลสัตว์เลี้ยงสำเร็จ!' : 'เพิ่มสัตว์เลี้ยงสำเร็จ!');
+        this.isPetFormVisible = false;
+        this.refreshUserData();
+      },
+      error: (err) => alert('เกิดข้อผิดพลาด: ' + err.message)
+    });
+  }
+
+  deletePet(id: number) {
+    if (confirm('ยืนยันการลบข้อมูลสัตว์เลี้ยง?')) {
+      this.http.delete(`http://localhost:8080/api/pets/delete/${id}`, { responseType: 'text' }).subscribe(() => {
+        this.refreshUserData();
+      });
+    }
+  }
+
+  viewDetail(order: Order) {
+    this.selectedOrder = order;
+  }
+
+  logout() {
+    localStorage.removeItem('currentUser');
+    this.router.navigate(['/login']);
+  }
 }

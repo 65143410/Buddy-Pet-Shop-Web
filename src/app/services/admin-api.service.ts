@@ -147,4 +147,9 @@ export class AdminApiService {
   getDailyRevenue(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/orders/report/daily-revenue`);
   }
+
+  updateOrderShippingInfo(orderId: number, trackingNumber: string, shippingCost: number): Observable<Order> {
+    const body = { trackingNumber, shippingCost };
+    return this.http.put<Order>(`${this.apiUrl}/orders/${orderId}/shipping-info`, body);
+  }
 }
