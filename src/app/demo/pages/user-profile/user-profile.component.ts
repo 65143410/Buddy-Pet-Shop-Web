@@ -63,10 +63,9 @@ import { UserService } from 'src/app/services/user.service';
                 <i class="far fa-clock me-1"></i> สมาชิกตั้งแต่: {{ currentUser?.createdAt | date:'d MMM yyyy' }}
               </p>
               <hr>
-              <div class="text-start">
-                  <a routerLink="/dashboard/home" class="d-block py-2 text-decoration-none text-dark"><i class="fas fa-home me-2 text-primary"></i> หน้าหลัก</a>
-                  <a class="d-block py-2 text-decoration-none fw-bold text-primary"><i class="fas fa-history me-2"></i> ประวัติการสั่งซื้อ</a>
-                  <a (click)="logout()" class="d-block py-2 text-decoration-none text-danger" style="cursor: pointer;"><i class="fas fa-sign-out-alt me-2"></i> ออกจากระบบ</a>
+              <div class="d-grid gap-2">
+                  <a routerLink="/dashboard/home" class="btn btn-outline-primary"><i class="fas fa-home me-2"></i> กลับหน้าหลัก</a>
+                  <button (click)="logout()" class="btn btn-outline-danger"><i class="fas fa-sign-out-alt me-2"></i> ออกจากระบบ</button>
               </div>
             </div>
           </div>
@@ -322,9 +321,25 @@ import { UserService } from 'src/app/services/user.service';
                   <img [src]="sanitizer.bypassSecurityTrustUrl('data:image/jpeg;base64,' + (selectedOrder.payments[0].slipImage.includes('base64,') ? selectedOrder.payments[0].slipImage.split('base64,')[1] : selectedOrder.payments[0].slipImage))" 
                        class="img-fluid rounded border shadow-sm" style="max-height: 300px;">
                </div>
+
+               <!-- Form to Upload Slip for 'Waiting for Payment' -->
+               <div *ngIf="selectedOrder.status.statusName.includes('รอชำระ') || selectedOrder.status.statusName === 'รอตรวจสอบยอดเงิน'" class="mt-4 border-top pt-3">
+                  <h6 class="text-warning"><i class="fas fa-upload me-2"></i> แจ้งชำระเงิน / อัปโหลดสลิป</h6>
+                  <div class="mb-2">
+                    <label class="small text-muted mb-1">เลือกไฟล์สลิป (รูปภาพ)</label>
+                    <input type="file" class="form-control" (change)="onSlipSelected($event)" accept="image/*">
+                  </div>
+                  <div *ngIf="slipPreview" class="mb-2 text-center">
+                    <img [src]="slipPreview" class="img-fluid rounded border" style="max-height: 200px;">
+                  </div>
+                  <button class="btn btn-success w-100" [disabled]="!slipPreview" (click)="submitSlip()">
+                    <i class="fas fa-check-circle me-1"></i> ยืนยันการแจ้งโอน
+                  </button>
+               </div>
+
           </div>
           <div class="modal-footer">
-             <button type="button" class="btn btn-secondary" (click)="selectedOrder = null">ปิด</button>
+             <button type="button" class="btn btn-secondary" (click)="closeDetailModal()">ปิด</button>
           </div>
         </div>
       </div>
@@ -337,6 +352,7 @@ export class UserProfileComponent implements OnInit {
   ongoingOrders: Order[] = [];
   isLoading = true;
   selectedOrder: Order | null = null;
+  slipPreview: any = null; // For upload preview
 
   // Edit Profile Mode
   isEditMode = false;
@@ -484,6 +500,45 @@ export class UserProfileComponent implements OnInit {
 
   viewDetail(order: Order) {
     this.selectedOrder = order;
+    this.slipPreview = null; // Reset preview
+  }
+
+  closeDetailModal() {
+    this.selectedOrder = null;
+    this.slipPreview = null;
+  }
+
+  onSlipSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.slipPreview = e.target.result; // Base64
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  submitSlip() {
+    if (!this.selectedOrder || !this.slipPreview) return;
+
+    if (confirm('ยืนยันการส่งสลิปโอนเงิน?')) {
+      this.orderService.submitPayment(this.selectedOrder.orderId, this.slipPreview, this.selectedOrder.totalAmount).subscribe({
+        next: () => {
+          alert('แจ้งชำระเงินเรียบร้อย! ทางร้านจะตรวจสอบโดยเร็วที่สุด');
+          this.closeDetailModal();
+          // Reload orders
+          if (this.currentUser?.customerId) {
+            this.loadOrders(this.currentUser.customerId);
+          }
+        },
+        error: (err) => {
+          console.error(err);
+          const errorMsg = typeof err.error === 'string' ? err.error : (err.error?.message || err.message);
+          alert('เกิดข้อผิดพลาด: ' + errorMsg);
+        }
+      });
+    }
   }
 
   logout() {
@@ -499,7 +554,7 @@ export class UserProfileComponent implements OnInit {
     img = img.replace(/[\n\r\s]/g, '');
 
     // Debug: Log length to detect truncation
-    console.log('Profile Image Check [User-Profile]:', { length: img.length, start: img.substring(0, 30), end: img.substring(img.length - 10) });
+    // console.log('Profile Image Check [User-Profile]:', { length: img.length, start: img.substring(0, 30), end: img.substring(img.length - 10) });
 
     // 2. Already HTTP Check
     if (img.startsWith('http')) {

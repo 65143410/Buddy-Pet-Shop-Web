@@ -23,4 +23,8 @@ export class OrderService {
     createOrderWithSlip(orderData: any): Observable<any> {
         return this.http.post(`${this.apiUrl}/create`, orderData);
     }
+    // แจ้งชำระเงินสำหรับออเดอร์ที่มีอยู่แล้ว
+    submitPayment(orderId: number, slipImage: string, amount?: number): Observable<any> {
+        return this.http.post(`${this.apiUrl}/${orderId}/payment`, { slipImage, amount });
+    }
 }
