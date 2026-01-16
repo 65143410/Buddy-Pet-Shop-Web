@@ -75,6 +75,7 @@ import { UserService } from 'src/app/services/user.service';
         <!-- Main Content (Pets & Orders) -->
         <div class="col-md-9">
 
+        
           <!-- My Pets Section -->
           <div class="card shadow-sm border-0 mb-4">
             <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
@@ -186,6 +187,49 @@ import { UserService } from 'src/app/services/user.service';
             </div>
           </div>
 
+          <!-- Tracking Active Orders -->
+          <div *ngIf="ongoingOrders.length > 0" class="card shadow-sm border-0 mb-4">
+             <div class="card-header bg-white py-3">
+               <h5 class="mb-0 fw-bold text-warning"><i class="fas fa-shipping-fast me-2"></i> ติดตามสถานะคำสั่งซื้อ</h5>
+             </div>
+             <div class="card-body p-0">
+                <div class="table-responsive">
+                   <table class="table align-middle mb-0 table-hover">
+                      <thead class="bg-light">
+                         <tr>
+                            <th class="py-3 ps-4">เลขที่ใบสั่งซื้อ</th>
+                            <th class="py-3">วันที่สั่งซื้อ</th>
+                            <th class="py-3 text-end">ยอดรวม</th>
+                            <th class="py-3 text-center">สถานะ</th>
+                         </tr>
+                      </thead>
+                      <tbody>
+                         <tr *ngFor="let order of ongoingOrders" (click)="viewDetail(order)" style="cursor: pointer;">
+                            <td class="ps-4 fw-bold text-primary">{{ order.invoiceNo || '#' + order.orderId }}</td>
+                            <td>{{ order.orderDate | date:'dd/MM/yyyy HH:mm' }}</td>
+                            <td class="text-end fw-bold">{{ order.totalAmount | currency:'THB' }}</td>
+                            <td class="text-center" style="min-width: 150px;">
+                               <span class="badge rounded-pill mb-2" [ngClass]="{
+                                  'bg-warning text-dark': order.status.statusName.includes('รอ'),
+                                  'bg-info text-white': order.status.statusName.includes('เตรียม'),
+                                  'bg-primary': order.status.statusName.includes('ชำระ')
+                               }">{{ order.status.statusName }}</span>
+                               <div class="progress" style="height: 4px; width: 120px; margin: 0 auto;">
+                                  <div class="progress-bar bg-success" role="progressbar" 
+                                       [style.width]="order.status.statusName.includes('รอชำระ') ? '20%' : 
+                                                      order.status.statusName.includes('ตรวจสอบ') ? '40%' :
+                                                      order.status.statusName.includes('ชำระเงินแล้ว') ? '60%' :
+                                                      order.status.statusName.includes('เตรียม') ? '80%' : '100%'">
+                                  </div>
+                               </div>
+                            </td>
+                         </tr>
+                      </tbody>
+                   </table>
+                </div>
+             </div>
+          </div>
+
           <!-- Order History Section -->
           <div class="card shadow-sm border-0">
             <div class="card-header bg-white py-3">
@@ -211,30 +255,25 @@ import { UserService } from 'src/app/services/user.service';
                       <th class="py-3">วันที่สั่งซื้อ</th>
                       <th class="py-3 text-end">ยอดรวม</th>
                       <th class="py-3 text-center">สถานะ</th>
-                      <th class="py-3 text-center">รายละเอียด</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr *ngFor="let order of orders">
-                      <td class="ps-4 fw-bold text-primary">{{ order.invoiceNo || '#' + order.orderId }}</td>
-                      <td>{{ order.orderDate | date:'dd/MM/yyyy HH:mm' }}</td>
-                      <td class="text-end fw-bold">{{ order.totalAmount | currency:'THB' }}</td>
-                      <td class="text-center">
-                        <span class="badge rounded-pill" 
-                              [ngClass]="{
-                                'bg-warning text-dark': order.status.statusName === 'รอตรวจสอบยอดเงิน' || order.status.statusName === 'รอชำระเงิน',
-                                'bg-success': order.status.statusName === 'ชำระเงินแล้ว' || order.status.statusName === 'สำเร็จ',
-                                'bg-danger': order.status.statusName.includes('ยกเลิก')
-                              }" style="font-size: 0.85rem; padding: 6px 12px;">
-                          {{ order.status.statusName }}
-                        </span>
-                      </td>
-                      <td class="text-center">
-                         <!-- In a full app, this would open a detail modal -->
-                         <button class="btn btn-sm btn-outline-secondary" (click)="viewDetail(order)">ดูรายการ</button>
-                      </td>
-                    </tr>
-                  </tbody>
+                     <tr *ngFor="let order of orders" (click)="viewDetail(order)" style="cursor: pointer;">
+                       <td class="ps-4 fw-bold text-primary">{{ order.invoiceNo || '#' + order.orderId }}</td>
+                       <td>{{ order.orderDate | date:'dd/MM/yyyy HH:mm' }}</td>
+                       <td class="text-end fw-bold">{{ order.totalAmount | currency:'THB' }}</td>
+                       <td class="text-center">
+                         <span class="badge rounded-pill" 
+                               [ngClass]="{
+                                 'bg-warning text-dark': order.status.statusName.includes('รอ'),
+                                 'bg-success': order.status.statusName === 'ชำระเงินแล้ว' || order.status.statusName === 'สำเร็จ',
+                                 'bg-danger': order.status.statusName.includes('ยกเลิก')
+                               }" style="font-size: 0.85rem; padding: 6px 12px;">
+                           {{ order.status.statusName }}
+                         </span>
+                       </td>
+                     </tr>
+                   </tbody>
                 </table>
               </div>
             </div>
@@ -278,6 +317,11 @@ import { UserService } from 'src/app/services/user.service';
                   <small class="text-muted d-block"><i class="fas fa-map-marker-alt me-1"></i> ที่อยู่จัดส่ง:</small>
                   {{ selectedOrder.shippingAddress }}
               </div>
+               <div *ngIf="selectedOrder.payments && selectedOrder.payments.length > 0 && selectedOrder.payments[0].slipImage" class="mt-3">
+                  <h6 class="border-bottom pb-2">หลักฐานการโอนเงิน</h6>
+                  <img [src]="sanitizer.bypassSecurityTrustUrl('data:image/jpeg;base64,' + (selectedOrder.payments[0].slipImage.includes('base64,') ? selectedOrder.payments[0].slipImage.split('base64,')[1] : selectedOrder.payments[0].slipImage))" 
+                       class="img-fluid rounded border shadow-sm" style="max-height: 300px;">
+               </div>
           </div>
           <div class="modal-footer">
              <button type="button" class="btn btn-secondary" (click)="selectedOrder = null">ปิด</button>
@@ -290,6 +334,7 @@ import { UserService } from 'src/app/services/user.service';
 export class UserProfileComponent implements OnInit {
   currentUser: Customer | null = null;
   orders: Order[] = [];
+  ongoingOrders: Order[] = [];
   isLoading = true;
   selectedOrder: Order | null = null;
 
@@ -341,6 +386,16 @@ export class UserProfileComponent implements OnInit {
     this.orderService.getOrdersByCustomer(customerId).subscribe({
       next: (data) => {
         this.orders = data.sort((a, b) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime());
+
+        // Filter for Tracking Section: Exclude 'Cancelled' and 'Completed/Shipped'
+        // Adjust status strings based on your actual DB values
+        this.ongoingOrders = this.orders.filter(o =>
+          !o.status.statusName.includes('ยกเลิก') &&
+          !o.status.statusName.includes('สลิปไม่ถูกต้อง') &&
+          !o.status.statusName.includes('สำเร็จ') &&
+          !o.status.statusName.includes('จัดส่งแล้ว')
+        );
+
         this.isLoading = false;
       },
       error: (err) => {
