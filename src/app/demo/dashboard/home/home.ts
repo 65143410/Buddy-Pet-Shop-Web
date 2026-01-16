@@ -22,6 +22,7 @@ export class Home implements OnInit {
 
   currentUser: any = null;
   recommendedProducts: any[] = [];
+  originalRecommendedProducts: any[] = [];
   // targetPetName: string = ''; // Replaced by selectedPet.petName
   allPets: any[] = [];
   selectedPet: any = null;
@@ -73,9 +74,23 @@ export class Home implements OnInit {
         next: (products) => {
           console.log('Recommended Products for ' + pet.petName + ':', products);
           this.recommendedProducts = products;
+          this.originalRecommendedProducts = [...products];
         },
         error: (err) => console.error('Error fetching recommendations:', err)
       });
+  }
+
+  public onSearch(event: Event): void {
+    const searchTerm = (event.target as HTMLInputElement).value.toLowerCase().trim();
+
+    if (!searchTerm) {
+      this.recommendedProducts = [...this.originalRecommendedProducts];
+    } else {
+      this.recommendedProducts = this.originalRecommendedProducts.filter(p =>
+        p.productName.toLowerCase().includes(searchTerm) ||
+        (p.description && p.description.toLowerCase().includes(searchTerm))
+      );
+    }
   }
 
   private normalizePetType(type: string): string {
