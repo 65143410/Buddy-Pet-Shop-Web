@@ -1,18 +1,20 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms'; // สำคัญมาก
+import { FormsModule } from '@angular/forms';
 import { AuthService } from 'src/app/services/authservice';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-auth-login',
   standalone: true,
-  imports: [RouterModule, FormsModule], // เพิ่ม FormsModule ที่นี่
+  imports: [RouterModule, FormsModule],
   templateUrl: './auth-login.component.html',
   styleUrl: './auth-login.component.scss'
 })
 export class AuthLoginComponent {
   router = inject(Router);
   authService = inject(AuthService);
+  userService = inject(UserService);
 
   isLoading = false;
   errorMessage = '';
@@ -36,7 +38,7 @@ export class AuthLoginComponent {
     this.authService.login(this.loginRequest).subscribe({
       next: (user) => {
         console.log('Login success:', user);
-        localStorage.setItem('currentUser', JSON.stringify(user));
+        this.userService.updateUser(user); // Use UserService to update state
         this.isLoading = false;
         this.router.navigate(['/dashboard/home']);
       },
