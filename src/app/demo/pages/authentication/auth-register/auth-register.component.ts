@@ -4,10 +4,11 @@ import { HttpClient } from '@angular/common/http';
 import { AuthService } from 'src/app/services/authservice';
 import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-auth-register',
-  imports: [RouterModule, FormsModule, ReactiveFormsModule],
+  imports: [RouterModule, FormsModule, ReactiveFormsModule, CommonModule],
   templateUrl: './auth-register.component.html',
   styleUrl: './auth-register.component.scss'
 })
@@ -28,27 +29,55 @@ export class AuthRegisterComponent {
     address: '',
     password: '',
     image: '',
-    petName: '',
-    petType: 'DOG',
-    congenitalDisease: 'ไม่มี',
-    petBirthdate: '',
-    petWeight: 0,
-    petGender: 'MALE',
-    petBreed: '',
-    petImage: '',
-    petIsSterilized: false
+    pets: [
+      {
+        petName: '',
+        petType: 'DOG',
+        congenitalDisease: 'ไม่มี',
+        petBirthdate: '',
+        petWeight: 0,
+        petGender: 'MALE',
+        petBreed: '',
+        petImage: '',
+        petIsSterilized: false
+      }
+    ]
   };
 
   diseases = ['ไม่มี', 'ภูมิแพ้', 'โรคผิวหนัง', 'โรคหัวใจ', 'โรคไต', 'โรคอ้วน', 'โรคข้อเสื่อม', 'โรคระบบทางเดินอาหาร', 'อื่นๆ'];
 
-  onFileSelected(event: any, field: 'image' | 'petImage') {
+  onFileSelected(event: any, field: 'image' | 'petImage', index?: number) {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = (e: any) => {
-        this.registerData[field] = e.target.result; // Base64 string
+        if (field === 'image') {
+          this.registerData.image = e.target.result;
+        } else if (field === 'petImage' && index !== undefined) {
+          this.registerData.pets[index].petImage = e.target.result;
+        }
       };
       reader.readAsDataURL(file);
+    }
+  }
+
+  addPet() {
+    this.registerData.pets.push({
+      petName: '',
+      petType: 'DOG',
+      congenitalDisease: 'ไม่มี',
+      petBirthdate: '',
+      petWeight: 0,
+      petGender: 'MALE',
+      petBreed: '',
+      petImage: '',
+      petIsSterilized: false
+    });
+  }
+
+  removePet(index: number) {
+    if (this.registerData.pets.length > 1) {
+      this.registerData.pets.splice(index, 1);
     }
   }
 
