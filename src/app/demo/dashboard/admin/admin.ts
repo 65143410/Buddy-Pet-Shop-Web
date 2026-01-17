@@ -8,10 +8,15 @@ import { IncomeOverviewChartComponent } from 'src/app/theme/shared/apexchart/inc
 import { AnalyticsChartComponent } from 'src/app/theme/shared/apexchart/analytics-chart/analytics-chart.component';
 import { SalesReportChartComponent } from 'src/app/theme/shared/apexchart/sales-report-chart/sales-report-chart.component';
 
+import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import ExcelJS from 'exceljs';
+import html2canvas from 'html2canvas';
+import { saveAs } from 'file-saver';
+
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule, MonthlyBarChartComponent, IncomeOverviewChartComponent, AnalyticsChartComponent, SalesReportChartComponent],
+  imports: [CommonModule, FormsModule, NgbDropdownModule, MonthlyBarChartComponent, IncomeOverviewChartComponent, AnalyticsChartComponent, SalesReportChartComponent],
   templateUrl: './admin.html',
   styleUrl: './admin.scss'
 })
@@ -471,4 +476,133 @@ export class Admin implements OnInit {
         }
       });
   }
+
+  exportReport(): void {
+    window.print();
+  }
+
+  exportToExcel(): void {
+    const revenueObs = this.adminService.getDailyRevenue();
+    const salesObs = this.adminService.getMonthlySales();
+    const weeklyObs = this.adminService.getWeeklyOrders();
+
+    this.adminService.getMonthlySales().subscribe({
+      next: (monthlyData) => {
+        this.adminService.getDailyRevenue().subscribe({
+          next: (dailyData) => {
+            this.generateFullExcel(monthlyData, dailyData);
+          },
+          error: () => this.generateFullExcel(monthlyData, [])
+        });
+      },
+      error: () => this.generateFullExcel([], [])
+    });
+  }
+
+  async generateFullExcel(monthlySales: any[], dailyRevenue: any[]) {
+    const workbook = new ExcelJS.Workbook();
+    workbook.creator = 'Buddy PetShop System';
+    workbook.created = new Date();
+
+    // --- Sheet 1: Dashboard Charts (Visuals) ---
+    const chartSheet = workbook.addWorksheet('Dashboard Visuals');
+    chartSheet.addRow(['Dashboard Report', new Date().toLocaleString()]);
+    chartSheet.addRow(['Graphs & Charts Snapshot']);
+    chartSheet.addRow([]); // Spacer
+
+    // Capture Charts Logic
+    const chartIds = ['monthlyChartContainer', 'incomeChartContainer', 'analyticsChartContainer', 'salesReportChartContainer'];
+    const chartTitles = ['Monthly Sales', 'Income Overview', 'Analytics', 'Sales Distribution'];
+
+    let currentRow = 4; // Start row for images
+
+    for (let i = 0; i < chartIds.length; i++) {
+      const id = chartIds[i];
+      const element = document.getElementById(id);
+      if (element) {
+        try {
+          const canvas = await html2canvas(element, { scale: 2 }); // Scale 2 for better quality
+          const base64 = canvas.toDataURL('image/png');
+
+          const imageId = workbook.addImage({
+            base64: base64,
+            extension: 'png',
+          });
+
+          chartSheet.addRow([chartTitles[i]]);
+          // Add Image
+          chartSheet.addImage(imageId, {
+            tl: { col: 0, row: currentRow },
+            ext: { width: 500, height: 300 }
+          });
+
+          currentRow += 16; // Move down (approx 15-20 rows per chart)
+          // Add empty rows to spacing
+          for (let r = 0; r < 15; r++) chartSheet.addRow([]);
+
+        } catch (e) {
+          console.error(`Error capturing chart ${id}`, e);
+          chartSheet.addRow([`Error capturing ${chartTitles[i]}`]);
+        }
+      }
+    }
+
+    // --- Sheet 2: Executive Summary (Data) ---
+    const summarySheet = workbook.addWorksheet('Executive Summary');
+    const totalRevenue = this.orders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+    const totalOrders = this.orders.length;
+    const avgOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
+    const totalCustomers = this.customers.length;
+
+    summarySheet.addRow(['KPI', 'Value']);
+    summarySheet.addRow(['Total Revenue', totalRevenue]);
+    summarySheet.addRow(['Total Orders', totalOrders]);
+    summarySheet.addRow(['Avg. Order Value', avgOrderValue]);
+    summarySheet.addRow(['Total Customers', totalCustomers]);
+    summarySheet.addRow([]);
+    summarySheet.addRow(['System Stats']);
+    this.stats.forEach(s => summarySheet.addRow([s.label, s.value]));
+
+    // --- Sheet 3: Monthly Sales Data ---
+    const monthlySheet = workbook.addWorksheet('Monthly Sales Data');
+    monthlySheet.addRow(['Month', 'Sales Amount', 'Order Count']);
+    monthlySales.forEach(m => monthlySheet.addRow([m.month || m.label, m.totalSales || m.value, m.orderCount || 0]));
+
+    // --- Sheet 4: Top Sellers ---
+    const topSheet = workbook.addWorksheet('Top Sellers');
+    topSheet.addRow(['Rank', 'Item Name', 'Revenue']);
+    // Simple calculation again for top products (or use existing calc logic)
+    // ... Calculate Top Products Logic ...
+    const productSalesMap = new Map<string, number>();
+    this.orders.forEach(o => o.orderDetails?.forEach(d => {
+      const name = d.product?.productName || 'Unknown';
+      productSalesMap.set(name, (productSalesMap.get(name) || 0) + (d.unitPrice * d.quantity));
+    }));
+    const topProducts = Array.from(productSalesMap.entries()).sort((a, b) => b[1] - a[1]).slice(0, 10);
+
+    topProducts.forEach((p, idx) => topSheet.addRow([idx + 1, p[0], p[1]]));
+
+    // --- Sheet 5: All Orders ---
+    const orderSheet = workbook.addWorksheet('All Orders');
+    orderSheet.addRow(['Order ID', 'Date', 'Customer', 'Total', 'Status']);
+    this.orders.forEach(o => orderSheet.addRow([
+      o.orderId, o.orderDate, o.customer?.customerName, o.totalAmount, o.status?.statusName
+    ]));
+
+    // --- Generate & Save ---
+    const buffer = await workbook.xlsx.writeBuffer();
+    this.saveAsExcelFile(buffer, 'BuddyPetShop_Full_Report');
+  }
+
+  private saveAsExcelFile(buffer: any, fileName: string): void {
+    const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+    const EXCEL_EXTENSION = '.xlsx';
+    const data: Blob = new Blob([buffer], { type: EXCEL_TYPE });
+
+    const date = new Date();
+    const dateStamp = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+
+    saveAs(data, fileName + '_' + dateStamp + EXCEL_EXTENSION);
+  }
 }
+// Import at top (simulated here for clarity, but I will add real imports at file top)

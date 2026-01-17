@@ -37,3 +37,25 @@ File: style.css
 
 @import 'scss/themes/preset-style.scss';
 
+
+@media print {
+
+    app-nav-bar,
+    app-navigation,
+    .pc-sidebar,
+    .pc-footer,
+    .pc-menu-overlay,
+    .no-print {
+        display: none !important;
+    }
+
+    .pc-container {
+        margin-left: 0 !important;
+        top: 0 !important;
+    }
+
+    .page-wrapper {
+        padding: 0 !important;
+        margin-top: 0 !important;
+    }
+}

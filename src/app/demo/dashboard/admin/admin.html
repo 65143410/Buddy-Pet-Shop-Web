@@ -14,7 +14,23 @@
 
   <main class="content-wrapper">
     <div class="content-area" *ngIf="currentPage === 'dashboard'">
-      <h2>📊 ภาพรวมระบบ</h2>
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>📊 ภาพรวมระบบ</h2>
+
+        <div class="dropdown no-print" ngbDropdown placement="bottom-end">
+          <button class="btn btn-outline-primary dropdown-toggle" type="button" id="exportDropdown" ngbDropdownToggle>
+            <i class="fas fa-file-export me-2"></i> Export Report
+          </button>
+          <div class="dropdown-menu" aria-labelledby="exportDropdown" ngbDropdownMenu>
+            <button class="dropdown-item" (click)="exportReport()">
+              <i class="fas fa-print me-2 text-muted"></i> Print Report / PDF
+            </button>
+            <button class="dropdown-item" (click)="exportToExcel()">
+              <i class="fas fa-file-excel me-2 text-success"></i> Export to Excel
+            </button>
+          </div>
+        </div>
+      </div>
       <div class="dashboard-grid">
         <div class="stat-card" *ngFor="let s of stats">
           <div class="card-icon" *ngIf="s.icon">
@@ -29,19 +45,19 @@
 
       <!-- Added Monthly Bar Chart -->
       <div class="row mt-4">
-        <div class="col-md-8">
+        <div class="col-md-8" id="monthlyChartContainer">
           <app-monthly-bar-chart></app-monthly-bar-chart>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4" id="incomeChartContainer">
           <app-income-overview-chart></app-income-overview-chart>
         </div>
       </div>
 
       <div class="row mt-4">
-        <div class="col-md-8">
+        <div class="col-md-8" id="analyticsChartContainer">
           <app-analytics-chart></app-analytics-chart>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4" id="salesReportChartContainer">
           <app-sales-report-chart></app-sales-report-chart>
         </div>
       </div>

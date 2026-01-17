@@ -671,3 +671,28 @@
     box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
   }
 }
+
+@media print {
+
+  .no-print,
+  .sidebar,
+  .sidebar-header,
+  .sidebar-nav,
+  app-nav-bar,
+  app-navigation,
+  .pc-footer,
+  .admin-layout> :first-child {
+    /* Hide sidebar container */
+    display: none !important;
+  }
+
+  .content-wrapper {
+    padding: 0;
+    margin: 0;
+  }
+
+  .admin-layout {
+    height: auto;
+    overflow: visible;
+  }
+}
