@@ -39,4 +39,20 @@ export class UserService {
     getCurrentUserValue(): Customer | null {
         return this.currentUserSubject.value;
     }
+
+    getUserRole(): 'ADMIN' | 'MANAGER' | 'STAFF' | 'CUSTOMER' | null {
+        const user: any = this.getCurrentUserValue();
+        if (!user) return null;
+
+        if (user.adminId) return 'ADMIN';
+        if (user.staffId) {
+            const pos = (user.position || '').toUpperCase();
+            if (pos === 'MANAGER') return 'MANAGER';
+            if (pos === 'ADMIN') return 'ADMIN';
+            return 'STAFF';
+        }
+        if (user.customerId) return 'CUSTOMER';
+
+        return null;
+    }
 }

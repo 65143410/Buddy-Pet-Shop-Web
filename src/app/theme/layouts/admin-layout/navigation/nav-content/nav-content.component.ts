@@ -6,6 +6,7 @@ import { RouterModule } from '@angular/router';
 // project import
 import { NavigationItem, NavigationItems } from '../navigation';
 import { environment } from 'src/environments/environment';
+import { UserService } from 'src/app/services/user.service';
 
 import { NavGroupComponent } from './nav-group/nav-group.component';
 
@@ -34,6 +35,7 @@ export class NavContentComponent implements OnInit {
   private location = inject(Location);
   private locationStrategy = inject(LocationStrategy);
   private iconService = inject(IconService);
+  private userService = inject(UserService);
 
   // public props
   NavCollapsedMob = output();
@@ -62,11 +64,35 @@ export class NavContentComponent implements OnInit {
         QuestionOutline
       ]
     );
-    this.navigations = NavigationItems;
+    this.navigations = []; // เริ่มต้นเป็นว่าง
+  }
+
+  private filterNavigationByRole(items: NavigationItem[]): NavigationItem[] {
+    const role = this.userService.getUserRole();
+
+    return items
+      .filter((item) => {
+        // ถ้าไม่มีการกำหนด role ให้ผ่าน (เผื่อเมนูทั่วไป)
+        if (!item.roles) return true;
+        // ถ้ามี role ให้เช็คว่าตรงกับสิทธิ์ของผู้ใช้ไหม
+        return role ? item.roles.includes(role) : false;
+      })
+      .map((item) => {
+        // ถ้ามีลูก ให้กรองลูกด้วย (Recursive)
+        if (item.children) {
+          return { ...item, children: this.filterNavigationByRole(item.children) };
+        }
+        return item;
+      });
   }
 
   // Life cycle events
   ngOnInit() {
+    // ติดตามการเปลี่ยนแปลงของผู้ใช้ เพื่อกรองเมนูใหม่ทันที
+    this.userService.currentUser$.subscribe(() => {
+      this.navigations = this.filterNavigationByRole(NavigationItems);
+    });
+
     if (this.windowWidth < 1025) {
       (document.querySelector('.coded-navbar') as HTMLDivElement).classList.add('menupos-static');
     }

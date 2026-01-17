@@ -16,6 +16,7 @@ export interface NavigationItem {
   link?: string;
   description?: string;
   path?: string;
+  roles?: string[]; // เพิ่มฟิลด์ roles กลับมา
 }
 
 export const NavigationItems: NavigationItem[] = [
@@ -33,7 +34,8 @@ export const NavigationItems: NavigationItem[] = [
         classes: 'nav-item',
         url: '/dashboard/home',
         icon: 'global',
-        breadcrumbs: false
+        breadcrumbs: false,
+        roles: ['ADMIN', 'MANAGER', 'STAFF', 'CUSTOMER']
       },
       {
         id: 'admin',
@@ -42,7 +44,8 @@ export const NavigationItems: NavigationItem[] = [
         classes: 'nav-item',
         url: '/dashboard/admin',
         icon: 'dashboard',
-        breadcrumbs: false
+        breadcrumbs: false,
+        roles: ['ADMIN', 'MANAGER']
       },
       {
         id: 'staff',
@@ -51,7 +54,8 @@ export const NavigationItems: NavigationItem[] = [
         classes: 'nav-item',
         url: '/dashboard/staff',
         icon: 'dashboard',
-        breadcrumbs: false
+        breadcrumbs: false,
+        roles: ['ADMIN', 'MANAGER', 'STAFF']
       },
     ]
   },

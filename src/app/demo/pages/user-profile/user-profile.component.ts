@@ -373,10 +373,8 @@ export class UserProfileComponent implements OnInit {
   ngOnInit() {
     this.userService.currentUser$.subscribe(user => {
       this.currentUser = user;
-      if (this.currentUser) {
+      if (this.currentUser && this.currentUser.customerId) {
         this.loadOrders(this.currentUser.customerId);
-      } else {
-        // Maybe redirect if not logged in, but better to check in refreshUserData logic
       }
     });
     this.refreshUserData();
@@ -390,7 +388,9 @@ export class UserProfileComponent implements OnInit {
           next: (res: any) => {
             this.userService.updateUser(res);
           },
-          error: () => this.loadOrders(currentUser.customerId)
+          error: () => {
+            if (currentUser.customerId) this.loadOrders(currentUser.customerId);
+          }
         });
       }
     } else {

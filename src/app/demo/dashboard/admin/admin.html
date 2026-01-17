@@ -709,7 +709,7 @@
             <input type="password" [(ngModel)]="newStaff.password" placeholder="กำหนดรหัสผ่าน"
               style="flex: 1; padding: 8px;">
             <select [(ngModel)]="newStaff.position" style="flex: 1; padding: 8px;">
-              <option value="ADMIN">🔑 Admin</option>
+              <option value="ADMIN" *ngIf="currentRole === 'ADMIN'">🔑 Admin</option>
               <option value="MANAGER">👔 Manager</option>
               <option value="STAFF">👤 Staff</option>
             </select>
@@ -792,7 +792,8 @@
 
               <div class="info-item">
                 <label>ตำแหน่งหน้าที่</label>
-                <select [(ngModel)]="selectedStaff.position" class="form-select">
+                <select [(ngModel)]="selectedStaff.position" class="form-select"
+                  [disabled]="currentRole === 'MANAGER' && selectedStaff.position === 'ADMIN'">
                   <option value="ADMIN">🔑 ADMIN</option>
                   <option value="MANAGER">👔 MANAGER</option>
                   <option value="STAFF">👤 STAFF</option>

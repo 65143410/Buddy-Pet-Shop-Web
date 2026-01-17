@@ -7,6 +7,7 @@ import { MonthlyBarChartComponent } from 'src/app/theme/shared/apexchart/monthly
 import { IncomeOverviewChartComponent } from 'src/app/theme/shared/apexchart/income-overview-chart/income-overview-chart.component';
 import { AnalyticsChartComponent } from 'src/app/theme/shared/apexchart/analytics-chart/analytics-chart.component';
 import { SalesReportChartComponent } from 'src/app/theme/shared/apexchart/sales-report-chart/sales-report-chart.component';
+import { UserService } from 'src/app/services/user.service';
 
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import ExcelJS from 'exceljs';
@@ -74,8 +75,12 @@ export class Admin implements OnInit {
   };
   readonly adminAllowedStatuses = ['รอตรวจสอบยอดเงิน', 'ชำระเงินแล้ว', 'ยกเลิก/สลิปไม่ถูกต้อง'];
   private adminService = inject(AdminApiService);
+  private userService = inject(UserService);
+
+  currentRole: string | null = null;
 
   ngOnInit(): void {
+    this.currentRole = this.userService.getUserRole();
     this.loadInitialData();
     this.loadCategories();
     this.loadProductLogs();
@@ -293,6 +298,12 @@ export class Admin implements OnInit {
   }
 
   toggleStaffStatus(staff: Staff): void {
+    // ✨ เพิ่มการตรวจสอบสิทธิ์สำหรับ MANAGER
+    if (this.currentRole === 'MANAGER' && staff.position === 'ADMIN') {
+      alert('ขออภัย: ในฐานะ Manager คุณไม่มีสิทธิ์เปลี่ยนสถานะ (ระงับ/เปิด) ของผู้ดูแลระบบ (ADMIN) ได้ครับ');
+      return;
+    }
+
     const newStatus = staff.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
     this.adminService.updateStaffStatus(staff.staffId, newStatus).subscribe({
       next: (msg) => {
@@ -470,6 +481,17 @@ export class Admin implements OnInit {
   }
   saveStaffChanges(staff: Staff | null): void {
     if (!staff) return;
+
+    // ✨ เพิ่มการตรวจสอบสิทธิ์สำหรับ MANAGER
+    if (this.currentRole === 'MANAGER') {
+      const originalStaff = this.staffs.find(s => s.staffId === staff.staffId);
+      if (originalStaff && originalStaff.position === 'ADMIN') {
+        alert('ขออภัย: ในฐานะ Manager คุณไม่มีสิทธิ์แก้ไขข้อมูลหรือตำแหน่งของผู้ดูแลระบบ (ADMIN) ได้ครับ');
+        this.loadInitialData(); // รีโหลดข้อมูลเพื่อคืนค่าเดิม
+        this.selectedStaff = null;
+        return;
+      }
+    }
 
     // Create a clean object with only necessary fields to avoid Jackson 400 errors
     const cleanData: any = {

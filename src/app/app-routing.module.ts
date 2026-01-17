@@ -29,27 +29,33 @@ export const routes: Routes = [
       },
       {
         path: 'dashboard/home',
-        component: Home
+        component: Home,
+        data: { roles: ['ADMIN', 'MANAGER', 'STAFF', 'CUSTOMER'] }
       },
       {
         path: 'dashboard/profile',
-        loadComponent: () => import('./demo/pages/user-profile/user-profile.component').then(c => c.UserProfileComponent)
+        loadComponent: () => import('./demo/pages/user-profile/user-profile.component').then(c => c.UserProfileComponent),
+        data: { roles: ['ADMIN', 'MANAGER', 'STAFF', 'CUSTOMER'] }
       },
       {
         path: 'dashboard/admin',
-        component: Admin
+        component: Admin,
+        data: { roles: ['ADMIN', 'MANAGER'] }
       },
       {
         path: 'dashboard/staff',
-        component: Staff
+        component: Staff,
+        data: { roles: ['ADMIN', 'MANAGER', 'STAFF'] }
       },
       {
         path: 'home/product/:id',
-        component: ProductList
+        component: ProductList,
+        data: { roles: ['ADMIN', 'MANAGER', 'STAFF', 'CUSTOMER'] }
       },
       {
         path: 'home/detail/:id',
-        component: ProductDetail
+        component: ProductDetail,
+        data: { roles: ['ADMIN', 'MANAGER', 'STAFF', 'CUSTOMER'] }
       },
     ]
   },
