@@ -69,7 +69,8 @@ export class Admin implements OnInit {
     },
     isActive: true,
     brand: '',
-    weightVolume: ''
+    weightVolume: '',
+    image: ''
   };
   readonly adminAllowedStatuses = ['รอตรวจสอบยอดเงิน', 'ชำระเงินแล้ว', 'ยกเลิก/สลิปไม่ถูกต้อง'];
   private adminService = inject(AdminApiService);

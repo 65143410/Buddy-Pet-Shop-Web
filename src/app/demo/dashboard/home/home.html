@@ -63,8 +63,7 @@
               <a class="card h-100 product-card shadow-sm product-link"
                 (click)="handleCardClick($event, item.productId)">
                 <div class="product-image-container">
-                  <!-- <img class="card-img-top" [src]="item.image || temp_img_url" [alt]="item.productName" loading="lazy"> -->
-                  <img class="card-img-top" [src]="temp_img_url" [alt]="item.productName" loading="lazy">
+                  <img class="card-img-top" [src]="item.image || temp_img_url" [alt]="item.productName" loading="lazy">
                 </div>
                 <div class="card-body d-flex flex-column">
                   <div class="mb-2">
