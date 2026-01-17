@@ -1,14 +1,40 @@
 .petshop-bg {
-  background:
-    radial-gradient(circle at 2px 2px, rgba(255, 159, 67, 0.05) 1px, transparent 0);
-  background-size: 32px 32px;
-  /* ลายจุดจางๆ */
-  background-color: #fff9e3;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
+  position: relative;
+  overflow: hidden;
+  /* กันสัตว์ดุ๊กดิ๊กหลุดขอบจอ */
+
+  /* Layer 1: พื้นหลังสีครีมอุ่นๆ */
+  background-color: #fff9e3;
+
+  /* Layer 2: ลาย Polka Dot จางๆ */
+  background-image:
+    radial-gradient(circle at 2px 2px, rgba(255, 159, 67, 0.1) 1px, transparent 0);
+  background-size: 40px 40px;
+}
+
+.petshop-bg::before {
+  content: '🐾';
+  position: absolute;
+  font-size: 150px;
+  opacity: 0.03;
+  top: 10%;
+  left: -50px;
+  transform: rotate(-20deg);
+}
+
+.petshop-bg::after {
+  content: '🐾';
+  position: absolute;
+  font-size: 120px;
+  opacity: 0.03;
+  bottom: 5%;
+  right: -30px;
+  transform: rotate(15deg);
 }
 
 .auth-form {
@@ -98,4 +124,208 @@
   justify-content: center;
   margin: 0 auto;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* แอนิเมชันสำหรับไอคอนอุ้งเท้าให้ขยับไปมา */
+.pet-logo-circle i {
+  display: inline-block;
+  animation: pawWiggle 2s ease-in-out infinite;
+}
+
+@keyframes pawWiggle {
+
+  0%,
+  100% {
+    transform: rotate(-10deg) scale(1);
+  }
+
+  50% {
+    transform: rotate(10deg) scale(1.1);
+  }
+}
+
+/* สร้างตัว Mascot ดิ้นดุ๊กดิ๊กข้างกล่อง Login */
+.auth-form {
+  position: relative;
+  /* เพื่อให้ Mascot เกาะขอบได้ */
+}
+
+.auth-form::before {
+  content: "🐶";
+  /* หรือใช้รูปภาพแทนได้ */
+  font-size: 50px;
+  position: absolute;
+  top: -40px;
+  right: 10px;
+  animation: mascotBounce 3s ease-in-out infinite;
+  z-index: 1;
+}
+
+.auth-form::after {
+  content: "🐱";
+  font-size: 40px;
+  position: absolute;
+  bottom: -20px;
+  left: -30px;
+  animation: mascotFloat 4s ease-in-out infinite;
+  z-index: 1;
+}
+
+@keyframes mascotBounce {
+
+  0%,
+  100% {
+    transform: translateY(0) rotate(5deg);
+  }
+
+  50% {
+    transform: translateY(-15px) rotate(-5deg);
+  }
+}
+
+@keyframes mascotFloat {
+
+  0%,
+  100% {
+    transform: translateX(0) rotate(0deg);
+  }
+
+  50% {
+    transform: translateX(10px) rotate(10deg);
+  }
+}
+
+/* เพิ่มลูกเล่นให้ปุ่ม ตอนโหลด (isLoading) ให้มีการขยับ */
+.spinner-border-sm {
+  animation: spin 1s linear infinite;
+}
+
+.pet-wiggle-text {
+  display: inline-block;
+  animation: textWave 2s infinite;
+}
+
+@keyframes textWave {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+    color: #ff9f43;
+  }
+}
+
+.bg-pet-friend {
+  position: absolute;
+  font-size: 40px;
+  user-select: none;
+  z-index: 0;
+  filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.05));
+}
+
+/* ตัวที่ 1: หมาทางซ้ายบน */
+.dog-top-left {
+  top: 15%;
+  left: 10%;
+  animation: bg-wiggle 4s ease-in-out infinite;
+}
+
+/* ตัวที่ 2: แมวทางขวาล่าง */
+.cat-bottom-right {
+  bottom: 15%;
+  right: 10%;
+  animation: bg-wiggle 5s ease-in-out infinite reverse;
+}
+
+/* ตัวที่ 3: กระต่ายกระโดดไปมา */
+.rabbit-bottom-left {
+  bottom: 10%;
+  left: 15%;
+  animation: bg-jump 3s ease-in-out infinite;
+}
+
+/* แอนิเมชันส่ายไปมา */
+@keyframes bg-wiggle {
+
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(-10deg);
+  }
+
+  50% {
+    transform: translate(15px, -15px) rotate(10deg);
+  }
+}
+
+/* แอนิเมชันกระโดด */
+@keyframes bg-jump {
+
+  0%,
+  100% {
+    transform: translateY(0) scale(1, 1);
+  }
+
+  30% {
+    transform: translateY(-30px) scale(0.9, 1.1);
+  }
+
+  50% {
+    transform: translateY(0) scale(1.1, 0.9);
+  }
+}
+
+.floating-item {
+  position: absolute;
+  z-index: 0;
+  opacity: 0.6;
+  user-select: none;
+  pointer-events: none;
+  /* เพื่อให้กดผ่านไปโดนปุ่มข้างหลังได้ */
+  filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.05));
+}
+
+/* แอนิเมชันลอยแบบสุ่ม */
+@keyframes float-around {
+
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  25% {
+    transform: translate(10px, -20px) rotate(5deg);
+  }
+
+  50% {
+    transform: translate(-5px, -40px) rotate(-5deg);
+  }
+
+  75% {
+    transform: translate(-15px, -20px) rotate(3deg);
+  }
+}
+
+/* แอนิเมชันสำหรับสัตว์ที่วิ่งข้ามจอ */
+@keyframes walk-across {
+  from {
+    left: -100px;
+  }
+
+  to {
+    left: 110%;
+  }
+}
+
+.auth-card {
+  border: none;
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.9);
+  /* ขาวโปร่งแสง */
+  backdrop-filter: blur(10px);
+  /* เบลอข้างหลัง */
+  box-shadow: 0 15px 35px rgba(255, 159, 67, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.5);
 }
