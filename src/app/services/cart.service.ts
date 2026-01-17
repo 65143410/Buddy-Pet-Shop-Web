@@ -13,19 +13,27 @@ export class CartService {
     return this.cartItems.reduce((total, item) => item.qty + total, 0);
   }
 
-  constructor() {}
+  constructor() { }
 
   add(product: Product): void {
     const existingItem = this.cartItems.find((item) => item.productId === product.productId);
 
     if (existingItem) {
-      existingItem.qty++;
+      if (existingItem.qty < product.stock) {
+        existingItem.qty++;
+      } else {
+        alert(`สินค้า ${product.productName} มีจำนวนจำกัดในสต็อก (${product.stock} ชิ้น)`);
+      }
     } else {
-      const newCartItem: CartProduct = {
-        ...product,
-        qty: 1
-      };
-      this.cartItems.push(newCartItem);
+      if (product.stock > 0) {
+        const newCartItem: CartProduct = {
+          ...product,
+          qty: 1
+        };
+        this.cartItems.push(newCartItem);
+      } else {
+        alert('สินค้านี้หมดสต็อกแล้ว');
+      }
     }
     this.cartUpdates.next();
   }

@@ -80,7 +80,16 @@ export class CartList implements OnInit {
     this.cartService.remove(item.productId);
   }
 
-  chngQuantity(): void {
+  chngQuantity(item?: CartProduct): void {
+    if (item) {
+      if (item.qty > item.stock) {
+        alert(`สินค้า ${item.productName} มีจำนวนจำกัดในสต็อก (${item.stock} ชิ้น)`);
+        item.qty = item.stock;
+      }
+      if (item.qty < 1) {
+        item.qty = 1;
+      }
+    }
     this.updateCartData();
   }
 

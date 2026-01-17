@@ -61,7 +61,8 @@
               </div>
               <div class="col-3">
                 <input type="number" class="form-control form-control-sm qty-input mx-auto" [(ngModel)]="item.qty"
-                  (ngModelChange)="chngQuantity()" min="1">
+                  (ngModelChange)="chngQuantity(item)" [max]="item.stock" min="1">
+                <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">(มี {{ item.stock }})</small>
               </div>
               <div class="col-2 text-end">
                 <div class="fw-bold text-primary">รวม: {{ (item.price * item.qty) | currency:'THB' }}</div>
