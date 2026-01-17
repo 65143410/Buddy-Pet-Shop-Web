@@ -604,5 +604,10 @@ export class Admin implements OnInit {
 
     saveAs(data, fileName + '_' + dateStamp + EXCEL_EXTENSION);
   }
+
+  getOrderCountByStatus(statusName: string): number {
+    if (statusName === 'ทั้งหมด') return this.orders.length;
+    return this.orders.filter(o => o.status?.statusName === statusName).length;
+  }
 }
 // Import at top (simulated here for clarity, but I will add real imports at file top)

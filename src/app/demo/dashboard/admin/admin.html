@@ -1,4 +1,4 @@
-<div class="admin-layout">
+﻿<div class="admin-layout">
   <aside class="sidebar">
     <div class="sidebar-header">
       <h3>🐾 PetStore Admin</h3>
@@ -365,6 +365,10 @@
           [style.color]="selectedStatusFilter === st ? 'white' : '#444'"
           style="border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; transition: 0.3s; font-size: 14px; font-weight: 500; border: 1px solid #ddd;">
           {{ st }}
+          <span *ngIf="st === 'รอตรวจสอบยอดเงิน' && getOrderCountByStatus(st) > 0"
+            class="badge bg-danger rounded-pill ms-1">
+            {{ getOrderCountByStatus(st) }}
+          </span>
         </button>
       </div>
       <table class="data-table">
@@ -770,7 +774,8 @@
               <div class="info-item">
                 <label>ตำแหน่งหน้าที่</label>
                 <select [(ngModel)]="selectedStaff.position" class="form-select">
-                  <option value="SALES">🛒 พนักงานขาย (Sales)</option>
+                  <option value="ADMIN">� ผู้ดูแลระบบ (Admin)</option>
+                  <option value="SALES">� พนักงานขาย (Sales)</option>
                   <option value="DELIVERY">🚚 พนักงานจัดส่ง (Delivery)</option>
                 </select>
               </div>
