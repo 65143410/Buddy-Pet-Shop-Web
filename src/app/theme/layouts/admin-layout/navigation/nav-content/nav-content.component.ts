@@ -69,13 +69,16 @@ export class NavContentComponent implements OnInit {
 
   private filterNavigationByRole(items: NavigationItem[]): NavigationItem[] {
     const role = this.userService.getUserRole();
+    console.log('Current User Role for Menu Filtering:', role);
 
     return items
       .filter((item) => {
         // ถ้าไม่มีการกำหนด role ให้ผ่าน (เผื่อเมนูทั่วไป)
         if (!item.roles) return true;
         // ถ้ามี role ให้เช็คว่าตรงกับสิทธิ์ของผู้ใช้ไหม
-        return role ? item.roles.includes(role) : false;
+        const hasAccess = role ? item.roles.includes(role) : false;
+        console.log(`Menu Item: ${item.title}, Required Roles: ${item.roles}, Access Granted: ${hasAccess}`);
+        return hasAccess;
       })
       .map((item) => {
         // ถ้ามีลูก ให้กรองลูกด้วย (Recursive)

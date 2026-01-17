@@ -83,6 +83,23 @@
     margin-bottom: 10px;
     border-bottom: 2px solid #f4f7f6;
     padding-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.task-count-badge {
+    background-color: #ff5252;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: bold;
+    padding: 2px 10px;
+    border-radius: 20px;
+    min-width: 25px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(255, 82, 82, 0.3);
 }
 
 .description {

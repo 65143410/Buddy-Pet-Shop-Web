@@ -15,7 +15,7 @@
   <div class="staff-content">
 
     <div class="section my-tasks" *ngIf="myPreparingTasks.length > 0">
-      <h2>📋 งานที่กำลังดำเนินการของคุณ</h2>
+      <h2>📋 งานที่กำลังดำเนินการของคุณ <span class="task-count-badge">{{ myPreparingTasks.length }}</span></h2>
       <table class="data-table">
         <thead>
           <tr>
