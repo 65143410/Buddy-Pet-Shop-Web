@@ -106,3 +106,140 @@
     /* สีส้มอ่อน */
     border: 1px solid #ffe0b2;
 }
+
+.category-selection-page {
+    padding-top: 2rem;
+    padding-bottom: 4rem;
+    min-height: 100vh;
+
+    /* พื้นหลังสีครีมนวลสไตล์ Pet Store */
+    background-color: #fff9e3;
+    /* ลายจุด Polka Dot จางๆ เพื่อให้หน้าเว็บดูมีมิติ ไม่เรียบเกินไป */
+    background-image: radial-gradient(#ff9f43 0.8px, transparent 0.8px);
+    background-size: 32px 32px;
+
+    position: relative;
+    overflow-x: hidden;
+    /* กันสัตว์ยักษ์ทำหน้าจอกว้างเกินไป */
+}
+
+/* ทำให้เนื้อหาหลักลอยขึ้นมาจากพื้นหลังเล็กน้อย */
+.category-selection-page .container {
+    position: relative;
+    z-index: 2;
+}
+
+/* --- กองทัพสัตว์ยักษ์ลอยตัว (ตกแต่งพื้นหลัง) --- */
+.bg-pet-decoration {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    /* อยู่หลังเนื้อหาหลัก */
+    pointer-events: none;
+    /* กดคลิกทะลุได้ */
+    opacity: 0.12;
+    /* จางมากๆ เพื่อเป็นแค่ Background */
+}
+
+.pet-item {
+    position: absolute;
+    filter: grayscale(0.2);
+    animation: bgFloat 12s ease-in-out infinite alternate;
+}
+
+@keyframes bgFloat {
+    0% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+
+    100% {
+        transform: translate(20px, 40px) rotate(10deg);
+    }
+}
+
+.category-tile {
+    border: none;
+    /* เอาขอบออกเพื่อให้ดูละมุนขึ้น */
+    border-radius: 1.5rem;
+    /* มนกว่าเดิม */
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background-color: rgba(255, 255, 255, 0.9);
+    overflow: hidden;
+}
+
+/* เอฟเฟกต์หมุนของ Emoji */
+.emoji-container-spin {
+    font-size: 3.5rem;
+    /* ขนาดใหญ่เบิ้ม */
+    margin-bottom: 10px;
+    display: inline-block;
+    animation: slowSpin 6s linear infinite;
+    /* หมุนช้าๆ ตลอดเวลา */
+    filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.1));
+}
+
+@keyframes slowSpin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* เมื่อเอาเมาส์ชี้ที่ Card */
+.category-tile:hover {
+    transform: translateY(-10px) scale(1.05);
+    box-shadow: 0 15px 30px rgba(255, 159, 67, 0.2);
+    background-color: #ffffff;
+}
+
+/* เมื่อ Hover แล้วให้ Emoji หมุนแบบตื่นเต้น */
+.category-tile:hover .emoji-container-spin {
+    animation: excitement 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes excitement {
+    from {
+        transform: rotate(-10deg) scale(1.1);
+    }
+
+    to {
+        transform: rotate(10deg) scale(1.3);
+    }
+}
+
+.category-tile .card-body {
+    min-height: 180px;
+    /* เพิ่มพื้นที่ให้น้องหมุน */
+    padding: 1.5rem;
+}
+
+.card-title {
+    color: #2d3436;
+    z-index: 1;
+}
+
+/* ตกแต่ง Loading ตอนโหลด */
+.loading-spinner-cute {
+    font-size: 3rem;
+    animation: bounce 0.8s infinite;
+    display: inline-block;
+}
+
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
+}

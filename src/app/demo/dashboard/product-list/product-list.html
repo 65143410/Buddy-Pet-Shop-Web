@@ -1,76 +1,79 @@
-<div class="row mb-3">
-  <div class="col-12">
-    <a (click)="goHome()" class="text-decoration-none text-primary fw-bold" style="cursor: pointer; user-select: none;">
-      <i class="bi bi-arrow-left me-1"></i> กลับหน้าหลัก
-    </a>
-  </div>
-</div>
-
-<div class="row mb-4 align-items-center">
-  <div class="col-md-6 mb-2 mb-md-0">
-    <h2 class="h4 text-muted mb-0">
-      <i class="fas fa-paw text-primary me-2"></i>สินค้าทั้งหมด ({{ selectedCatList.length }} รายการ)
-    </h2>
+<div class="list-page-wrapper">
+  <div class="chaotic-bg-overlay">
+    <div class="hyper-pet" style="top: 10%; left: 2%; font-size: 140px;">🐶</div>
+    <div class="hyper-pet" style="top: 30%; right: 5%; font-size: 160px;">🐈</div>
+    <div class="hyper-pet" style="bottom: 15%; left: 5%; font-size: 180px;">🐹</div>
+    <div class="hyper-pet" style="bottom: 5%; right: 2%; font-size: 130px;">🐰</div>
+    <div class="hyper-pet" style="top: 50%; left: 45%; font-size: 80px;">🐾</div>
+    <div class="hyper-pet" style="top: 15%; left: 30%; font-size: 70px;">🦴</div>
+    <div class="hyper-pet" style="bottom: 40%; right: 20%; font-size: 90px;">🐟</div>
   </div>
 
-  <div class="col-md-6">
-    <div class="d-flex gap-2 justify-content-md-end">
-      <!-- Search Box -->
-      <div class="input-group" style="max-width: 250px;">
-        <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
-        <input type="text" class="form-control border-start-0 ps-0" placeholder="ค้นหาสินค้า..."
-          (keyup)="onSearch($event)">
+  <div class="container py-5 content-glass-layer">
+    <div class="row mb-3">
+      <div class="col-12">
+        <a (click)="goHome()" class="btn-back-cute">
+          <i class="bi bi-arrow-left me-1"></i> กลับหน้าหลัก
+        </a>
       </div>
-
-      <!-- Sort Select -->
-      <select class="form-select form-select-sm d-inline-block w-auto" (change)="onSortChange($event)">
-        <option value="recommended" selected>เรียงตาม: แนะนำ</option>
-        <option value="price_asc">ราคาน้อยไปมาก</option>
-        <option value="price_desc">ราคามากไปน้อย</option>
-        <option value="newest">สินค้ามาใหม่</option>
-      </select>
     </div>
-  </div>
-</div>
 
-<div class="row" *ngIf="selectedCatList.length === 0">
-  <div class="col-12 text-center py-5">
-    <i class="bi bi-box-seam display-1 text-light"></i>
-    <p class="text-muted mt-3">ขออภัย! ไม่พบสินค้าในหมวดหมู่นี้</p>
-  </div>
-</div>
-
-<div class="row" *ngIf="selectedCatList.length > 0">
-  <div class="col-6 col-md-4 col-lg-3 mb-4" *ngFor="let item of selectedCatList; trackBy: trackByProductId">
-
-    <a class="card h-100 product-card shadow-sm product-link" (click)="handleCardClick($event, item.productId)">
-
-      <div class="product-image-container">
-        <img class="card-img-top" [src]="item.image || temp_img_url" [alt]="item.productName" loading="lazy">
+    <div class="row mb-4 align-items-center header-box">
+      <div class="col-md-6">
+        <h2 class="h4 text-dark mb-0 fw-bold">
+          <i class="fas fa-paw text-orange me-2"></i>สินค้าทั้งหมด ({{ selectedCatList.length }} รายการ)
+        </h2>
       </div>
-      <div class="card-body d-flex flex-column">
-        <div class="mb-2">
-          <span *ngIf="item.targetPetType !== 'ALL'" class="badge rounded-pill bg-info text-dark me-1"
-            style="font-size: 0.7rem;">
-            {{ item.targetPetType === 'DOG' ? '🐕 สุนัข' : item.targetPetType === 'CAT' ? '🐈 แมว' : item.targetPetType
-            }}
-          </span>
-          <span *ngIf="item.suitableForDisease !== 'NONE'" class="badge rounded-pill bg-warning text-dark"
-            style="font-size: 0.7rem;">
-            ✨ สูตร: {{ item.suitableForDisease }}
-          </span>
+      <div class="col-md-6 mt-3 mt-md-0">
+        <div class="d-flex gap-2 justify-content-md-end">
+          <div class="input-group search-pill">
+            <span class="input-group-text bg-white border-0"><i class="fas fa-search text-muted"></i></span>
+            <input type="text" class="form-control border-0 ps-0" placeholder="ค้นหาสินค้า..."
+              (keyup)="onSearch($event)">
+          </div>
+          <select class="form-select sort-select-cute" (change)="onSortChange($event)">
+            <option value="recommended" selected>✨ แนะนำ</option>
+            <option value="price_asc">💰 ถูกไปแพง</option>
+            <option value="price_desc">💎 แพงไปถูก</option>
+            <option value="newest">🆕 มาใหม่</option>
+          </select>
         </div>
-        <h5 class="card-title product-title">{{ item.productName }}</h5>
-
-        <p class="card-text mt-auto">
-          <strong class="text-success h5">{{ item.price | currency: 'THB': 'symbol': '1.0-2' }}</strong>
-        </p>
-
-        <button type="button" (click)="addToCart(item); $event.stopPropagation()"
-          class="btn btn-primary mt-2 add-to-cart-btn">
-          <i class="bi bi-cart-plus-fill me-1"></i> เพิ่มลงตะกร้า
-        </button>
       </div>
-    </a>
+    </div>
+
+    <div class="row" *ngIf="selectedCatList.length === 0">
+      <div class="col-12 text-center py-5 empty-state">
+        <div class="bounce-icon">📦</div>
+        <p class="text-muted mt-3 h5">ขออภัย! ไม่พบสินค้าในหมวดหมู่นี้</p>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="selectedCatList.length > 0">
+      <div class="col-6 col-md-4 col-lg-3 mb-4" *ngFor="let item of selectedCatList; trackBy: trackByProductId">
+        <a class="card h-100 cute-product-card shadow-sm product-link"
+          (click)="handleCardClick($event, item.productId)">
+          <div class="product-image-container">
+            <img class="card-img-top" [src]="item.image || temp_img_url" [alt]="item.productName" loading="lazy">
+          </div>
+          <div class="card-body d-flex flex-column">
+            <div class="mb-2">
+              <span *ngIf="item.targetPetType !== 'ALL'" class="badge-custom blue">
+                {{ item.targetPetType === 'DOG' ? '🐕 สุนัข' : item.targetPetType === 'CAT' ? '🐈 แมว' : '🐹 หนู' }}
+              </span>
+              <span *ngIf="item.suitableForDisease !== 'NONE'" class="badge-custom orange">
+                ✨ {{ item.suitableForDisease }}
+              </span>
+            </div>
+            <h5 class="card-title product-title">{{ item.productName }}</h5>
+            <p class="card-text mt-auto text-success fw-bold h5">
+              {{ item.price | currency: 'THB': 'symbol': '1.0-2' }}
+            </p>
+            <button type="button" (click)="addToCart(item); $event.stopPropagation()" class="btn-add-to-cart">
+              <i class="bi bi-cart-plus-fill me-1"></i> เพิ่มลงตะกร้า
+            </button>
+          </div>
+        </a>
+      </div>
+    </div>
   </div>
 </div>

@@ -1,26 +1,154 @@
+/* คอนเทนเนอร์หลัก */
+.product-page-container {
+    min-height: 100vh;
+    background-color: #fff9e3;
+    background-image: radial-gradient(#ff9f43 1px, transparent 1px);
+    background-size: 30px 30px;
+    position: relative;
+    overflow: hidden;
+    /* กัน Emoji ล้นหน้าจอ */
+    padding: 40px 0;
+}
+
+/* เลเยอร์สัตว์เลี้ยงดุ๊กดิ๊ก */
+.chaotic-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.wild-pet {
+    position: absolute;
+    opacity: 0.15;
+    /* จางๆ เพื่อไม่ให้บังตัวหนังสือ */
+    user-select: none;
+    filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.1));
+    animation: extremeMove 10s ease-in-out infinite alternate;
+}
+
+/* สุ่มแอนิเมชันที่แตกต่างกัน */
+.wild-pet:nth-child(odd) {
+    animation: extremeSpin 15s linear infinite;
+}
+
+.wild-pet:nth-child(3n) {
+    animation: extremeJump 4s ease-in-out infinite alternate;
+}
+
+/* รวมความดุ๊กดิ๊ก: ทั้งเลื่อน ทั้งส่าย */
+@keyframes extremeMove {
+    0% {
+        transform: translate(0, 0) rotate(0deg) scale(1);
+    }
+
+    33% {
+        transform: translate(30px, -50px) rotate(15deg) scale(1.1);
+    }
+
+    66% {
+        transform: translate(-40px, 20px) rotate(-15deg) scale(0.9);
+    }
+
+    100% {
+        transform: translate(0, 0) rotate(0deg) scale(1);
+    }
+}
+
+@keyframes extremeSpin {
+    from {
+        transform: rotate(0deg) scale(1);
+    }
+
+    to {
+        transform: rotate(360deg) scale(1.2);
+    }
+}
+
+@keyframes extremeJump {
+    0% {
+        transform: translateY(0) rotate(-10deg);
+    }
+
+    50% {
+        transform: translateY(-100px) rotate(10deg);
+    }
+
+    /* กระโดดสูง */
+    100% {
+        transform: translateY(0) rotate(-10deg);
+    }
+}
+
+/* ทำให้เนื้อหาหลักลอยเด่นเป็นกระจก */
+.main-content-glass {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
+    border-radius: 40px;
+    border: 4px solid #ffffff;
+    padding: 40px;
+    position: relative;
+    z-index: 10;
+    box-shadow: 0 20px 50px rgba(255, 159, 67, 0.15);
+}
+
+/* ตกแต่งส่วนประกอบหน้าจอ */
 .product-image-wrapper {
+    background-color: #ffffff;
+    border-radius: 30px;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 400px;
-    background-color: #f8f9fa;
-    border-radius: 15px;
     padding: 20px;
-    overflow: hidden;
+    border: 2px dashed #ff9f43;
+    /* เส้นประเพิ่มความคิวท์ */
 }
 
-.product-image-wrapper img {
-    max-height: 450px;
-    width: auto;
-    object-fit: contain;
+.price-tag {
+    color: #27ae60;
+    font-size: 3rem;
+    font-weight: 800;
+    text-shadow: 2px 2px 0px #fff;
 }
 
-@media (max-width: 768px) {
-    .product-image-wrapper {
-        min-height: 300px;
-    }
+.badge-pill-cute {
+    padding: 8px 18px;
+    border-radius: 50px;
+    background: white;
+    border: 2px solid #fff1e6;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 0px #fff1e6;
+}
 
-    .product-image-wrapper img {
-        max-height: 300px;
-    }
+.btn-add-cart-giant {
+    background: #ff9f43;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 15px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    transition: 0.3s;
+    box-shadow: 0 8px 0px #d35400;
+    /* ปุ่มแบบ 3D */
+}
+
+.btn-add-cart-giant:active {
+    transform: translateY(4px);
+    box-shadow: 0 4px 0px #d35400;
+}
+
+.back-home-btn {
+    background: white;
+    padding: 10px 20px;
+    border-radius: 50px;
+    text-decoration: none;
+    color: #ff9f43 !important;
+    font-weight: bold;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    display: inline-block;
 }

@@ -1,57 +1,57 @@
-<div class="container my-5" *ngIf="product">
-    <div class="row mb-4">
-        <div class="col-12">
-            <a (click)="goHome()" class="text-decoration-none text-primary fw-bold"
-                style="cursor: pointer; user-select: none;">
-                <i class="bi bi-arrow-left me-1"></i> กลับหน้าหลัก
-            </a>
-        </div>
+<div class="product-page-container">
+    <div class="chaotic-background">
+        <div class="wild-pet" style="top: 5%; left: 5%; font-size: 150px;">🐶</div>
+        <div class="wild-pet" style="top: 15%; right: 10%; font-size: 120px;">🐈</div>
+        <div class="wild-pet" style="bottom: 10%; left: 8%; font-size: 180px;">🐹</div>
+        <div class="wild-pet" style="bottom: 5%; right: 5%; font-size: 130px;">🐰</div>
+        <div class="wild-pet" style="top: 40%; left: -5%; font-size: 100px;">🦴</div>
+        <div class="wild-pet" style="top: 60%; right: -2%; font-size: 90px;">🐟</div>
+        <div class="wild-pet" style="top: 50%; left: 45%; font-size: 70px;">🐾</div>
+        <div class="wild-pet" style="bottom: 30%; right: 40%; font-size: 80px;">🍗</div>
     </div>
-    <div class="row">
-        <div class="col-md-6 mb-4 mb-md-0">
-            <div class="product-image-wrapper">
-                <img [src]="product.image || temp_img_url" class="img-fluid rounded shadow-sm"
-                    [alt]="product.productName">
+
+    <div class="container my-5 main-content-glass" *ngIf="product">
+        <div class="row mb-4">
+            <div class="col-12">
+                <a (click)="goHome()" class="back-home-btn">
+                    <i class="bi bi-arrow-left me-1"></i> กลับหน้าหลัก
+                </a>
             </div>
         </div>
-
-        <div class="col-md-6">
-            <h1 class="display-5 fw-bold">{{ product.productName }}</h1>
-
-            <p class="text-muted mb-1">หมวดหมู่: {{ product.category?.categoryName }}</p>
-            <p class="text-muted mb-3" *ngIf="product.brand">แบรนด์: <strong>{{ product.brand }}</strong></p>
-
-            <div class="d-flex gap-2 mb-3 flex-wrap">
-                <div class="px-3 py-1 rounded-pill border bg-light" style="font-size: 0.9rem;">
-                    📍 สำหรับ: <strong>{{ product.targetPetType === 'ALL' ? 'สัตว์เลี้ยงทุกชนิด' : product.targetPetType
-                        }}</strong>
-                </div>
-                <div *ngIf="product.suitableForDisease !== 'NONE'" class="px-3 py-1 rounded-pill border bg-light"
-                    style="font-size: 0.9rem;">
-                    🩺 การดูแล: <strong>{{ product.suitableForDisease }}</strong>
-                </div>
-                <div *ngIf="product.weightVolume" class="px-3 py-1 rounded-pill border bg-light"
-                    style="font-size: 0.9rem;">
-                    ⚖️ ปริมาณ: <strong>{{ product.weightVolume }}</strong>
+        <div class="row">
+            <div class="col-md-6 mb-4 mb-md-0">
+                <div class="product-image-wrapper">
+                    <img [src]="product.image || temp_img_url" class="img-fluid rounded shadow-sm"
+                        [alt]="product.productName">
                 </div>
             </div>
 
-            <h2 class="text-success my-4">{{ product.price | currency: 'THB' }}</h2>
+            <div class="col-md-6">
+                <h1 class="display-5 fw-bold text-dark">{{ product.productName }}</h1>
+                <p class="text-muted mb-1">หมวดหมู่: {{ product.category?.categoryName }}</p>
+                <p class="text-muted mb-3" *ngIf="product.brand">แบรนด์: <strong>{{ product.brand }}</strong></p>
 
-            <hr>
+                <div class="d-flex gap-2 mb-3 flex-wrap">
+                    <div class="badge-pill-cute">📍 สำหรับ: <strong>{{ product.targetPetType === 'ALL' ?
+                            'สัตว์เลี้ยงทุกชนิด' : product.targetPetType }}</strong></div>
+                    <div *ngIf="product.suitableForDisease !== 'NONE'" class="badge-pill-cute">🩺 การดูแล: <strong>{{
+                            product.suitableForDisease }}</strong></div>
+                    <div *ngIf="product.weightVolume" class="badge-pill-cute">⚖️ ปริมาณ: <strong>{{ product.weightVolume
+                            }}</strong></div>
+                </div>
 
-            <div class="mb-4">
-                <h5>รายละเอียดสินค้า:</h5>
-                <p class="text-lead">
-                    {{ product.description || 'ไม่มีข้อมูลรายละเอียดสินค้า' }}
-                </p>
-                <p class="text-secondary">คงเหลือในคลัง: {{ product.stock }} ชิ้น</p>
-            </div>
-
-            <div class="d-grid gap-2">
-                <button class="btn btn-primary" (click)="addToCart(product)">
-                    เพิ่มลงตะกร้า
-                </button>
+                <h2 class="price-tag my-4">{{ product.price | currency: 'THB' }}</h2>
+                <hr>
+                <div class="mb-4">
+                    <h5 class="fw-bold">รายละเอียดสินค้า:</h5>
+                    <p class="description-text">{{ product.description || 'ไม่มีข้อมูลรายละเอียดสินค้า' }}</p>
+                    <p class="stock-text">คงเหลือในคลัง: {{ product.stock }} ชิ้น</p>
+                </div>
+                <div class="d-grid gap-2">
+                    <button class="btn-add-cart-giant" (click)="addToCart(product)">
+                        <i class="bi bi-cart-plus-fill me-2"></i> เพิ่มลงตะกร้า
+                    </button>
+                </div>
             </div>
         </div>
     </div>
