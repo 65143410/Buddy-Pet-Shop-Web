@@ -1,8 +1,7 @@
 <div class="container my-5" *ngIf="product">
     <div class="row">
         <div class="col-md-6">
-            <!-- <img [src]="product.image || 'assets/default-product.png'" class="img-fluid rounded"> -->
-            <img [src]="temp_img_url || 'assets/default-product.png'" class="img-fluid rounded">
+            <img [src]="product.image || temp_img_url" class="img-fluid rounded" [alt]="product.productName">
         </div>
 
         <div class="col-md-6">

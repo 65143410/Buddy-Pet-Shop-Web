@@ -14,8 +14,6 @@ import { StaffApiService } from 'src/app/services/StaffApiService';
 export class Staff implements OnInit {
   private staffApiService = inject(StaffApiService);
 
-  isToggleLogisTable = false;
-  isToggleOrderTable = false;
   selectedOrder: Order | null = null;
 
   currentStaff!: Employee;
@@ -69,6 +67,7 @@ export class Staff implements OnInit {
       this.staffApiService.acceptOrder(order.orderId, this.currentStaff.staffId).subscribe({
         next: () => {
           alert(`รับออเดอร์ #${order.orderId} เรียบร้อยแล้ว`);
+          this.selectedOrder = null;
           this.loadInitialData();
         },
         error: (err) => alert('ไม่สามารถรับออเดอร์ได้: ' + (err.error?.message || err.error))
@@ -81,6 +80,7 @@ export class Staff implements OnInit {
       this.staffApiService.completeOrder(order.orderId).subscribe({
         next: () => {
           alert(`อัปเดตออเดอร์ #${order.orderId} เป็นจัดส่งแล้ว`);
+          this.selectedOrder = null;
           this.loadInitialData();
         },
         error: (err) => alert('ไม่สามารถอัปเดตสถานะได้: ' + (err.error?.message || err.error))
@@ -100,15 +100,11 @@ export class Staff implements OnInit {
     }
   }
 
-  viewOrderDetails(order: Order, table: string): void {
-    if (this.selectedOrder === order) {
-      this.selectedOrder = null;
-      this.isToggleLogisTable = false;
-      this.isToggleOrderTable = false;
-    } else {
-      this.selectedOrder = order;
-      this.isToggleLogisTable = table === 'logis';
-      this.isToggleOrderTable = table === 'order';
-    }
+  viewOrderDetails(order: Order, _table: string = ''): void {
+    this.selectedOrder = order;
+  }
+
+  closeOrderDetails(): void {
+    this.selectedOrder = null;
   }
 }

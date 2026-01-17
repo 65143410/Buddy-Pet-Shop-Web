@@ -13,80 +13,6 @@
   <hr>
 
   <div class="staff-content">
-    <div class="section shipping-priority">
-      <h2>📥 ออเดอร์ใหม่ (รอรับงาน)</h2>
-      <table class="data-table" *ngIf="ordersForShipping.length > 0; else noShipping">
-        <thead>
-          <tr>
-            <th>ลำดับ</th>
-            <th>รหัสสั่งซื้อ</th>
-            <th>ลูกค้า</th>
-            <th>วันที่สั่งซื้อ</th>
-            <th>ยอดรวม</th>
-            <th>รายละเอียด</th>
-            <th>ดำเนินการ</th>
-          </tr>
-        </thead>
-        <tbody>
-          <ng-container *ngFor="let order of ordersForShipping; let i = index">
-            <tr [ngClass]="{'active-row': selectedOrder === order && isToggleLogisTable}">
-              <td class="priority-number">{{ i + 1 }}</td>
-              <td><strong>#{{ order.orderId }}</strong></td>
-              <td>{{ order.customer.customerName }}</td>
-              <td>{{ order.orderDate | date:'dd/MM/yyyy' }}</td>
-              <td>{{ order.totalAmount | currency:'฿':'symbol':'1.2-2' }}</td>
-              <td>
-                <button class="action-btn view" (click)="viewOrderDetails(order, 'logis')">
-                  {{ selectedOrder === order && isToggleLogisTable ? '➖ ปิด' : '➕ สินค้า' }}
-                </button>
-              </td>
-              <td>
-                <button class="action-btn update" (click)="pickupOrder(order)">
-                  รับเตรียมจัดส่ง
-                </button>
-              </td>
-            </tr>
-
-            <tr *ngIf="selectedOrder === order && isToggleLogisTable" class="order-details-row">
-              <td colspan="7">
-                <div class="details-content">
-                  <div class="customer-address-box">
-                    <p><strong>📍 ที่อยู่จัดส่ง:</strong> {{ order.shippingAddress || order.customer.address ||
-                      'ไม่ระบุที่อยู่' }}</p>
-                  </div>
-                  <h4>รายการสินค้า (Order ID: {{ order.orderId }})</h4>
-                  <table class="details-table">
-                    <thead>
-                      <tr>
-                        <th>รหัสสินค้า</th>
-                        <th>ชื่อสินค้า</th>
-                        <th>ราคา/หน่วย</th>
-                        <th>จำนวน</th>
-                        <th>รวม</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr *ngFor="let item of order.orderDetails">
-                        <td>{{ item.product.productId }}</td>
-                        <td>{{ item.product.productName }}</td>
-                        <td>{{ item.unitPrice | currency:'฿':'symbol':'1.2-2' }}</td>
-                        <td>{{ item.quantity }}</td>
-                        <td>{{ item.quantity * item.unitPrice | currency:'฿':'symbol':'1.2-2' }}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </td>
-            </tr>
-          </ng-container>
-        </tbody>
-      </table>
-      <ng-template #noShipping>
-        <p>ไม่มีออเดอร์ใหม่ที่รอการรับงานในขณะนี้</p>
-      </ng-template>
-    </div>
-
-    <hr *ngIf="myPreparingTasks.length > 0">
 
     <div class="section my-tasks" *ngIf="myPreparingTasks.length > 0">
       <h2>📋 งานที่กำลังดำเนินการของคุณ</h2>
@@ -97,64 +23,50 @@
             <th>ลูกค้า</th>
             <th>วันที่</th>
             <th>ยอดรวม</th>
-            <th>รายละเอียด</th>
-            <th>ดำเนินการ</th>
           </tr>
         </thead>
         <tbody>
-          <ng-container *ngFor="let order of myPreparingTasks">
-            <tr [ngClass]="{'active-row': selectedOrder === order && isToggleOrderTable}">
-              <td><strong>#{{ order.orderId }}</strong></td>
-              <td>{{ order.customer.customerName }}</td>
-              <td>{{ order.orderDate | date:'dd/MM/yyyy' }}</td>
-              <td>{{ order.totalAmount | currency:'฿':'symbol':'1.2-2' }}</td>
-              <td>
-                <button class="action-btn view" (click)="viewOrderDetails(order, 'order')">
-                  {{ selectedOrder === order && isToggleOrderTable ? '➖ ปิด' : '➕ สินค้า' }}
-                </button>
-              </td>
-              <td>
-                <button class="action-btn success" (click)="shipOrder(order)">
-                  ✅ จัดส่งแล้ว
-                </button>
-              </td>
-            </tr>
-
-            <tr *ngIf="selectedOrder === order && isToggleOrderTable" class="order-details-row">
-              <td colspan="6">
-                <div class="details-content">
-                  <div class="customer-address-box">
-                    <p><strong>📍 ที่อยู่จัดส่ง:</strong> {{ order.shippingAddress || order.customer.address ||
-                      'ไม่ระบุที่อยู่' }}</p>
-                  </div>
-                  <h4>รายการสินค้า (Order ID: {{ order.orderId }})</h4>
-                  <table class="details-table">
-                    <thead>
-                      <tr>
-                        <th>รหัสสินค้า</th>
-                        <th>ชื่อสินค้า</th>
-                        <th>ราคา/หน่วย</th>
-                        <th>จำนวน</th>
-                        <th>รวม</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr *ngFor="let item of order.orderDetails">
-                        <td>{{ item.product.productId }}</td>
-                        <td>{{ item.product.productName }}</td>
-                        <td>{{ item.unitPrice | currency:'฿':'symbol':'1.2-2' }}</td>
-                        <td>{{ item.quantity }}</td>
-                        <td>{{ item.quantity * item.unitPrice | currency:'฿':'symbol':'1.2-2' }}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </td>
-            </tr>
-          </ng-container>
+          <tr *ngFor="let order of myPreparingTasks" [ngClass]="{'active-row': selectedOrder === order}"
+            (click)="viewOrderDetails(order)">
+            <td><strong>#{{ order.orderId }}</strong></td>
+            <td>{{ order.customer.customerName }}</td>
+            <td>{{ order.orderDate | date:'dd/MM/yyyy' }}</td>
+            <td>{{ order.totalAmount | currency:'฿':'symbol':'1.2-2' }}</td>
+          </tr>
         </tbody>
       </table>
     </div>
+    <div class="section shipping-priority">
+      <h2>📥 ออเดอร์ใหม่ (รอรับงาน)</h2>
+      <table class="data-table" *ngIf="ordersForShipping.length > 0; else noShipping">
+        <thead>
+          <tr>
+            <th>ลำดับ</th>
+            <th>รหัสสั่งซื้อ</th>
+            <th>ลูกค้า</th>
+            <th>วันที่สั่งซื้อ</th>
+            <th>ยอดรวม</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of ordersForShipping; let i = index" [ngClass]="{'active-row': selectedOrder === order}"
+            (click)="viewOrderDetails(order)">
+            <td class="priority-number">{{ i + 1 }}</td>
+            <td><strong>#{{ order.orderId }}</strong></td>
+            <td>{{ order.customer.customerName }}</td>
+            <td>{{ order.orderDate | date:'dd/MM/yyyy' }}</td>
+            <td>{{ order.totalAmount | currency:'฿':'symbol':'1.2-2' }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <ng-template #noShipping>
+        <p>ไม่มีออเดอร์ใหม่ที่รอการรับงานในขณะนี้</p>
+      </ng-template>
+    </div>
+
+    <hr *ngIf="myPreparingTasks.length > 0">
+
+
 
     <hr>
 
@@ -167,69 +79,93 @@
             <th>ลูกค้า</th>
             <th>วันที่</th>
             <th>ยอดรวม</th>
-            <th>รายละเอียด</th>
             <th>สถานะ</th>
           </tr>
         </thead>
         <tbody>
-          <ng-container *ngFor="let order of allOrders">
-            <tr [ngClass]="{'active-row': selectedOrder === order && isToggleOrderTable}">
-              <td>{{ order.orderId }}</td>
-              <td>{{ order.customer.customerName }}</td>
-              <td>{{ order.orderDate | date:'dd/MM/yyyy' }}</td>
-              <td>{{ order.totalAmount | currency:'฿':'symbol':'1.2-2' }}</td>
-              <td>
-                <button class="action-btn view" (click)="viewOrderDetails(order, 'order')">
-                  {{ selectedOrder === order && isToggleOrderTable ? '➖ ปิด' : '➕ สินค้า' }}
-                </button>
-              </td>
-              <td>
-                <span class="status-chip" [ngClass]="{
-                  'chip-new': order.status.statusId === 1,
-                  'chip-payment': order.status.statusId === 2,
-                  'chip-paid': order.status.statusId === 3,
-                  'chip-preparing': order.status.statusId === 4,
-                  'chip-shipped': order.status.statusId === 5,
-                  'chip-cancel': order.status.statusId === 6
-                }">
-                  {{ order.status.statusName }}
-                </span>
-              </td>
-            </tr>
-
-            <tr *ngIf="selectedOrder === order && isToggleOrderTable" class="order-details-row">
-              <td colspan="6">
-                <div class="details-content">
-                  <div class="customer-address-box">
-                    <p><strong>📍 ที่อยู่จัดส่ง:</strong> {{ order.customer.address || 'ไม่ระบุที่อยู่' }}</p>
-                  </div>
-                  <h4>รายการสินค้า (Order ID: {{ order.orderId }})</h4>
-                  <table class="details-table">
-                    <thead>
-                      <tr>
-                        <th>รหัสสินค้า</th>
-                        <th>ชื่อสินค้า</th>
-                        <th>ราคา/หน่วย</th>
-                        <th>จำนวน</th>
-                        <th>รวม</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr *ngFor="let item of order.orderDetails">
-                        <td>{{ item.product.productId }}</td>
-                        <td>{{ item.product.productName }}</td>
-                        <td>{{ item.unitPrice | currency:'฿':'symbol':'1.2-2' }}</td>
-                        <td>{{ item.quantity }}</td>
-                        <td>{{ item.quantity * item.unitPrice | currency:'฿':'symbol':'1.2-2' }}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </td>
-            </tr>
-          </ng-container>
+          <tr *ngFor="let order of allOrders" [ngClass]="{'active-row': selectedOrder === order}"
+            (click)="viewOrderDetails(order)">
+            <td>{{ order.orderId }}</td>
+            <td>{{ order.customer.customerName }}</td>
+            <td>{{ order.orderDate | date:'dd/MM/yyyy' }}</td>
+            <td>{{ order.totalAmount | currency:'฿':'symbol':'1.2-2' }}</td>
+            <td>
+              <span class="status-chip" [ngClass]="{
+                'chip-new': order.status.statusId === 1,
+                'chip-payment': order.status.statusId === 2,
+                'chip-paid': order.status.statusId === 3,
+                'chip-preparing': order.status.statusId === 4,
+                'chip-shipped': order.status.statusId === 5,
+                'chip-cancel': order.status.statusId === 6
+              }">
+                {{ order.status.statusName }}
+              </span>
+            </td>
+          </tr>
         </tbody>
       </table>
+    </div>
+  </div>
+
+  <!-- ORDER DETAILS MODAL -->
+  <div class="detail-overlay" *ngIf="selectedOrder" (click)="closeOrderDetails()">
+    <div class="detail-card" (click)="$event.stopPropagation()">
+      <div class="detail-header">
+        <h3>📋 รายละเอียดออเดอร์ #{{ selectedOrder.orderId }}</h3>
+        <button class="close-btn" (click)="closeOrderDetails()">&times;</button>
+      </div>
+
+      <div class="detail-body">
+        <div class="customer-address-box">
+          <p><strong>👤 ลูกค้า:</strong> {{ selectedOrder.customer.customerName }}</p>
+          <p><strong> เบอร์โทร:</strong> {{ selectedOrder.customer.phone || '-' }}</p>
+          <hr style="margin: 10px 0; border: none; border-top: 1px dashed #ff9800;">
+          <p><strong>📍 ที่อยู่จัดส่ง:</strong> {{ selectedOrder.shippingAddress || selectedOrder.customer.address ||
+            'ไม่ระบุที่อยู่' }}</p>
+        </div>
+
+        <h4>📦 รายการสินค้า</h4>
+        <table class="details-table" style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+          <thead>
+            <tr style="background: #e3f2fd; color: #3f51b5;">
+              <th style="padding: 10px; text-align: left;">สินค้า</th>
+              <th style="padding: 10px; text-align: center;">ราคา/หน่วย</th>
+              <th style="padding: 10px; text-align: right;">จำนวน</th>
+              <th style="padding: 10px; text-align: right;">รวม</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of selectedOrder.orderDetails" style="border-bottom: 1px solid #eee;">
+              <td style="padding: 10px;">{{ item.product.productName }}</td>
+              <td style="padding: 10px; text-align: center;">{{ item.unitPrice | currency:'฿':'symbol':'1.2-2' }}</td>
+              <td style="padding: 10px; text-align: right;">{{ item.quantity }}</td>
+              <td style="padding: 10px; text-align: right;">{{ item.quantity * item.unitPrice |
+                currency:'฿':'symbol':'1.2-2' }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="text-align: right; margin-top: 15px; font-size: 1.1rem; font-weight: bold; color: #3f51b5;">
+          ยอดรวมสุทธิ: {{ selectedOrder.totalAmount | currency:'฿':'symbol':'1.2-2' }}
+        </div>
+      </div>
+
+      <div class="detail-footer">
+        <!-- Action Buttons based on context -->
+        <ng-container *ngIf="selectedOrder.status.statusName === 'ชำระเงินแล้ว' && !selectedOrder.staff">
+          <button class="action-btn update" (click)="pickupOrder(selectedOrder)">
+            📥 รับเตรียมจัดส่ง
+          </button>
+        </ng-container>
+
+        <ng-container
+          *ngIf="selectedOrder.staff?.staffId === currentStaff.staffId && selectedOrder.status.statusName === 'กำลังจัดเตรียมสินค้า'">
+          <button class="action-btn success" (click)="shipOrder(selectedOrder)">
+            ✅ จัดส่งแล้ว
+          </button>
+        </ng-container>
+
+        <button class="action-btn secondary" (click)="closeOrderDetails()">ปิด</button>
+      </div>
     </div>
   </div>
 </div>

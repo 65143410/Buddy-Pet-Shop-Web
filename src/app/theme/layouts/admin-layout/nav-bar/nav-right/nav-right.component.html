@@ -91,7 +91,8 @@
 
           <div class="mt-3" *ngIf="selectedOrderDetail.payments && selectedOrderDetail.payments.length > 0">
             <small class="text-muted d-block mb-1">หลักฐานการชำระเงิน</small>
-            <img src="https://s359.kapook.com/pagebuilder/ba154685-db18-4ac7-b318-a4a2b15b9d4c.jpg"
+            <img
+              [src]="selectedOrderDetail.payments[0].slipImage || 'https://s359.kapook.com/pagebuilder/ba154685-db18-4ac7-b318-a4a2b15b9d4c.jpg'"
               class="img-fluid rounded border" style="max-height: 120px;">
           </div>
         </div>
