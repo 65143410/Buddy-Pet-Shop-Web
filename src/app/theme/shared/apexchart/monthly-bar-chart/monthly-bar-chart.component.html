@@ -6,10 +6,15 @@
 </div>
 <div class="card">
   <div class="card-body">
-    <div id="chart">
+    <div id="chart" *ngIf="chartOptions">
       <apx-chart [series]="chartOptions.series" [chart]="chartOptions.chart" [dataLabels]="chartOptions.dataLabels"
         [xaxis]="chartOptions.xaxis" [colors]="chartOptions.colors" [stroke]="chartOptions.stroke"
         [yaxis]="chartOptions.yaxis" [grid]="chartOptions.grid" [theme]="chartOptions.theme"></apx-chart>
+    </div>
+    <div class="text-center p-4" *ngIf="!chartOptions">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
     </div>
   </div>
 </div>

@@ -7,9 +7,11 @@ import { AdminApiService } from 'src/app/services/admin-api.service';
 // third party
 import { NgApexchartsModule, ChartComponent, ApexOptions } from 'ng-apexcharts';
 
+import { CommonModule } from '@angular/common';
+
 @Component({
   selector: 'app-monthly-bar-chart',
-  imports: [NgApexchartsModule],
+  imports: [NgApexchartsModule, CommonModule],
   templateUrl: './monthly-bar-chart.component.html',
   styleUrl: './monthly-bar-chart.component.scss'
 })

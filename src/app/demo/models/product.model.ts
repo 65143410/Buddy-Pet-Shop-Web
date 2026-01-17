@@ -38,7 +38,7 @@ export interface Staff {
   name: string;
   email: string;
   phone?: string;
-  position: 'SALES' | 'DELIVERY' | 'ADMIN';
+  position: 'ADMIN' | 'MANAGER' | 'STAFF';
   role?: string;
   status: string;
   password?: string;

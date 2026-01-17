@@ -3,11 +3,16 @@
   <div class="card-body">
     <!-- <h6 class="mb-2 f-w-400 text-muted">This Week Statistics</h6>
     <h3 class="mb-0">$7,650</h3> -->
-    <div id="chart">
+    <div id="chart" *ngIf="chartOptions">
       <apx-chart [series]="chartOptions.series" [chart]="chartOptions.chart" [dataLabels]="chartOptions.dataLabels"
         [legend]="chartOptions.legend" [xaxis]="chartOptions.xaxis" [colors]="chartOptions.colors"
         [stroke]="chartOptions.stroke" [grid]="chartOptions.grid" [plotOptions]="chartOptions.plotOptions"
         [tooltip]="chartOptions.tooltip"></apx-chart>
+    </div>
+    <div class="text-center p-4" *ngIf="!chartOptions">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
     </div>
   </div>
 </div>

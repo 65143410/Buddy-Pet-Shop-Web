@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminApiService } from 'src/app/services/admin-api.service';
-import { Staff, Customer, Order, DashboardStat, SystemConfig, Product, Category, ProductLog } from '../../models/product.model';
+import { Staff, Admin as AdminInfo, Customer, Order, DashboardStat, SystemConfig, Product, Category, ProductLog } from '../../models/product.model';
 import { MonthlyBarChartComponent } from 'src/app/theme/shared/apexchart/monthly-bar-chart/monthly-bar-chart.component';
 import { IncomeOverviewChartComponent } from 'src/app/theme/shared/apexchart/income-overview-chart/income-overview-chart.component';
 import { AnalyticsChartComponent } from 'src/app/theme/shared/apexchart/analytics-chart/analytics-chart.component';
@@ -119,7 +119,31 @@ export class Admin implements OnInit {
       error: (err) => console.error('Error loading orders', err)
     });
 
-    this.adminService.getStaffs().subscribe({ next: (res) => (this.staffs = res) });
+    this.adminService.getStaffs().subscribe({
+      next: (staffs) => {
+        this.adminService.getAdmins().subscribe({
+          next: (admins) => {
+            const mappedAdmins: Staff[] = admins.map(a => ({
+              staffId: a.adminId,
+              name: a.name,
+              email: a.email,
+              phone: a.phone,
+              position: 'ADMIN',
+              status: 'ACTIVE',
+              role: 'SUPER_ADMIN'
+            }));
+
+            this.staffs = [...mappedAdmins, ...staffs].map(s => {
+              if (s.position) {
+                s.position = s.position.toUpperCase() as any;
+              }
+              return s;
+            });
+          }
+        });
+      }
+    });
+
     this.adminService.getCustomers().subscribe({ next: (res) => (this.customers = res) });
     this.adminService.getProducts().subscribe({ next: (res) => (this.products = res) });
   }
@@ -444,16 +468,49 @@ export class Admin implements OnInit {
     });
   }
   saveStaffChanges(staff: Staff | null): void {
-    if (!staff || !staff.staffId) return;
+    if (!staff) return;
 
-    this.adminService.updateStaff(staff).subscribe({
-      next: () => {
-        alert('บันทึกข้อมูลพนักงานสำเร็จ!');
-        this.loadInitialData();
-        this.selectedStaff = null;
-      },
-      error: (err) => alert('เกิดข้อผิดพลาด: ' + err.message)
-    });
+    // Create a clean object with only necessary fields to avoid Jackson 400 errors
+    const cleanData: any = {
+      name: staff.name,
+      email: staff.email,
+      phone: staff.phone,
+      position: staff.position,
+      status: staff.status
+    };
+
+    // If password was typed (though not in current UI), include it
+    if (staff.password) {
+      cleanData.password = staff.password;
+    }
+
+    if (staff.role === 'SUPER_ADMIN') {
+      const adminData: AdminInfo = {
+        adminId: staff.staffId,
+        ...cleanData
+      };
+      this.adminService.updateAdmin(adminData).subscribe({
+        next: () => {
+          alert('บันทึกข้อมูลผู้ดูแลระบบสำเร็จ!');
+          this.loadInitialData();
+          this.selectedStaff = null;
+        },
+        error: (err) => alert('เกิดข้อผิดพลาด: ' + (err.error?.message || err.message))
+      });
+    } else {
+      const staffData: any = {
+        staffId: staff.staffId,
+        ...cleanData
+      };
+      this.adminService.updateStaff(staffData).subscribe({
+        next: () => {
+          alert('บันทึกข้อมูลพนักงานสำเร็จ!');
+          this.loadInitialData();
+          this.selectedStaff = null;
+        },
+        error: (err) => alert('เกิดข้อผิดพลาด: ' + (err.error?.message || err.message))
+      });
+    }
   }
 
   saveShippingInfo(order: Order): void {

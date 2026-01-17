@@ -2,10 +2,15 @@
 <div class="card">
   <!-- Removed hardcoded list group -->
   <div class="card-body px-2">
-    <div class="chart">
+    <div class="chart" *ngIf="chartOptions">
       <apx-chart [series]="chartOptions.series" [chart]="chartOptions.chart" [plotOptions]="chartOptions.plotOptions"
         [xaxis]="chartOptions.xaxis" [colors]="chartOptions.colors" [stroke]="chartOptions.stroke"
         [yaxis]="chartOptions.yaxis" [grid]="chartOptions.grid" [tooltip]="chartOptions.tooltip"></apx-chart>
+    </div>
+    <div class="text-center p-4" *ngIf="!chartOptions">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
     </div>
   </div>
 </div>

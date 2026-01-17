@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
   Staff,
+  Admin,
   Customer,
   Order,
   SystemConfig,
@@ -26,6 +27,10 @@ export class AdminApiService {
 
   getDashboardStats(): Observable<DashboardStat[]> {
     return this.http.get<DashboardStat[]>(`${this.apiUrl}/admin/stats`);
+  }
+
+  getAdmins(): Observable<Admin[]> {
+    return this.http.get<Admin[]>(`${this.apiUrl}/admin/all`);
   }
 
   getPendingOrders(): Observable<Order[]> {
@@ -131,6 +136,10 @@ export class AdminApiService {
 
   getProductLogsById(productId: number): Observable<ProductLog[]> {
     return this.http.get<ProductLog[]>(`${this.apiUrl}/product/logs/${productId}`);
+  }
+
+  updateAdmin(admin: Admin): Observable<Admin> {
+    return this.http.put<Admin>(`${this.apiUrl}/admin/${admin.adminId}`, admin);
   }
 
   updateStaff(staff: Staff): Observable<Staff> {

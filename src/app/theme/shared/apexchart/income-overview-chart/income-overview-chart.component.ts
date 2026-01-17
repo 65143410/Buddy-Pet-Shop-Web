@@ -8,9 +8,11 @@ import { NgApexchartsModule, ChartComponent, ApexOptions } from 'ng-apexcharts';
 import { CardComponent } from 'src/app/theme/shared/components/card/card.component';
 import { AdminApiService } from 'src/app/services/admin-api.service';
 
+import { CommonModule } from '@angular/common';
+
 @Component({
   selector: 'app-income-overview-chart',
-  imports: [CardComponent, NgApexchartsModule],
+  imports: [CardComponent, NgApexchartsModule, CommonModule],
   templateUrl: './income-overview-chart.component.html',
   styleUrl: './income-overview-chart.component.scss'
 })

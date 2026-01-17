@@ -1,7 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { RouterOutlet, Router } from "@angular/router";
+import { Router } from "@angular/router";
 import { Category } from '../category/category';
-import { IconDirective } from '@ant-design/icons-angular';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common'; // Import CommonModule for ngIf/ngFor
 import { ProductService } from 'src/app/services/ProductService';
@@ -12,7 +11,7 @@ import { CartService } from 'src/app/services/cart.service';
   standalone: true,
   templateUrl: './home.html',
   styleUrls: ['./home.scss'],
-  imports: [RouterOutlet, Category, IconDirective, CommonModule]
+  imports: [Category, CommonModule]
 })
 export class Home implements OnInit {
   private http = inject(HttpClient);

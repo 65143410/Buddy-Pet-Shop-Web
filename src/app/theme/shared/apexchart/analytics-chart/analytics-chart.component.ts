@@ -7,9 +7,11 @@ import { AdminApiService } from 'src/app/services/admin-api.service';
 // third party
 import { NgApexchartsModule, ChartComponent, ApexOptions } from 'ng-apexcharts';
 
+import { CommonModule } from '@angular/common';
+
 @Component({
   selector: 'app-analytics-chart',
-  imports: [NgApexchartsModule],
+  imports: [NgApexchartsModule, CommonModule],
   templateUrl: './analytics-chart.component.html',
   styleUrl: './analytics-chart.component.scss'
 })

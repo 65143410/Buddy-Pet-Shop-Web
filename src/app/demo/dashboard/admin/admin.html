@@ -700,8 +700,9 @@
             <input type="password" [(ngModel)]="newStaff.password" placeholder="กำหนดรหัสผ่าน"
               style="flex: 1; padding: 8px;">
             <select [(ngModel)]="newStaff.position" style="flex: 1; padding: 8px;">
-              <option value="SALES">🛒 พนักงานขาย (Sales)</option>
-              <option value="DELIVERY">🚚 พนักงานจัดส่ง (Delivery)</option>
+              <option value="ADMIN">🔑 Admin</option>
+              <option value="MANAGER">👔 Manager</option>
+              <option value="STAFF">👤 Staff</option>
             </select>
             <button (click)="saveStaff()"
               style="background-color: #2196F3; color: white; padding: 8px 40px; border: none; border-radius: 4px; cursor: pointer;">
@@ -716,6 +717,7 @@
           <tr>
             <th>รหัส</th>
             <th>ชื่อ</th>
+            <th>ตำแหน่ง</th>
             <th>อีเมล</th>
             <th>เบอร์โทร</th>
             <th>สถานะ</th>
@@ -726,6 +728,13 @@
           <tr *ngFor="let s of staffs" (click)="viewStaffDetails(s)" style="cursor: pointer;">
             <td>#{{ s.staffId }}</td>
             <td>{{ s.name }}</td>
+            <td>
+              <span class="badge"
+                [style.background-color]="s.position === 'ADMIN' ? '#6366f1' : (s.position === 'MANAGER' ? '#f59e0b' : '#94a3b8')"
+                style="color: white; font-size: 11px;">
+                {{ s.position }}
+              </span>
+            </td>
             <td>{{ s.email }}</td>
             <td>{{ s.phone || '-' }}</td>
             <td>
@@ -734,9 +743,10 @@
               </span>
             </td>
             <td>
-              <button class="action-btn" (click)="toggleStaffStatus(s)">
+              <button class="action-btn" (click)="toggleStaffStatus(s)" *ngIf="s.role !== 'SUPER_ADMIN'">
                 {{ s.status === 'ACTIVE' ? 'ระงับสิทธิ์' : 'เปิดใช้งาน' }}
               </button>
+              <span *ngIf="s.role === 'SUPER_ADMIN'" style="font-size: 12px; color: #666;">-</span>
             </td>
           </tr>
         </tbody>
@@ -774,24 +784,10 @@
               <div class="info-item">
                 <label>ตำแหน่งหน้าที่</label>
                 <select [(ngModel)]="selectedStaff.position" class="form-select">
-                  <option value="ADMIN">� ผู้ดูแลระบบ (Admin)</option>
-                  <option value="SALES">� พนักงานขาย (Sales)</option>
-                  <option value="DELIVERY">🚚 พนักงานจัดส่ง (Delivery)</option>
+                  <option value="ADMIN">🔑 ADMIN</option>
+                  <option value="MANAGER">👔 MANAGER</option>
+                  <option value="STAFF">👤 STAFF</option>
                 </select>
-              </div>
-
-              <div class="info-item full"
-                style="background: #f0f4ff; padding: 10px; border-radius: 5px; margin-top: 10px;">
-                <label>🛠️ สิทธิ์การใช้งานปัจจุบัน:</label>
-                <ul style="font-size: 13px; margin-top: 5px;" *ngIf="selectedStaff.position === 'SALES'">
-                  <li>✅ จัดการสต็อกสินค้า / เพิ่ม-ลดสินค้า</li>
-                  <li>✅ ยืนยันยอดชำระเงินจากลูกค้า</li>
-                </ul>
-                <ul style="font-size: 13px; margin-top: 5px;" *ngIf="selectedStaff.position === 'DELIVERY'">
-                  <li>✅ ดูรายการที่ต้องจัดส่ง / ที่อยู่ลูกค้า</li>
-                  <li>✅ อัปเดตสถานะการส่งสินค้า</li>
-                  <li>❌ ไม่สามารถเข้าถึงยอดเงินในระบบได้</li>
-                </ul>
               </div>
               <div class="info-item">
                 <label>สถานะปัจจุบัน</label>
