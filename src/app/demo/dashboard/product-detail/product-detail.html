@@ -1,4 +1,12 @@
 <div class="container my-5" *ngIf="product">
+    <div class="row mb-4">
+        <div class="col-12">
+            <a (click)="goHome()" class="text-decoration-none text-primary fw-bold"
+                style="cursor: pointer; user-select: none;">
+                <i class="bi bi-arrow-left me-1"></i> กลับหน้าหลัก
+            </a>
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-6">
             <img [src]="product.image || temp_img_url" class="img-fluid rounded" [alt]="product.productName">

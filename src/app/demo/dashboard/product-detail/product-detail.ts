@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule, Router } from '@angular/router'; // Added Router
 import { CommonModule } from '@angular/common';
 
 import { CartService } from 'src/app/services/cart.service';
@@ -18,13 +18,18 @@ export class ProductDetail implements OnInit {
   product: Product | undefined;
 
   route = inject(ActivatedRoute);
+  router = inject(Router); // Added Router
   cartService = inject(CartService);
   productService = inject(ProductService);
+
+  public goHome(): void {
+    this.router.navigate(['/dashboard/home']);
+  }
 
   temp_img_url = "https://www.prachachat.net/wp-content/uploads/2023/05/%E0%B8%94%E0%B8%B5%E0%B9%84%E0%B8%8B%E0%B8%99%E0%B9%8C%E0%B8%97%E0%B8%B5%E0%B9%88%E0%B8%A2%E0%B8%B1%E0%B8%87%E0%B9%84%E0%B8%A1%E0%B9%88%E0%B9%84%E0%B8%94%E0%B9%89%E0%B8%95%E0%B8%B1%E0%B9%89%E0%B8%87%E0%B8%8A%E0%B8%B7%E0%B9%88%E0%B8%AD-6.jpg";
 
 
-  constructor() {}
+  constructor() { }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
