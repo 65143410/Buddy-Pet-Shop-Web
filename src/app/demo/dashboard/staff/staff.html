@@ -1,4 +1,16 @@
+<div class="staff-pet-overlay">
+  <div class="floating-pet" style="top: 5%; left: 15%; font-size: 110px;">🐶</div>
+  <div class="floating-pet" style="top: 15%; right: 10%; font-size: 90px; opacity: 0.1;">🐾</div>
+  <div class="floating-pet" style="bottom: 20%; left: 8%; font-size: 130px;">🐰</div>
+  <div class="floating-pet" style="bottom: 15%; right: 5%; font-size: 100px;">🐹</div>
+
+  <div class="floating-pet" style="top: 40%; left: 2%; font-size: 50px;">🦴</div>
+  <div class="floating-pet" style="top: 60%; right: 3%; font-size: 55px;">🐟</div>
+  <div class="floating-pet" style="top: 5%; left: 45%; font-size: 45px; opacity: 0.1;">🐾</div>
+  <div class="floating-pet" style="bottom: 5%; left: 40%; font-size: 60px;">🍗</div>
+</div>
 <div class="staff-panel-container">
+
   <header class="staff-header-card" *ngIf="currentStaff">
     <div class="profile-section">
       <div class="avatar-circle">🧑‍💻</div>
@@ -51,6 +63,7 @@
       <table class="modern-table" *ngIf="ordersForShipping.length > 0">
         <thead>
           <tr>
+            <th>ลำดับ</th>
             <th>รหัส</th>
             <th>ลูกค้า</th>
             <th>ยอดรวม</th>
@@ -58,7 +71,9 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let order of ordersForShipping" (click)="viewOrderDetails(order)">
+          <tr *ngFor="let order of ordersForShipping; let i = index" [ngClass]="{'active-row': selectedOrder === order}"
+            (click)="viewOrderDetails(order)">
+            <td class="priority-number">{{ i + 1 }}</td>
             <td class="id-cell">#{{ order.orderId }}</td>
             <td>{{ order.customer.customerName }}</td>
             <td class="amount-cell">{{ order.totalAmount | currency:'฿':'symbol':'1.2-2' }}</td>

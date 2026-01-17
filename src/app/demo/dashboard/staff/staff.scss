@@ -176,3 +176,372 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* --- Added Missing Styles --- */
+.staff-stats-mini {
+    display: flex;
+    gap: 15px;
+}
+
+.stat-box {
+    text-align: center;
+    background: #fdfdfd;
+    padding: 8px 15px;
+    border-radius: 12px;
+    border: 1px solid #eee;
+    min-width: 80px;
+}
+
+.stat-box .label {
+    display: block;
+    font-size: 0.75rem;
+    color: #888;
+    margin-bottom: 4px;
+}
+
+.stat-box .value {
+    font-weight: 700;
+    font-size: 1rem;
+    color: #333;
+}
+
+.status-online {
+    color: #4caf50 !important;
+}
+
+.count-badge {
+    background-color: #ff5252;
+    color: white !important;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 0.85rem !important;
+    min-width: 25px;
+    display: inline-block;
+}
+
+/* Task List Items */
+.task-list {
+    margin-top: 15px;
+}
+
+.order-mini-card .order-id {
+    font-weight: bold;
+    color: #ff9f43;
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+}
+
+.order-mini-card .order-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+.order-mini-card .amount {
+    font-weight: 600;
+    color: #333;
+}
+
+.order-mini-card .order-action-hint {
+    font-size: 0.75rem;
+    color: #aaa;
+    text-align: right;
+    font-style: italic;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 30px;
+    color: #aaa;
+    background: #fffcf5;
+    border-radius: 12px;
+    border: 2px dashed #ffe0b2;
+}
+
+.empty-state .empty-icon {
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+/* Grab Button */
+.btn-grab {
+    background: linear-gradient(45deg, #ff9f43, #ffb367);
+    color: white;
+    border: none;
+    padding: 6px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: transform 0.2s;
+}
+
+.btn-grab:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(255, 159, 67, 0.3);
+}
+
+.modern-table .id-cell {
+    font-weight: 600;
+    color: #ff9f43;
+}
+
+.modern-table .amount-cell {
+    font-weight: 600;
+    color: #333;
+}
+
+.modern-table .action-cell {
+    text-align: right;
+}
+
+/* --- Added Active Row Styles --- */
+.modern-table tr {
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.modern-table tr:hover td {
+    background-color: #fff8f0 !important;
+}
+
+.modern-table tr.active-row td {
+    background-color: #ffe0b2 !important;
+    border-top: 1px solid #ffcc80 !important;
+    border-bottom: 1px solid #ffcc80 !important;
+}
+
+/* --- RE-ADDED MISSING MODAL STYLES --- */
+.detail-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 12000;
+    /* Must be higher than giant-pet-overlay (9999) */
+    opacity: 0;
+    animation: fadeIn 0.3s forwards;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+.detail-card {
+    background: white;
+    width: 90%;
+    max-width: 600px;
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
+    transform: scale(0.9);
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes popIn {
+    to {
+        transform: scale(1);
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 25px;
+    border-bottom: 1px solid #eee;
+}
+
+.header-main {
+    display: flex;
+    flex-direction: column;
+}
+
+.header-main h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.modal-status {
+    font-size: 0.8rem;
+    opacity: 0.8;
+    margin-top: 2px;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: white;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.close-btn:hover {
+    opacity: 1;
+}
+
+.detail-body {
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.shipping-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.info-block label {
+    font-size: 0.75rem;
+    color: #888;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.info-block p,
+.address-tag {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.item-list-section h4 {
+    margin: 0 0 10px 0;
+    font-size: 1rem;
+    color: #ff9f43;
+    border-bottom: 2px dashed #ffe0b2;
+    padding-bottom: 5px;
+}
+
+.item-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #f9f9f9;
+}
+
+.item-name {
+    flex: 2;
+    font-weight: 500;
+}
+
+.item-qty,
+.item-price {
+    flex: 1;
+    text-align: right;
+    color: #666;
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #333;
+    padding-top: 10px;
+    border-top: 2px solid #eee;
+}
+
+.total-price {
+    color: #ff9f43;
+}
+
+.modal-footer {
+    padding: 15px 25px;
+    background: #fdfdfd;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.btn-secondary {
+    padding: 10px 20px;
+    border: 1px solid #ddd;
+    background: white;
+    border-radius: 12px;
+    cursor: pointer;
+    color: #666;
+    font-weight: 500;
+}
+
+.btn-secondary:hover {
+    background: #f5f5f5;
+}
+
+/* เลเยอร์สัตว์เลี้ยงกระจายตัว */
+.staff-pet-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    /* อยู่บนสุดเสมอ */
+    pointer-events: none;
+    /* สำคัญ: ทำให้กดปุ่ม/ตารางข้างหลังได้ปกติ */
+    overflow: hidden;
+}
+
+.floating-pet {
+    position: absolute;
+    opacity: 0.18;
+    /* จางๆ ไม่ให้กวนสายตาพนักงาน */
+    filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.1));
+    animation: petWiggle 8s ease-in-out infinite alternate;
+    user-select: none;
+}
+
+/* สุ่มจังหวะดุ๊กดิ๊ก */
+.floating-pet:nth-child(even) {
+    animation-duration: 6s;
+    animation-delay: -2s;
+}
+
+.floating-pet:nth-child(3n) {
+    animation-duration: 10s;
+    animation-delay: -1s;
+}
+
+@keyframes petWiggle {
+    0% {
+        transform: translate(0, 0) rotate(-8deg) scale(1);
+    }
+
+    50% {
+        transform: translate(15px, 25px) rotate(8deg) scale(1.05);
+    }
+
+    100% {
+        transform: translate(-10px, -15px) rotate(-4deg) scale(0.95);
+    }
+}
+
+/* ปรับพื้นหลังหน้าจอให้เป็นสีครีมจุดส้มเหมือนหน้าแรก */
+.staff-panel-container {
+    background-color: #fff9e3 !important;
+    background-image: radial-gradient(#ff9f43 0.8px, transparent 0.8px);
+    background-size: 30px 30px;
+    position: relative;
+    z-index: 1;
+}
