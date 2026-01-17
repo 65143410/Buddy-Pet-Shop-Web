@@ -1,0 +1,26 @@
+.product-image-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+    background-color: #f8f9fa;
+    border-radius: 15px;
+    padding: 20px;
+    overflow: hidden;
+}
+
+.product-image-wrapper img {
+    max-height: 450px;
+    width: auto;
+    object-fit: contain;
+}
+
+@media (max-width: 768px) {
+    .product-image-wrapper {
+        min-height: 300px;
+    }
+
+    .product-image-wrapper img {
+        max-height: 300px;
+    }
+}

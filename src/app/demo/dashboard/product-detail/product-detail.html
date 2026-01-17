@@ -8,8 +8,11 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-6">
-            <img [src]="product.image || temp_img_url" class="img-fluid rounded" [alt]="product.productName">
+        <div class="col-md-6 mb-4 mb-md-0">
+            <div class="product-image-wrapper">
+                <img [src]="product.image || temp_img_url" class="img-fluid rounded shadow-sm"
+                    [alt]="product.productName">
+            </div>
         </div>
 
         <div class="col-md-6">
