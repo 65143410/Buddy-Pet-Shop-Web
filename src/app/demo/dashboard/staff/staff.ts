@@ -48,12 +48,10 @@ export class Staff implements OnInit {
   }
 
   loadOrdersForShipping(): void {
-    // 1. New Orders (Paid but no staff assigned)
     this.ordersForShipping = this.allOrders
       .filter((order) => order.status.statusName === 'ชำระเงินแล้ว' && !order.staff)
       .sort((a, b) => new Date(a.orderDate).getTime() - new Date(b.orderDate).getTime());
 
-    // 2. My Tasks (Assigned to me and Preparing)
     this.myPreparingTasks = this.allOrders
       .filter((order) =>
         order.staff?.staffId === this.currentStaff.staffId &&

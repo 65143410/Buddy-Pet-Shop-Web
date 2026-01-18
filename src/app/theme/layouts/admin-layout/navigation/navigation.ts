@@ -16,7 +16,7 @@ export interface NavigationItem {
   link?: string;
   description?: string;
   path?: string;
-  roles?: string[]; // เพิ่มฟิลด์ roles กลับมา
+  roles?: string[];
 }
 
 export const NavigationItems: NavigationItem[] = [

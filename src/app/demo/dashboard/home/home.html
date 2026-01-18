@@ -23,7 +23,7 @@
       <app-category></app-category>
     </div>
   </div>
-  <!-- Search Section -->
+
   <div class="row mb-4 justify-content-center">
     <div class="col-md-6">
       <div class="input-group">
@@ -34,12 +34,11 @@
     </div>
   </div>
 
-  <!-- Recommendation Section -->
+
   <div class="row mb-5" *ngIf="allPets.length > 0">
     <div class="col-12">
       <div class="card border-0 shadow-sm bg-light-primary">
         <div class="card-body p-4">
-          <!-- Pet Selector pills -->
           <div class="d-flex justify-content-center mb-4" *ngIf="allPets.length > 1">
             <ul class="nav nav-pills bg-white rounded-pill p-1 shadow-sm border">
               <li class="nav-item" *ngFor="let pet of allPets">

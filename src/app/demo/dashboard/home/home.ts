@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { Router } from "@angular/router";
 import { Category } from '../category/category';
 import { HttpClient } from '@angular/common/http';
-import { CommonModule } from '@angular/common'; // Import CommonModule for ngIf/ngFor
+import { CommonModule } from '@angular/common';
 import { ProductService } from 'src/app/services/ProductService';
 import { CartService } from 'src/app/services/cart.service';
 
@@ -22,7 +22,7 @@ export class Home implements OnInit {
   currentUser: any = null;
   recommendedProducts: any[] = [];
   originalRecommendedProducts: any[] = [];
-  // targetPetName: string = ''; // Replaced by selectedPet.petName
+
   allPets: any[] = [];
   selectedPet: any = null;
 
@@ -65,9 +65,7 @@ export class Home implements OnInit {
 
     // Normalize Pet Type to Thai (matching DB)
     const apiPetType = this.normalizePetType(pet.petType);
-    console.log('Mapped Pet Type for API:', apiPetType);
 
-    // Fetch recommendations for the selected pet
     this.productService.getRecommendedProducts(apiPetType, pet.congenitalDisease)
       .subscribe({
         next: (products) => {
@@ -95,7 +93,6 @@ export class Home implements OnInit {
   private normalizePetType(type: string): string {
     if (!type) return 'ALL';
     const t = type.trim();
-    // Normalize to ENGLISH because Database/Admin now uses English (DOG, CAT, GUINEA_PIG)
     if (t.toUpperCase() === 'DOG' || t === 'สุนัข') return 'DOG';
     if (t.toUpperCase() === 'CAT' || t === 'แมว') return 'CAT';
     if (t.toUpperCase() === 'GUINEA_PIG' || t === 'หนูตะเภา') return 'GUINEA_PIG';
@@ -116,8 +113,6 @@ export class Home implements OnInit {
       event.stopPropagation();
       return;
     }
-    // Navigating to correct path based on app-routing.module.ts
-    console.log('Navigating to:', ['/home/detail', id]);
     this.router.navigate(['/home/detail', id]);
   }
 

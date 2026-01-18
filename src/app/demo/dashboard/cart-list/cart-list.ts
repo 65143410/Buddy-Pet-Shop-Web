@@ -1,10 +1,10 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router'; // Import Router
+import { Router } from '@angular/router';
 import { CartProduct } from 'src/app/demo/models/product.model';
 import { CartService } from 'src/app/services/cart.service';
-import { OrderService } from 'src/app/services/order.service'; // Import OrderService
+import { OrderService } from 'src/app/services/order.service';
 
 @Component({
   selector: 'app-cart-list',
@@ -17,7 +17,6 @@ export class CartList implements OnInit {
   count: number = 0;
   isOpen: boolean = false;
 
-  // Steps Flags
   previewFlag: boolean = false;
   addressFlag: boolean = false;
   paymentFlag: boolean = false;
@@ -31,8 +30,8 @@ export class CartList implements OnInit {
   currentUser: any = null;
 
   cartService = inject(CartService);
-  private router = inject(Router); // Inject Router
-  private orderService = inject(OrderService); // Inject OrderService
+  private router = inject(Router);
+  private orderService = inject(OrderService);
 
   constructor() { }
 
@@ -93,7 +92,6 @@ export class CartList implements OnInit {
     this.updateCartData();
   }
 
-  // Step 1: Check Login -> Go to Preview
   checkout(): void {
     const userJson = localStorage.getItem('currentUser');
     if (!userJson) {
@@ -109,7 +107,6 @@ export class CartList implements OnInit {
     this.calculateTotal();
   }
 
-  // Step 2: Confirm Items -> Go to Address
   confirmItems(): void {
     this.addressFlag = true;
     this.previewFlag = false;
@@ -117,7 +114,6 @@ export class CartList implements OnInit {
     this.shippingAddress = this.currentUser.address || '';
   }
 
-  // Step 3: Confirm Address -> Go to Payment
   confirmAddress(): void {
     if (!this.shippingAddress || this.shippingAddress.trim() === '') {
       alert('กรุณาระบุที่อยู่จัดส่ง');
