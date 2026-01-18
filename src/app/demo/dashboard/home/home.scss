@@ -1,12 +1,21 @@
 .category-selection-page {
     padding-top: 2rem;
     padding-bottom: 4rem;
-    background-color: #f8f9fa;
-    min-height: 80vh;
+    min-height: 100vh;
+    background-color: #fff9e3;
+    background-image: radial-gradient(#ff9f43 0.8px, transparent 0.8px);
+    background-size: 32px 32px;
+    position: relative;
+    overflow-x: hidden;
 }
 
 .category-selection-page h1 {
     color: #343a40 !important;
+}
+
+.category-selection-page .container {
+    position: relative;
+    z-index: 2;
 }
 
 .category-item {
@@ -70,23 +79,12 @@
     -webkit-box-orient: vertical;
 }
 
-.product-image-container {
-    padding-top: 100%;
-    position: relative;
-    overflow: hidden;
-}
-
-.product-image-container .card-img-top {
-    object-fit: contain;
-}
-
 .product-link {
     text-decoration: none;
     color: inherit;
 }
 
 .product-link button {
-
     pointer-events: auto !important;
 }
 
@@ -97,39 +95,14 @@
 
 .bg-info {
     background-color: #e3f2fd !important;
-    /* สีฟ้าอ่อนดูละมุน */
     border: 1px solid #bbdefb;
 }
 
 .bg-warning {
     background-color: #fff3e0 !important;
-    /* สีส้มอ่อน */
     border: 1px solid #ffe0b2;
 }
 
-.category-selection-page {
-    padding-top: 2rem;
-    padding-bottom: 4rem;
-    min-height: 100vh;
-
-    /* พื้นหลังสีครีมนวลสไตล์ Pet Store */
-    background-color: #fff9e3;
-    /* ลายจุด Polka Dot จางๆ เพื่อให้หน้าเว็บดูมีมิติ ไม่เรียบเกินไป */
-    background-image: radial-gradient(#ff9f43 0.8px, transparent 0.8px);
-    background-size: 32px 32px;
-
-    position: relative;
-    overflow-x: hidden;
-    /* กันสัตว์ยักษ์ทำหน้าจอกว้างเกินไป */
-}
-
-/* ทำให้เนื้อหาหลักลอยขึ้นมาจากพื้นหลังเล็กน้อย */
-.category-selection-page .container {
-    position: relative;
-    z-index: 2;
-}
-
-/* --- กองทัพสัตว์ยักษ์ลอยตัว (ตกแต่งพื้นหลัง) --- */
 .bg-pet-decoration {
     position: fixed;
     top: 0;
@@ -137,11 +110,8 @@
     width: 100%;
     height: 100%;
     z-index: 0;
-    /* อยู่หลังเนื้อหาหลัก */
     pointer-events: none;
-    /* กดคลิกทะลุได้ */
     opacity: 0.12;
-    /* จางมากๆ เพื่อเป็นแค่ Background */
 }
 
 .pet-item {
@@ -162,23 +132,18 @@
 
 .category-tile {
     border: none;
-    /* เอาขอบออกเพื่อให้ดูละมุนขึ้น */
     border-radius: 1.5rem;
-    /* มนกว่าเดิม */
     cursor: pointer;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     background-color: rgba(255, 255, 255, 0.9);
     overflow: hidden;
 }
 
-/* เอฟเฟกต์หมุนของ Emoji */
 .emoji-container-spin {
     font-size: 3.5rem;
-    /* ขนาดใหญ่เบิ้ม */
     margin-bottom: 10px;
     display: inline-block;
     animation: slowSpin 6s linear infinite;
-    /* หมุนช้าๆ ตลอดเวลา */
     filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.1));
 }
 
@@ -192,14 +157,12 @@
     }
 }
 
-/* เมื่อเอาเมาส์ชี้ที่ Card */
 .category-tile:hover {
     transform: translateY(-10px) scale(1.05);
     box-shadow: 0 15px 30px rgba(255, 159, 67, 0.2);
     background-color: #ffffff;
 }
 
-/* เมื่อ Hover แล้วให้ Emoji หมุนแบบตื่นเต้น */
 .category-tile:hover .emoji-container-spin {
     animation: excitement 0.5s ease-in-out infinite alternate;
 }
@@ -216,7 +179,6 @@
 
 .category-tile .card-body {
     min-height: 180px;
-    /* เพิ่มพื้นที่ให้น้องหมุน */
     padding: 1.5rem;
 }
 
@@ -225,7 +187,6 @@
     z-index: 1;
 }
 
-/* ตกแต่ง Loading ตอนโหลด */
 .loading-spinner-cute {
     font-size: 3rem;
     animation: bounce 0.8s infinite;

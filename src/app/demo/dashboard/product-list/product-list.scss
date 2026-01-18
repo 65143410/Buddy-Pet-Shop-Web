@@ -1,4 +1,3 @@
-/* พื้นหลังฉบับรวมพลังสัตว์ยักษ์ */
 .list-page-wrapper {
     min-height: 100vh;
     background-color: #fff9e3;
@@ -19,7 +18,6 @@
     pointer-events: none;
 }
 
-/* แอนิเมชันดุ๊กดิ๊กแรงๆ */
 .hyper-pet {
     position: absolute;
     opacity: 0.12;
@@ -63,7 +61,6 @@
     }
 }
 
-/* คอนเทนต์เลเยอร์กระจก */
 .content-glass-layer {
     position: relative;
     z-index: 10;
@@ -82,7 +79,6 @@
     box-shadow: 0 20px 40px rgba(255, 159, 67, 0.2) !important;
 }
 
-/* ตกแต่งปุ่มและ Badge */
 .btn-back-cute {
     background: white;
     padding: 8px 20px;

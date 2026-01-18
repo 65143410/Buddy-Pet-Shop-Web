@@ -1,4 +1,3 @@
-/* คอนเทนเนอร์หลัก */
 .product-page-container {
     min-height: 100vh;
     background-color: #fff9e3;
@@ -6,11 +5,9 @@
     background-size: 30px 30px;
     position: relative;
     overflow: hidden;
-    /* กัน Emoji ล้นหน้าจอ */
     padding: 40px 0;
 }
 
-/* เลเยอร์สัตว์เลี้ยงดุ๊กดิ๊ก */
 .chaotic-background {
     position: fixed;
     top: 0;
@@ -24,13 +21,11 @@
 .wild-pet {
     position: absolute;
     opacity: 0.15;
-    /* จางๆ เพื่อไม่ให้บังตัวหนังสือ */
     user-select: none;
     filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.1));
     animation: extremeMove 10s ease-in-out infinite alternate;
 }
 
-/* สุ่มแอนิเมชันที่แตกต่างกัน */
 .wild-pet:nth-child(odd) {
     animation: extremeSpin 15s linear infinite;
 }
@@ -39,7 +34,6 @@
     animation: extremeJump 4s ease-in-out infinite alternate;
 }
 
-/* รวมความดุ๊กดิ๊ก: ทั้งเลื่อน ทั้งส่าย */
 @keyframes extremeMove {
     0% {
         transform: translate(0, 0) rotate(0deg) scale(1);
@@ -77,13 +71,11 @@
         transform: translateY(-100px) rotate(10deg);
     }
 
-    /* กระโดดสูง */
     100% {
         transform: translateY(0) rotate(-10deg);
     }
 }
 
-/* ทำให้เนื้อหาหลักลอยเด่นเป็นกระจก */
 .main-content-glass {
     background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(10px);
@@ -95,7 +87,6 @@
     box-shadow: 0 20px 50px rgba(255, 159, 67, 0.15);
 }
 
-/* ตกแต่งส่วนประกอบหน้าจอ */
 .product-image-wrapper {
     background-color: #ffffff;
     border-radius: 30px;
@@ -105,7 +96,6 @@
     min-height: 400px;
     padding: 20px;
     border: 2px dashed #ff9f43;
-    /* เส้นประเพิ่มความคิวท์ */
 }
 
 .price-tag {
@@ -134,7 +124,6 @@
     font-weight: bold;
     transition: 0.3s;
     box-shadow: 0 8px 0px #d35400;
-    /* ปุ่มแบบ 3D */
 }
 
 .btn-add-cart-giant:active {
