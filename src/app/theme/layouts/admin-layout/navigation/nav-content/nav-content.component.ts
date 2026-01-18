@@ -1,16 +1,16 @@
-// Angular import
+
 import { Component, OnInit, inject, output } from '@angular/core';
 import { CommonModule, Location, LocationStrategy } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
-// project import
+
 import { NavigationItem, NavigationItems } from '../navigation';
 import { environment } from 'src/environments/environment';
 import { UserService } from 'src/app/services/user.service';
 
 import { NavGroupComponent } from './nav-group/nav-group.component';
 
-// icon
+
 import { IconService } from '@ant-design/icons-angular';
 import {
   DashboardOutline,
@@ -37,19 +37,19 @@ export class NavContentComponent implements OnInit {
   private iconService = inject(IconService);
   private userService = inject(UserService);
 
-  // public props
+
   NavCollapsedMob = output();
 
   navigations: NavigationItem[];
 
-  // version
+
   title = 'Demo application for version numbering';
   currentApplicationVersion = environment.appVersion;
 
   navigation = NavigationItems;
   windowWidth = window.innerWidth;
 
-  // Constructor
+
   constructor() {
     this.iconService.addIcon(
       ...[
@@ -64,24 +64,20 @@ export class NavContentComponent implements OnInit {
         QuestionOutline
       ]
     );
-    this.navigations = []; // เริ่มต้นเป็นว่าง
+    this.navigations = [];
   }
 
   private filterNavigationByRole(items: NavigationItem[]): NavigationItem[] {
     const role = this.userService.getUserRole();
-    console.log('Current User Role for Menu Filtering:', role);
+
 
     return items
       .filter((item) => {
-        // ถ้าไม่มีการกำหนด role ให้ผ่าน (เผื่อเมนูทั่วไป)
         if (!item.roles) return true;
-        // ถ้ามี role ให้เช็คว่าตรงกับสิทธิ์ของผู้ใช้ไหม
         const hasAccess = role ? item.roles.includes(role) : false;
-        console.log(`Menu Item: ${item.title}, Required Roles: ${item.roles}, Access Granted: ${hasAccess}`);
         return hasAccess;
       })
       .map((item) => {
-        // ถ้ามีลูก ให้กรองลูกด้วย (Recursive)
         if (item.children) {
           return { ...item, children: this.filterNavigationByRole(item.children) };
         }
@@ -89,9 +85,8 @@ export class NavContentComponent implements OnInit {
       });
   }
 
-  // Life cycle events
+
   ngOnInit() {
-    // ติดตามการเปลี่ยนแปลงของผู้ใช้ เพื่อกรองเมนูใหม่ทันที
     this.userService.currentUser$.subscribe(() => {
       this.navigations = this.filterNavigationByRole(NavigationItems);
     });
@@ -101,7 +96,7 @@ export class NavContentComponent implements OnInit {
     }
   }
   ngAfterViewInit() {
-    const element = document.querySelector('.some-class'); // จุดที่ระบุในบรรทัด 71
+    const element = document.querySelector('.some-class');
     if (element) {
       element.classList.add('active');
     }
@@ -135,7 +130,7 @@ export class NavContentComponent implements OnInit {
   navMob() {
     const navElement = document.querySelector('app-navigation.coded-navbar');
 
-    // ตรวจสอบว่า Element มีอยู่ (ไม่เป็น null) ก่อนใช้งาน
+
     if (navElement && this.windowWidth < 1025 && navElement.classList.contains('mob-open')) {
       this.NavCollapsedMob.emit();
     }

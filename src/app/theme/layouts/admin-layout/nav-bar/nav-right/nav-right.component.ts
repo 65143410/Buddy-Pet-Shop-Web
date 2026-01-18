@@ -50,10 +50,7 @@ export class NavRightComponent {
   notifications: any[] = [];
   unreadCount = 0;
   activeSubPage: string = 'default';
-  // userPets: any[] = [];
-  // newPet: any = { petName: '', petType: 'DOG', congenitalDisease: 'ไม่มี' };
-  // diseases = ['ไม่มี', 'ภูมิแพ้', 'โรคผิวหนัง', 'โรคหัวใจ', 'โรคไต', 'อื่นๆ'];
-  // isEditPetMode: boolean = false;
+
   private router = inject(Router);
   currentUser: any = null;
   constructor() {
@@ -136,18 +133,9 @@ export class NavRightComponent {
     { icon: 'logout', title: 'Logout', fn: 'logout' },
   ];
 
-  // Unused methods removed
-  /*
-  saveProfile() { ... }
-  addPet() { ... }
-  loadUserPets() { ... }
-  prepareEditPet() { ... }
-  savePet() { ... }
-  deletePet() { ... }
-  resetPetForm() { ... }
-  */
 
-  // แก้ไขฟังก์ชัน test เดิมให้ครอบคลุม
+
+
   test(param: string | undefined) {
     if (!param) return;
     if (param === 'logout') return this.logout();
@@ -164,8 +152,7 @@ export class NavRightComponent {
     // 1. Initial Clean
     img = img.replace(/[\n\r\s]/g, '');
 
-    // Debug
-    console.log('Profile Image Check [Nav-Right]:', { length: img.length, start: img.substring(0, 30) });
+
 
     // 2. Check HTTP
     if (img.startsWith('http')) {

@@ -1,13 +1,13 @@
-// Angular Import
+
 import { Component, Input, inject, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router, RouterModule, Event } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 
-// project import
+
 import { NavigationItem, NavigationItems } from 'src/app/theme/layouts/admin-layout/navigation/navigation';
 
-// icons
+
 import { IconService } from '@ant-design/icons-angular';
 import { GlobalOutline, NodeExpandOutline } from '@ant-design/icons-angular/icons';
 
@@ -33,7 +33,7 @@ export class BreadcrumbComponent {
   private titleService = inject(Title);
   private iconService = inject(IconService);
 
-  // public props
+
   @Input() type: string;
   dashboard = input(true);
   Component = input(false);
@@ -44,7 +44,7 @@ export class BreadcrumbComponent {
   navigationList!: titleType[];
   componentList!: titleType[];
 
-  // constructor
+
   constructor() {
     this.navigations = NavigationItems;
     this.type = 'theme1';
@@ -52,7 +52,7 @@ export class BreadcrumbComponent {
     this.iconService.addIcon(...[GlobalOutline, NodeExpandOutline]);
   }
 
-  // public method
+
   setBreadcrumb() {
     this.route.events.subscribe((router: Event) => {
       if (router instanceof NavigationEnd) {

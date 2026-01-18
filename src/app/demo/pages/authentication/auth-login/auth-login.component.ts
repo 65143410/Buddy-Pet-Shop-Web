@@ -19,7 +19,6 @@ export class AuthLoginComponent {
   isLoading = false;
   errorMessage = '';
 
-  // สร้าง Object ให้ตรงกับ LoginRequest ใน Backend (AuthController.java)
   loginRequest = {
     email: '',
     password: ''
@@ -38,7 +37,7 @@ export class AuthLoginComponent {
     this.authService.login(this.loginRequest).subscribe({
       next: (user) => {
         console.log('Login success:', user);
-        this.userService.updateUser(user); // Use UserService to update state
+        this.userService.updateUser(user);
         this.isLoading = false;
         this.router.navigate(['/dashboard/home']);
       },
