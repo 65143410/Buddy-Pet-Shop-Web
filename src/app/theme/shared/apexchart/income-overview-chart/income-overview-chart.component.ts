@@ -28,15 +28,15 @@ export class IncomeOverviewChartComponent implements OnInit {
     this.adminService.getWeeklyOrders().subscribe({
       next: (data) => {
         const days = data.map((d) => {
-          // Format date string "YYYY-MM-DD" to short day e.g. "Mon"
           const date = new Date(d.date);
           return date.toLocaleDateString('th-TH', { weekday: 'short' });
         });
         const counts = data.map((d) => d.count);
+        const revenues = data.map((d) => d.revenue || 0);
 
         this.chartOptions = {
           chart: {
-            type: 'bar',
+            type: 'line', // Mixed chart
             height: 365,
             toolbar: { show: false },
             background: 'transparent'
@@ -44,32 +44,66 @@ export class IncomeOverviewChartComponent implements OnInit {
           plotOptions: {
             bar: {
               columnWidth: '45%',
-              borderRadius: 4,
-              distributed: true // Optional: different colors for bars
+              borderRadius: 4
             }
           },
           dataLabels: { enabled: false },
           series: [
             {
               name: 'จำนวนออเดอร์',
+              type: 'column',
               data: counts
+            },
+            {
+              name: 'รายได้รวม (บาท)',
+              type: 'line',
+              data: revenues
             }
           ],
-          stroke: { curve: 'smooth', width: 2 },
+          stroke: {
+            width: [0, 4], // Column: 0, Line: 4
+            curve: 'smooth'
+          },
           xaxis: {
             categories: days,
             axisBorder: { show: false },
             axisTicks: { show: false },
             labels: {
               style: {
-                colors: days.map(() => '#8c8c8c')
+                colors: '#8c8c8c'
               }
             }
           },
-          yaxis: { show: false },
-          colors: ['#5cdbd3', '#ff9c6e', '#ffc069', '#95de64', '#597ef7', '#85a5ff', '#b37feb'],
+          yaxis: [
+            {
+              show: false, // Left axis (Count)
+              min: 0
+            },
+            {
+              opposite: true, // Right axis (Revenue)
+              show: false,
+              min: 0
+            }
+          ],
+          colors: ['#5cdbd3', '#ff4d4f'], // Column Color, Line Color
           grid: { show: false },
-          tooltip: { theme: 'light' }
+          tooltip: {
+            theme: 'light',
+            shared: true,
+            intersect: false,
+            y: {
+              formatter: function (y) {
+                if (typeof y !== 'undefined') {
+                  return y.toFixed(0);
+                }
+                return y;
+              }
+            }
+          },
+          legend: {
+            show: true,
+            position: 'top'
+          }
         };
       },
       error: (err) => console.error('Error loading weekly orders:', err)
