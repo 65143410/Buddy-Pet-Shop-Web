@@ -39,7 +39,14 @@ export class AuthLoginComponent {
         console.log('Login success:', user);
         this.userService.updateUser(user);
         this.isLoading = false;
-        this.router.navigate(['/dashboard/home']);
+        const role = this.userService.getUserRole();
+        if (role === 'ADMIN' || role === 'MANAGER') {
+          this.router.navigate(['/dashboard/admin']);
+        } else if (role === 'STAFF') {
+          this.router.navigate(['/dashboard/staff']);
+        } else {
+          this.router.navigate(['/dashboard/home']);
+        }
       },
       error: (err) => {
         console.error(err);
