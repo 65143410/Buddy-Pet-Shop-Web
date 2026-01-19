@@ -338,7 +338,12 @@ import { UserService } from 'src/app/services/user.service';
                </div>
 
           </div>
-          <div class="modal-footer">
+          <div class="modal-footer justify-content-between">
+             <button type="button" class="btn btn-outline-danger" 
+                 *ngIf="selectedOrder!.status.statusName.includes('รอชำระ')"
+                 (click)="cancelOrder(selectedOrder!)">
+               <i class="fas fa-trash-alt me-1"></i> ยกเลิกคำสั่งซื้อ
+             </button>
              <button type="button" class="btn btn-secondary" (click)="closeDetailModal()">ปิด</button>
           </div>
         </div>
@@ -403,8 +408,10 @@ export class UserProfileComponent implements OnInit {
       next: (data) => {
         this.orders = data.sort((a, b) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime());
 
+        // Auto-cancel check
+        this.autoCancelExpiredOrders();
+
         // Filter for Tracking Section: Exclude 'Cancelled' and 'Completed/Shipped'
-        // Adjust status strings based on your actual DB values
         this.ongoingOrders = this.orders.filter(o =>
           !o.status.statusName.includes('ยกเลิก') &&
           !o.status.statusName.includes('สลิปไม่ถูกต้อง') &&
@@ -417,6 +424,47 @@ export class UserProfileComponent implements OnInit {
       error: (err) => {
         console.error('Error loading orders', err);
         this.isLoading = false;
+      }
+    });
+  }
+
+  autoCancelExpiredOrders() {
+    const NOW = new Date().getTime();
+    const FIFTEEN_MINUTES = 15 * 60 * 1000;
+
+    this.orders.forEach(order => {
+      if (order.status.statusName.includes('รอชำระ') || order.status.statusName === 'รอตรวจสอบยอดเงิน') {
+        const orderTime = new Date(order.orderDate).getTime();
+        if (NOW - orderTime > FIFTEEN_MINUTES) {
+          console.log(`Auto cancelling order #${order.orderId} (expired)`);
+          this.orderService.cancelOrder(order.orderId).subscribe({
+            next: () => {
+              // Update local status to reflect change immediately without full reload if possible,
+              // or just let it update on next reload. For now, we update the object locally.
+              order.status.statusName = 'ยกเลิก (หมดเวลา)';
+              // Also remove from ongoing if needed
+              this.ongoingOrders = this.ongoingOrders.filter(o => o.orderId !== order.orderId);
+            },
+            error: (err) => console.error('Failed to auto-cancel order', err)
+          });
+        }
+      }
+    });
+  }
+
+  cancelOrder(order: Order) {
+    if (!confirm('คุณแน่ใจหรือไม่ว่าต้องการยกเลิกคำสั่งซื้อนี้?')) return;
+
+    this.orderService.cancelOrder(order.orderId).subscribe({
+      next: () => {
+        alert('ยกเลิกคำสั่งซื้อเรียบร้อยแล้ว');
+        this.closeDetailModal();
+        if (this.currentUser?.customerId) {
+          this.loadOrders(this.currentUser.customerId);
+        }
+      },
+      error: (err) => {
+        alert('เกิดข้อผิดพลาดในการยกเลิก: ' + (err.error?.message || err.message));
       }
     });
   }

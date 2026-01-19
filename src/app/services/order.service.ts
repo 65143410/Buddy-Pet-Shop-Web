@@ -22,4 +22,8 @@ export class OrderService {
     submitPayment(orderId: number, slipImage: string, amount?: number): Observable<any> {
         return this.http.post(`${this.apiUrl}/${orderId}/payment`, { slipImage, amount });
     }
+
+    cancelOrder(orderId: number): Observable<any> {
+        return this.http.put(`${this.apiUrl}/${orderId}/cancel`, {});
+    }
 }
