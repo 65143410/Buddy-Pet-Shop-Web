@@ -169,7 +169,11 @@ export class CartList implements OnInit {
           : 'บันทึกคำสั่งซื้อเรียบร้อย! กรุณาชำระเงินและแจ้งโอนที่เมนู "ติดตามสถานะคำสั่งซื้อ"';
         alert(msg);
         this.cartService.clearCart();
-        this.closeCart();
+
+        // Close cart and redirect to profile
+        this.isOpen = false;
+        this.resetFlags();
+        this.router.navigate(['/dashboard/profile']);
       },
       error: (err) => {
         console.error(err);
