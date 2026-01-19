@@ -35,7 +35,7 @@ export const NavigationItems: NavigationItem[] = [
         url: '/dashboard/home',
         icon: 'global',
         breadcrumbs: false,
-        roles: ['ADMIN', 'MANAGER', 'STAFF', 'CUSTOMER']
+        roles: ['ADMIN', 'MANAGER', 'STAFF', 'CUSTOMER', 'GUEST']
       },
       {
         id: 'admin',

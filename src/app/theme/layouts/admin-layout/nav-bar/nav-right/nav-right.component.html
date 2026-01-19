@@ -11,7 +11,7 @@
       <span class="f-w-600">{{ currentUser ? currentUser.customerName : 'Guest' }}</span>
     </a>
     <div class="dropdown-menu dropdown-user-profile dropdown-menu-end pc-h-dropdown" ngbDropdownMenu>
-      <div class="dropdown-header">
+      <div class="dropdown-header" *ngIf="currentUser?.role !== 'GUEST'">
         <div class="d-flex mb-1">
           <div class="flex-shrink-0">
             <img [src]="getProfileImage()" alt="user-image" class="user-avatar wid-35" style="object-fit: cover;" />
@@ -26,7 +26,7 @@
         </div>
       </div>
 
-      <div class="list-group list-group-flush w-100">
+      <div class="list-group list-group-flush w-100" *ngIf="currentUser?.role !== 'GUEST'">
         <a href="javascript:" class="list-group-item list-group-item-action" (click)="test('view-profile')">
           <i class="me-2 text-muted" antIcon theme="outline" type="user"></i>
           <span>View Profile</span>
@@ -34,6 +34,13 @@
         <a href="javascript:" class="list-group-item list-group-item-action" (click)="test('logout')">
           <i class="me-2 text-muted" antIcon theme="outline" type="logout"></i>
           <span>Logout</span>
+        </a>
+      </div>
+
+      <div class="list-group list-group-flush w-100" *ngIf="currentUser?.role === 'GUEST'">
+        <a [routerLink]="['/login']" class="list-group-item list-group-item-action">
+          <i class="me-2 text-muted" antIcon theme="outline" type="login"></i>
+          <span>Login</span>
         </a>
       </div>
 
