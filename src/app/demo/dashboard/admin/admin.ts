@@ -388,6 +388,17 @@ export class Admin implements OnInit {
     });
   }
 
+  onProductImageSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.newProduct.image = e.target.result as string;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
   resetProductForm(): void {
     this.newProduct = {
       productName: '',
