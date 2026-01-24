@@ -31,6 +31,10 @@ export class Admin implements OnInit {
   categories: Category[] = [];
   productLogs: ProductLog[] = [];
   logsByProduct: ProductLog[] = [];
+  logsCurrentPage: number = 1;
+  logsPageSize: number = 10;
+  modalLogsCurrentPage: number = 1;
+  modalLogsPageSize: number = 5;
   selectedProductDetail: Product | null = null;
   selectedOrderDetail: Order | null = null;
   showAddStaffForm = false;
@@ -453,6 +457,7 @@ export class Admin implements OnInit {
       });
     }
   }
+
   loadProductLogs() {
     this.isLoadingLogs = true;
     this.adminService.getProductLogs().subscribe({
@@ -466,8 +471,40 @@ export class Admin implements OnInit {
       }
     });
   }
+
+  get paginatedProductLogs(): ProductLog[] {
+    const start = (this.logsCurrentPage - 1) * this.logsPageSize;
+    return this.productLogs.slice(start, start + this.logsPageSize);
+  }
+
+  get logsTotalPages(): number {
+    return Math.ceil(this.productLogs.length / this.logsPageSize);
+  }
+
+  changeLogsPage(page: number): void {
+    if (page >= 1 && page <= this.logsTotalPages) {
+      this.logsCurrentPage = page;
+    }
+  }
+
+  get paginatedModalLogs(): ProductLog[] {
+    const start = (this.modalLogsCurrentPage - 1) * this.modalLogsPageSize;
+    return this.logsByProduct.slice(start, start + this.modalLogsPageSize);
+  }
+
+  get modalLogsTotalPages(): number {
+    return Math.ceil(this.logsByProduct.length / this.modalLogsPageSize);
+  }
+
+  changeModalLogsPage(page: number): void {
+    if (page >= 1 && page <= this.modalLogsTotalPages) {
+      this.modalLogsCurrentPage = page;
+    }
+  }
+
   viewProductDetails(product: Product): void {
     this.selectedProductDetail = product;
+    this.modalLogsCurrentPage = 1;
     this.isLoadingLogs = true;
     this.logsByProduct = [];
     this.adminService.getProductLogsById(product.productId).subscribe({
@@ -481,6 +518,7 @@ export class Admin implements OnInit {
       }
     });
   }
+
   confirmAddStock(): void {
     if (this.selectedProductDetail && this.quantityToAdd > 0) {
       const originalStock = this.selectedProductDetail.stock;
@@ -507,10 +545,12 @@ export class Admin implements OnInit {
       alert('กรุณากรอกจำนวนที่ต้องการลด (ต้องมากกว่า 0)');
     }
   }
+
   closeProductDetails(): void {
     this.selectedProductDetail = null;
     this.logsByProduct = [];
   }
+
   fetchLogsForProduct(productId: number) {
     this.isLoadingLogs = true;
     this.adminService.getProductLogsById(productId).subscribe({
@@ -521,6 +561,7 @@ export class Admin implements OnInit {
       error: () => (this.isLoadingLogs = false)
     });
   }
+
   viewOrderDetails(order: Order): void {
     this.selectedOrderDetail = order;
   }
@@ -548,21 +589,20 @@ export class Admin implements OnInit {
       }
     });
   }
+
   saveStaffChanges(staff: Staff | null): void {
     if (!staff) return;
 
-    // ✨ เพิ่มการตรวจสอบสิทธิ์สำหรับ MANAGER
     if (this.currentRole === 'MANAGER') {
       const originalStaff = this.staffs.find(s => s.staffId === staff.staffId);
       if (originalStaff && originalStaff.position === 'ADMIN') {
         alert('ขออภัย: ในฐานะ Manager คุณไม่มีสิทธิ์แก้ไขข้อมูลหรือตำแหน่งของผู้ดูแลระบบ (ADMIN) ได้ครับ');
-        this.loadInitialData(); // รีโหลดข้อมูลเพื่อคืนค่าเดิม
+        this.loadInitialData();
         this.selectedStaff = null;
         return;
       }
     }
 
-    // Create a clean object with only necessary fields to avoid Jackson 400 errors
     const cleanData: any = {
       name: staff.name,
       email: staff.email,
@@ -571,7 +611,6 @@ export class Admin implements OnInit {
       status: staff.status
     };
 
-    // If password was typed (though not in current UI), include it
     if (staff.password) {
       cleanData.password = staff.password;
     }
@@ -612,9 +651,7 @@ export class Admin implements OnInit {
       .subscribe({
         next: (updatedOrder) => {
           alert('บันทึกข้อมูลการจัดส่งสำเร็จ!');
-          // Update local data
           this.selectedOrderDetail = updatedOrder;
-          // Also update in the list
           const index = this.orders.findIndex(o => o.orderId === updatedOrder.orderId);
           if (index !== -1) {
             this.orders[index] = updatedOrder;
@@ -631,10 +668,6 @@ export class Admin implements OnInit {
   }
 
   exportToExcel(): void {
-    const revenueObs = this.adminService.getDailyRevenue();
-    const salesObs = this.adminService.getMonthlySales();
-    const weeklyObs = this.adminService.getWeeklyOrders();
-
     this.adminService.getMonthlySales().subscribe({
       next: (monthlyData) => {
         this.adminService.getDailyRevenue().subscribe({
@@ -653,24 +686,22 @@ export class Admin implements OnInit {
     workbook.creator = 'Buddy PetShop System';
     workbook.created = new Date();
 
-    // --- Sheet 1: Dashboard Charts (Visuals) ---
     const chartSheet = workbook.addWorksheet('Dashboard Visuals');
     chartSheet.addRow(['Dashboard Report', new Date().toLocaleString()]);
     chartSheet.addRow(['Graphs & Charts Snapshot']);
-    chartSheet.addRow([]); // Spacer
+    chartSheet.addRow([]);
 
-    // Capture Charts Logic
     const chartIds = ['monthlyChartContainer', 'incomeChartContainer', 'analyticsChartContainer', 'salesReportChartContainer'];
     const chartTitles = ['Monthly Sales', 'Income Overview', 'Analytics', 'Sales Distribution'];
 
-    let currentRow = 4; // Start row for images
+    let currentRow = 4;
 
     for (let i = 0; i < chartIds.length; i++) {
       const id = chartIds[i];
       const element = document.getElementById(id);
       if (element) {
         try {
-          const canvas = await html2canvas(element, { scale: 2 }); // Scale 2 for better quality
+          const canvas = await html2canvas(element, { scale: 2 });
           const base64 = canvas.toDataURL('image/png');
 
           const imageId = workbook.addImage({
@@ -679,14 +710,12 @@ export class Admin implements OnInit {
           });
 
           chartSheet.addRow([chartTitles[i]]);
-          // Add Image
           chartSheet.addImage(imageId, {
             tl: { col: 0, row: currentRow },
             ext: { width: 500, height: 300 }
           });
 
-          currentRow += 16; // Move down (approx 15-20 rows per chart)
-          // Add empty rows to spacing
+          currentRow += 16;
           for (let r = 0; r < 15; r++) chartSheet.addRow([]);
 
         } catch (e) {
@@ -696,7 +725,6 @@ export class Admin implements OnInit {
       }
     }
 
-    // --- Sheet 2: Executive Summary (Data) ---
     const summarySheet = workbook.addWorksheet('Executive Summary');
     const totalRevenue = this.orders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
     const totalOrders = this.orders.length;
@@ -712,16 +740,12 @@ export class Admin implements OnInit {
     summarySheet.addRow(['System Stats']);
     this.stats.forEach(s => summarySheet.addRow([s.label, s.value]));
 
-    // --- Sheet 3: Monthly Sales Data ---
     const monthlySheet = workbook.addWorksheet('Monthly Sales Data');
     monthlySheet.addRow(['Month', 'Sales Amount', 'Order Count']);
     monthlySales.forEach(m => monthlySheet.addRow([m.month || m.label, m.totalSales || m.value, m.orderCount || 0]));
 
-    // --- Sheet 4: Top Sellers ---
     const topSheet = workbook.addWorksheet('Top Sellers');
     topSheet.addRow(['Rank', 'Item Name', 'Revenue']);
-    // Simple calculation again for top products (or use existing calc logic)
-    // ... Calculate Top Products Logic ...
     const productSalesMap = new Map<string, number>();
     this.orders.forEach(o => o.orderDetails?.forEach(d => {
       const name = d.product?.productName || 'Unknown';
@@ -731,14 +755,12 @@ export class Admin implements OnInit {
 
     topProducts.forEach((p, idx) => topSheet.addRow([idx + 1, p[0], p[1]]));
 
-    // --- Sheet 5: All Orders ---
     const orderSheet = workbook.addWorksheet('All Orders');
     orderSheet.addRow(['Order ID', 'Date', 'Customer', 'Total', 'Status']);
     this.orders.forEach(o => orderSheet.addRow([
       o.orderId, o.orderDate, o.customer?.customerName, o.totalAmount, o.status?.statusName
     ]));
 
-    // --- Generate & Save ---
     const buffer = await workbook.xlsx.writeBuffer();
     this.saveAsExcelFile(buffer, 'BuddyPetShop_Full_Report');
   }

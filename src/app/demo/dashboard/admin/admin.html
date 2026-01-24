@@ -326,7 +326,13 @@
               </div>
               <hr class="divider">
 
-              <h4>🕒 ประวัติความเคลื่อนไหว (Stock Logs)</h4>
+              <div class="d-flex justify-content-between align-items-center mt-4 mb-2">
+                <h4 class="mb-0">🕒 ประวัติความเคลื่อนไหว (Stock Logs)</h4>
+                <div *ngIf="logsByProduct.length > 0" style="font-size: 12px; color: #666;">
+                  หน้าที่ {{ modalLogsCurrentPage }} / {{ modalLogsTotalPages }}
+                </div>
+              </div>
+
               <div *ngIf="isLoadingLogs" style="text-align: center; padding: 20px;">กำลังโหลดประวัติ...</div>
 
               <div class="table-container" *ngIf="!isLoadingLogs">
@@ -338,11 +344,10 @@
                       <th>การดำเนินการ</th>
                       <th>จำนวน</th>
                       <th>จำนวนคงเหลือ</th>
-                      <th>ผู้ดำเนินการ</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr *ngFor="let log of logsByProduct">
+                    <tr *ngFor="let log of paginatedModalLogs">
                       <td>{{ log.timestamp | date:'dd/MM/yyyy HH:mm' }}</td>
                       <td><strong>{{ log.productName }}</strong></td>
                       <td>
@@ -358,10 +363,23 @@
                         </span>
                       </td>
                       <td>{{ log.finalStock }} ชิ้น</td>
-                      <td>{{ log.staffName }}</td>
                     </tr>
                   </tbody>
                 </table>
+
+                <!-- Modal Logs Pagination -->
+                <div *ngIf="modalLogsTotalPages > 1" class="d-flex justify-content-end gap-2 mt-2">
+                  <button class="btn btn-xs btn-outline-secondary" [disabled]="modalLogsCurrentPage === 1"
+                    (click)="changeModalLogsPage(modalLogsCurrentPage - 1)" style="font-size: 11px; padding: 2px 8px;">
+                    &laquo;
+                  </button>
+                  <button class="btn btn-xs btn-outline-secondary"
+                    [disabled]="modalLogsCurrentPage === modalLogsTotalPages"
+                    (click)="changeModalLogsPage(modalLogsCurrentPage + 1)" style="font-size: 11px; padding: 2px 8px;">
+                    &raquo;
+                  </button>
+                </div>
+
                 <div *ngIf="logsByProduct.length === 0" style="text-align: center; padding: 20px; color: #999;">
                   ยังไม่มีประวัติสำหรับสินค้านี้
                 </div>
@@ -375,7 +393,13 @@
         </div>
         <div class="history-section"
           style="margin-top: 30px; background: #fdfdfd; padding: 20px; border-radius: 8px; border: 1px solid #eee;">
-          <h3>🕒 ประวัติความเคลื่อนไหวสต็อกล่าสุด</h3>
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="mb-0">🕒 ประวัติความเคลื่อนไหวสต็อกล่าสุด</h3>
+            <div class="page-info" style="font-size: 13px; color: #666;">
+              หน้าที่ {{ logsCurrentPage }} / {{ logsTotalPages || 1 }}
+            </div>
+          </div>
+
           <table class="history-table" style="font-size: 13px;">
             <thead>
               <tr style="background: #f1f1f1;">
@@ -384,16 +408,15 @@
                 <th>การดำเนินการ</th>
                 <th>จำนวน</th>
                 <th>จำนวนคงเหลือ</th>
-                <th>ผู้ดำเนินการ</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let log of productLogs">
+              <tr *ngFor="let log of paginatedProductLogs">
                 <td>{{ log.timestamp | date:'dd/MM/yyyy HH:mm' }}</td>
                 <td><strong>{{ log.productName }}</strong></td>
                 <td>
                   <span
-                    [style.color]="log.action === 'ADD' ? '#4CAF50' :log.action === 'DELETE' ? '#f44336' : '#2196F3'"
+                    [style.color]="log.action === 'ADD' ? '#4CAF50' : log.action === 'DELETE' ? '#f44336' : '#2196F3'"
                     style="font-weight: bold;">
                     {{ log.action }}
                   </span>
@@ -404,10 +427,21 @@
                   </span>
                 </td>
                 <td>{{ log.finalStock }} ชิ้น</td>
-                <td>{{ log.staffName }}</td>
               </tr>
             </tbody>
           </table>
+
+          <!-- Pagination Controls -->
+          <div *ngIf="logsTotalPages > 1" class="d-flex justify-content-end gap-2 mt-3 no-print">
+            <button class="btn btn-sm btn-outline-secondary" [disabled]="logsCurrentPage === 1"
+              (click)="changeLogsPage(logsCurrentPage - 1)">
+              &laquo; ก่อนหน้า
+            </button>
+            <button class="btn btn-sm btn-outline-secondary" [disabled]="logsCurrentPage === logsTotalPages"
+              (click)="changeLogsPage(logsCurrentPage + 1)">
+              ถัดไป &raquo;
+            </button>
+          </div>
         </div>
         <div *ngIf="filteredProducts.length === 0" style="text-align: center; padding: 40px; color: #999;">
           ยังไม่มีสินค้าในหมวดหมู่นี้
