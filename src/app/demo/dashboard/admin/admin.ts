@@ -85,8 +85,7 @@ export class Admin implements OnInit {
   showCategoryForm = false;
   isEditCategoryMode = false;
   categoryFormModel: Partial<Category> = {
-    categoryName: '',
-    description: ''
+    categoryName: ''
   };
   readonly adminAllowedStatuses = ['รอตรวจสอบยอดเงิน', 'ชำระเงินแล้ว', 'ยกเลิก/สลิปไม่ถูกต้อง'];
   private adminService = inject(AdminApiService);
@@ -425,8 +424,7 @@ export class Admin implements OnInit {
     this.showCategoryForm = true;
     this.isEditCategoryMode = false;
     this.categoryFormModel = {
-      categoryName: '',
-      description: ''
+      categoryName: ''
     };
   }
 
@@ -443,15 +441,11 @@ export class Admin implements OnInit {
       return;
     }
 
-    // Clean payload to ensure only relevant fields are sent
     const payload: any = {
-      categoryName: this.categoryFormModel.categoryName.trim(),
-      description: this.categoryFormModel.description ? this.categoryFormModel.description.trim() : ''
+      categoryName: this.categoryFormModel.categoryName.trim()
     };
 
-    if (this.isEditCategoryMode) {
-      payload.categoryId = this.categoryFormModel.categoryId;
-    }
+    console.log('Final Payload sending to Service:', payload);
 
     const obs = this.isEditCategoryMode
       ? this.adminService.updateCategory(this.categoryFormModel.categoryId!, payload)
@@ -459,8 +453,14 @@ export class Admin implements OnInit {
 
     obs.subscribe({
       next: (res) => {
-        console.log('Category saved successfully:', res);
+        console.log('Category saved success:', res);
         alert(this.isEditCategoryMode ? 'แก้ไขประเภทสินค้าสำเร็จ!' : 'เพิ่มประเภทสินค้าสำเร็จ!');
+
+        // Update selectedCategory if we are currently viewing it
+        if (this.selectedCategory && this.selectedCategory.categoryId === res.categoryId) {
+          this.selectedCategory = { ...res };
+        }
+
         this.loadCategories();
         this.showCategoryForm = false;
       },

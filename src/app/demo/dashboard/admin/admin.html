@@ -164,11 +164,6 @@
                 <input type="text" class="form-control" [(ngModel)]="categoryFormModel.categoryName"
                   placeholder="ระบุชื่อประเภทสินค้า..." style="padding: 12px; border-radius: 8px;">
               </div>
-              <div class="mb-3">
-                <label class="form-label fw-bold small text-muted text-uppercase mb-2">คำอธิบาย (ถ้ามี)</label>
-                <textarea class="form-control" [(ngModel)]="categoryFormModel.description" rows="3"
-                  placeholder="ระบุรายละเอียดเพิ่มเติม..." style="border-radius: 8px;"></textarea>
-              </div>
 
               <div class="d-flex gap-2 mt-4">
                 <button class="btn flex-grow-1 py-2 fw-bold"
@@ -211,10 +206,6 @@
               style="font-size: 48px; margin-bottom: 15px; background: #f8fafc; width: 80px; height: 80px; line-height: 80px; border-radius: 50%; margin: 0 auto 20px;">
               📦</div>
             <h3 style="margin: 0; color: #1e293b; font-weight: 700;">{{ cat.categoryName }}</h3>
-            <p class="text-muted small mt-2 mb-0" *ngIf="cat.description"
-              style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 38px;">
-              {{ cat.description }}
-            </p>
             <p style="color: #64748b; font-size: 14px; margin-top: 10px;">
               <span class="badge bg-light-primary text-primary border px-3 py-2 rounded-pill">
                 {{ getProductCount(cat.categoryId) }} รายการสินค้า
