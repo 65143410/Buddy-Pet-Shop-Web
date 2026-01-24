@@ -21,6 +21,13 @@ export class Staff implements OnInit {
   ordersForShipping: Order[] = [];
   myPreparingTasks: Order[] = [];
 
+  // Pagination for Shipping Orders
+  shippingCurrentPage: number = 1;
+  pageSize: number = 10;
+
+  // Pagination for All Orders
+  allOrdersCurrentPage: number = 1;
+
   constructor() { }
 
   ngOnInit(): void {
@@ -42,6 +49,9 @@ export class Staff implements OnInit {
       next: (data) => {
         this.allOrders = data;
         this.loadOrdersForShipping();
+        // Keep current pages unless the data length makes them invalid
+        if (this.shippingCurrentPage > this.shippingTotalPages) this.shippingCurrentPage = Math.max(1, this.shippingTotalPages);
+        if (this.allOrdersCurrentPage > this.allOrdersTotalPages) this.allOrdersCurrentPage = Math.max(1, this.allOrdersTotalPages);
       },
       error: (err) => console.error('Error loading orders:', err)
     });
@@ -100,6 +110,37 @@ export class Staff implements OnInit {
 
   viewOrderDetails(order: Order, _table: string = ''): void {
     this.selectedOrder = order;
+  }
+
+  // Pagination Getters & Methods
+  get paginatedShippingOrders(): Order[] {
+    const start = (this.shippingCurrentPage - 1) * this.pageSize;
+    return this.ordersForShipping.slice(start, start + this.pageSize);
+  }
+
+  get shippingTotalPages(): number {
+    return Math.ceil(this.ordersForShipping.length / this.pageSize);
+  }
+
+  changeShippingPage(page: number): void {
+    if (page >= 1 && page <= this.shippingTotalPages) {
+      this.shippingCurrentPage = page;
+    }
+  }
+
+  get paginatedAllOrders(): Order[] {
+    const start = (this.allOrdersCurrentPage - 1) * this.pageSize;
+    return this.allOrders.slice(start, start + this.pageSize);
+  }
+
+  get allOrdersTotalPages(): number {
+    return Math.ceil(this.allOrders.length / this.pageSize);
+  }
+
+  changeAllOrdersPage(page: number): void {
+    if (page >= 1 && page <= this.allOrdersTotalPages) {
+      this.allOrdersCurrentPage = page;
+    }
   }
 
   closeOrderDetails(): void {

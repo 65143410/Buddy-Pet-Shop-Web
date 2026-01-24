@@ -50,9 +50,14 @@
     </div>
 
     <div class="section new-orders-card">
-      <div class="section-title">
-        <span class="icon">📥</span>
-        <h2>ออเดอร์ใหม่ (รอรับงาน)</h2>
+      <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span class="icon">📥</span>
+          <h2 style="margin: 0;">ออเดอร์ใหม่ (รอรับงาน)</h2>
+        </div>
+        <div *ngIf="ordersForShipping.length > 0" style="font-size: 14px; color: #666;">
+          หน้า {{ shippingCurrentPage }} / {{ shippingTotalPages }}
+        </div>
       </div>
 
       <div class="empty-state" *ngIf="ordersForShipping.length === 0">
@@ -71,22 +76,41 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let order of ordersForShipping; let i = index" [ngClass]="{'active-row': selectedOrder === order}"
-            (click)="viewOrderDetails(order)">
-            <td class="priority-number">{{ i + 1 }}</td>
+          <tr *ngFor="let order of paginatedShippingOrders; let i = index"
+            [ngClass]="{'active-row': selectedOrder === order}" (click)="viewOrderDetails(order)">
+            <td class="priority-number">{{ (shippingCurrentPage - 1) * pageSize + i + 1 }}</td>
             <td class="id-cell">#{{ order.orderId }}</td>
             <td>{{ order.customer.customerName }}</td>
             <td class="amount-cell">{{ order.totalAmount | currency:'฿':'symbol':'1.2-2' }}</td>
-            <td class="action-cell"><button class="btn-grab">รับงาน</button></td>
+            <td class="action-cell">
+              <button class="btn-grab" (click)="$event.stopPropagation(); pickupOrder(order)">รับงาน</button>
+            </td>
           </tr>
         </tbody>
       </table>
+
+      <!-- Pagination for New Orders -->
+      <div *ngIf="shippingTotalPages > 1"
+        style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px; padding: 10px;">
+        <button (click)="changeShippingPage(shippingCurrentPage - 1)" [disabled]="shippingCurrentPage === 1"
+          style="padding: 5px 12px; border-radius: 4px; border: 1px solid #ddd; background: white; cursor: pointer;">
+          &laquo;
+        </button>
+        <button (click)="changeShippingPage(shippingCurrentPage + 1)"
+          [disabled]="shippingCurrentPage === shippingTotalPages"
+          style="padding: 5px 12px; border-radius: 4px; border: 1px solid #ddd; background: white; cursor: pointer;">
+          &raquo;
+        </button>
+      </div>
     </div>
   </div>
 
-  <div class="section history-card">
-    <div class="section-title">
-      <h2>🧾 ประวัติคำสั่งซื้อทั้งหมด</h2>
+  <div class="section history-card" style="margin-top: 30px;">
+    <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+      <h2 style="margin: 0;">🧾 ประวัติคำสั่งซื้อทั้งหมด</h2>
+      <div *ngIf="allOrders.length > 0" style="font-size: 14px; color: #666;">
+        หน้า {{ allOrdersCurrentPage }} / {{ allOrdersTotalPages }}
+      </div>
     </div>
     <div class="table-responsive">
       <table class="modern-table">
@@ -100,7 +124,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let order of allOrders" (click)="viewOrderDetails(order)">
+          <tr *ngFor="let order of paginatedAllOrders" (click)="viewOrderDetails(order)">
             <td>#{{ order.orderId }}</td>
             <td>{{ order.customer.customerName }}</td>
             <td>{{ order.orderDate | date:'dd/MM/yy' }}</td>
@@ -113,6 +137,20 @@
           </tr>
         </tbody>
       </table>
+    </div>
+
+    <!-- Pagination for All Orders -->
+    <div *ngIf="allOrdersTotalPages > 1"
+      style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px; padding: 10px;">
+      <button (click)="changeAllOrdersPage(allOrdersCurrentPage - 1)" [disabled]="allOrdersCurrentPage === 1"
+        style="padding: 5px 12px; border-radius: 4px; border: 1px solid #ddd; background: white; cursor: pointer;">
+        &laquo;
+      </button>
+      <button (click)="changeAllOrdersPage(allOrdersCurrentPage + 1)"
+        [disabled]="allOrdersCurrentPage === allOrdersTotalPages"
+        style="padding: 5px 12px; border-radius: 4px; border: 1px solid #ddd; background: white; cursor: pointer;">
+        &raquo;
+      </button>
     </div>
   </div>
 
