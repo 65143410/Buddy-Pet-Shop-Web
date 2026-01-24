@@ -30,7 +30,7 @@ export const routes: Routes = [
       {
         path: 'dashboard/home',
         component: Home,
-        data: { roles: ['ADMIN', 'MANAGER', 'STAFF', 'CUSTOMER', 'GUEST'] }
+        data: { roles: ['CUSTOMER', 'GUEST'] }
       },
       {
         path: 'dashboard/profile',
@@ -45,7 +45,7 @@ export const routes: Routes = [
       {
         path: 'dashboard/staff',
         component: Staff,
-        data: { roles: ['ADMIN', 'MANAGER', 'STAFF'] }
+        data: { roles: ['STAFF'] }
       },
       {
         path: 'home/product/:id',

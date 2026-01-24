@@ -95,7 +95,28 @@
               <span class="fw-bold text-primary ms-2">{{ inVoiceNo }}</span>
             </div>
             <div class="card-body p-0">
-              <ul class="list-group list-group-flush">
+
+
+              <div class="cart-item-row row align-items-center shadow-sm mx-0"
+                *ngFor="let item of cartService.cartItems">
+                <div class="col-2 p-0 text-center">
+                  <img
+                    [src]="item.image || 'https://www.prachachat.net/wp-content/uploads/2023/05/%E0%B8%94%E0%B8%B5%E0%B9%84%E0%B8%8B%E0%B8%99%E0%B9%8C%E0%B8%97%E0%B8%B5%E0%B9%88%E0%B8%A2%E0%B8%B1%E0%B8%87%E0%B9%84%E0%B8%A1%E0%B9%88%E0%B9%84%E0%B8%94%E0%B9%89%E0%B8%95%E0%B8%B1%E0%B9%89%E0%B8%87%E0%B8%8A%E0%B8%B7%E0%B9%88%E0%B8%AD-6.jpg'"
+                    class="rounded me-3" style="width: 40px; height: 40px; object-fit: cover;">
+                </div>
+                <div class="col-6">
+                  <div class="fw-bold text-dark text-truncate">{{ item.productName }}</div>
+                  <small class="text-muted">{{ item.price | currency:'THB' }} x {{ item.qty }}</small>
+                </div>
+                <div class="col-4 text-end">
+                  <span class="fw-bold text-primary" style="font-size: 1.1rem; display: block;">
+                    รวม: {{ (item.price * item.qty) | currency:'THB' }}
+                  </span>
+                </div>
+              </div>
+
+
+              <!-- <ul class="list-group list-group-flush">
                 <li class="list-group-item p-3" *ngFor="let item of cartService.cartItems">
                   <div class="d-flex align-items-center w-100">
                     <img
@@ -112,7 +133,7 @@
                     </div>
                   </div>
                 </li>
-              </ul>
+              </ul> -->
             </div>
             <div class="card-footer bg-primary-subtle text-end py-3">
               <span class="h5 mb-0 fw-bold text-primary">ยอดชำระสุทธิ: {{ totalAmount | currency:'THB' }}</span>

@@ -374,10 +374,11 @@ export class UserProfileComponent implements OnInit {
   http = inject(HttpClient);
   sanitizer = inject(DomSanitizer);
   userService = inject(UserService);
-
+  private expiryInterval: any;
   ngOnInit() {
     this.userService.currentUser$.subscribe(user => {
       this.currentUser = user;
+      console.log('ตรงนี้', this.currentUser)
       if (this.currentUser && this.currentUser.customerId) {
         this.loadOrders(this.currentUser.customerId);
       }
@@ -402,16 +403,20 @@ export class UserProfileComponent implements OnInit {
       this.router.navigate(['/login']);
     }
   }
-
+  ngOnDestroy() {
+    if (this.expiryInterval) {
+      clearInterval(this.expiryInterval);
+    }
+  }
   loadOrders(customerId: number) {
     this.orderService.getOrdersByCustomer(customerId).subscribe({
       next: (data) => {
         this.orders = data.sort((a, b) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime());
 
         // Auto-cancel check
-        this.autoCancelExpiredOrders();
-
-        // Filter for Tracking Section: Exclude 'Cancelled' and 'Completed/Shipped'
+        this.expiryInterval = setInterval(() => {
+          this.autoCancelExpiredOrders();
+        }, 1000);
         this.ongoingOrders = this.orders.filter(o =>
           !o.status.statusName.includes('ยกเลิก') &&
           !o.status.statusName.includes('สลิปไม่ถูกต้อง') &&
@@ -430,19 +435,18 @@ export class UserProfileComponent implements OnInit {
 
   autoCancelExpiredOrders() {
     const NOW = new Date().getTime();
-    const FIFTEEN_MINUTES = 15 * 60 * 1000;
-
+    const FIFTEEN_MINUTES = 1 * 60 * 1000;
+    console.log('นาที', FIFTEEN_MINUTES)
     this.orders.forEach(order => {
-      if (order.status.statusName.includes('รอชำระ') || order.status.statusName === 'รอตรวจสอบยอดเงิน') {
+      if (order.status.statusName.includes('รอชำระ')) {
+        console.log('222')
         const orderTime = new Date(order.orderDate).getTime();
-        if (NOW - orderTime > FIFTEEN_MINUTES) {
+        console.log('order', orderTime)
+        if (NOW > (orderTime + FIFTEEN_MINUTES)) {
           console.log(`Auto cancelling order #${order.orderId} (expired)`);
           this.orderService.cancelOrder(order.orderId).subscribe({
             next: () => {
-              // Update local status to reflect change immediately without full reload if possible,
-              // or just let it update on next reload. For now, we update the object locally.
               order.status.statusName = 'ยกเลิก (หมดเวลา)';
-              // Also remove from ongoing if needed
               this.ongoingOrders = this.ongoingOrders.filter(o => o.orderId !== order.orderId);
             },
             error: (err) => console.error('Failed to auto-cancel order', err)
