@@ -179,6 +179,9 @@ import { UserService } from 'src/app/services/user.service';
                                 {{ pet.isSterilized ? 'ทำหมันแล้ว' : 'ยังไม่ทำหมัน' }}
                               </span>
                            </p>
+                           <p class="mb-0 small text-danger fw-bold" *ngIf="pet.congenitalDisease && pet.congenitalDisease !== 'ไม่มี'" style="font-size: 12px;">
+                              <i class="fas fa-heartbeat me-1"></i> โรคประจำตัว: {{ pet.congenitalDisease }}
+                           </p>
                         </div>
                      </div>
                   </div>
