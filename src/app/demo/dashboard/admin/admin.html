@@ -280,29 +280,39 @@
                 </div>
               </div>
               <div class="stock-action-zone"
-                style="background: #e8f5e9; padding: 20px; border-radius: 12px; border: 1px solid #4CAF50; margin-bottom: 25px;">
-                <h4 style="margin-top: 0; color: #2e7d32; display: flex; align-items: center; gap: 8px;">
-                  📥 เพิ่มสต็อกสินค้า (เติมของ)
+                style="background: #e3f2fd; padding: 20px; border-radius: 12px; border: 1px solid #2196F3; margin-bottom: 25px;">
+                <h4 style="margin-top: 0; color: #1976d2; display: flex; align-items: center; gap: 8px;">
+                  🔄 ปรับสต็อกสินค้า (เพิ่ม/ลด)
                 </h4>
 
                 <div style="display: flex; gap: 10px; align-items: center;">
                   <div style="flex: 1;">
                     <label
-                      style="display: block; font-size: 12px; color: #666; margin-bottom: 5px;">จำนวนที่นำมาเพิ่ม</label>
+                      style="display: block; font-size: 12px; color: #666; margin-bottom: 5px;">จำนวนที่ต้องการปรับ</label>
                     <input type="number" [(ngModel)]="quantityToAdd" placeholder="ระบุจำนวน..."
-                      style="width: 100%; padding: 12px; border: 2px solid #4CAF50; border-radius: 8px; font-size: 16px; text-align: center;">
+                      style="width: 100%; padding: 12px; border: 2px solid #2196F3; border-radius: 8px; font-size: 16px; text-align: center;">
                   </div>
 
-                  <button (click)="confirmAddStock()"
-                    style="background: #4CAF50; color: white; border: none; padding: 0 30px; border-radius: 8px; cursor: pointer; font-size: 24px; font-weight: bold; height: 48px; display: flex; align-items: center; justify-content: center; margin-top: 20px;">
-                    +
-                  </button>
+                  <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button (click)="confirmAddStock()" title="เพิ่มสต็อก"
+                      style="background: #4CAF50; color: white; border: none; width: 48px; border-radius: 8px; cursor: pointer; font-size: 24px; font-weight: bold; height: 48px; display: flex; align-items: center; justify-content: center;">
+                      +
+                    </button>
+                    <button (click)="confirmRemoveStock()" title="ลดสต็อก"
+                      style="background: #f44336; color: white; border: none; width: 48px; border-radius: 8px; cursor: pointer; font-size: 24px; font-weight: bold; height: 48px; display: flex; align-items: center; justify-content: center;">
+                      -
+                    </button>
+                  </div>
                 </div>
 
-                <p style="font-size: 12px; color: #43a047; margin-top: 8px;">
+                <p style="font-size: 12px; color: #1976d2; margin-top: 8px;">
                   * สต็อกปัจจุบัน: <strong>{{ selectedProductDetail?.stock }}</strong>
-                  <span *ngIf="quantityToAdd > 0"> ➡️ สต็อกใหม่จะเป็น: <strong>{{ (selectedProductDetail?.stock || 0) +
-                      quantityToAdd }}</strong></span>
+                  <ng-container *ngIf="quantityToAdd > 0">
+                    <span class="ms-2"> ➕ เพิ่มเป็น: <strong>{{ (selectedProductDetail?.stock || 0) + quantityToAdd
+                        }}</strong></span>
+                    <span class="ms-2" *ngIf="(selectedProductDetail?.stock || 0) >= quantityToAdd"> ➖ ลดเหลือ:
+                      <strong>{{ (selectedProductDetail?.stock || 0) - quantityToAdd }}</strong></span>
+                  </ng-container>
                 </p>
               </div>
 

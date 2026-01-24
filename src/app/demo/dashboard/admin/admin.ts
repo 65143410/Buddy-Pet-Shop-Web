@@ -492,6 +492,21 @@ export class Admin implements OnInit {
       alert('กรุณากรอกจำนวนที่ต้องการเพิ่ม (ต้องมากกว่า 0)');
     }
   }
+
+  confirmRemoveStock(): void {
+    if (this.selectedProductDetail && this.quantityToAdd > 0) {
+      const originalStock = this.selectedProductDetail.stock;
+      if (originalStock < this.quantityToAdd) {
+        alert('จำนวนสต็อกคงเหลือไม่พอสำหรับการลด');
+        return;
+      }
+      this.selectedProductDetail.stock = originalStock - this.quantityToAdd;
+      this.updateStockValue(this.selectedProductDetail);
+      this.quantityToAdd = 0;
+    } else {
+      alert('กรุณากรอกจำนวนที่ต้องการลด (ต้องมากกว่า 0)');
+    }
+  }
   closeProductDetails(): void {
     this.selectedProductDetail = null;
     this.logsByProduct = [];
