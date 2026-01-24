@@ -37,6 +37,14 @@ export class AuthLoginComponent {
     this.authService.login(this.loginRequest).subscribe({
       next: (user) => {
         console.log('Login success:', user);
+
+        // Check if account is active (for Admin/Staff)
+        if (user.status === 'INACTIVE') {
+          this.errorMessage = 'บัญชีของคุณถูกระงับการใช้งาน กรุณาติดต่อผู้ดูแลระบบ';
+          this.isLoading = false;
+          return;
+        }
+
         this.userService.updateUser(user);
         this.isLoading = false;
         const role = this.userService.getUserRole();
