@@ -81,6 +81,13 @@ export class Admin implements OnInit {
     weightVolume: '',
     image: ''
   };
+
+  showCategoryForm = false;
+  isEditCategoryMode = false;
+  categoryFormModel: Partial<Category> = {
+    categoryName: '',
+    description: ''
+  };
   readonly adminAllowedStatuses = ['รอตรวจสอบยอดเงิน', 'ชำระเงินแล้ว', 'ยกเลิก/สลิปไม่ถูกต้อง'];
   private adminService = inject(AdminApiService);
   private userService = inject(UserService);
@@ -415,16 +422,57 @@ export class Admin implements OnInit {
   }
 
   addCategory(): void {
-    const name = window.prompt('กรุณากรอกชื่อประเภทสินค้าใหม่:');
-    if (name && name.trim()) {
-      this.adminService.addCategory({ categoryName: name.trim() }).subscribe({
-        next: (res) => {
-          alert('เพิ่มประเภทสินค้าสำเร็จ!');
-          this.loadCategories();
-        },
-        error: (err) => alert('เกิดข้อผิดพลาด: ' + (err.error?.message || err.message))
-      });
+    this.showCategoryForm = true;
+    this.isEditCategoryMode = false;
+    this.categoryFormModel = {
+      categoryName: '',
+      description: ''
+    };
+  }
+
+  editCategory(event: Event, cat: Category): void {
+    event.stopPropagation();
+    this.showCategoryForm = true;
+    this.isEditCategoryMode = true;
+    this.categoryFormModel = { ...cat };
+  }
+
+  saveCategory(): void {
+    if (!this.categoryFormModel.categoryName || !this.categoryFormModel.categoryName.trim()) {
+      alert('กรุณากรอกชื่อประเภทสินค้า');
+      return;
     }
+
+    // Clean payload to ensure only relevant fields are sent
+    const payload: any = {
+      categoryName: this.categoryFormModel.categoryName.trim(),
+      description: this.categoryFormModel.description ? this.categoryFormModel.description.trim() : ''
+    };
+
+    if (this.isEditCategoryMode) {
+      payload.categoryId = this.categoryFormModel.categoryId;
+    }
+
+    const obs = this.isEditCategoryMode
+      ? this.adminService.updateCategory(this.categoryFormModel.categoryId!, payload)
+      : this.adminService.addCategory(payload);
+
+    obs.subscribe({
+      next: (res) => {
+        console.log('Category saved successfully:', res);
+        alert(this.isEditCategoryMode ? 'แก้ไขประเภทสินค้าสำเร็จ!' : 'เพิ่มประเภทสินค้าสำเร็จ!');
+        this.loadCategories();
+        this.showCategoryForm = false;
+      },
+      error: (err) => {
+        console.error('Save Category Error:', err);
+        alert('เกิดข้อผิดพลาด: ' + (err.error?.message || err.message));
+      }
+    });
+  }
+
+  closeCategoryForm(): void {
+    this.showCategoryForm = false;
   }
 
   deleteCategory(event: Event, cat: Category): void {
@@ -447,19 +495,6 @@ export class Admin implements OnInit {
     }
   }
 
-  editCategory(event: Event, cat: Category): void {
-    event.stopPropagation();
-    const newName = window.prompt('แก้ไขชื่อประเภทสินค้า:', cat.categoryName);
-    if (newName && newName.trim() && newName.trim() !== cat.categoryName) {
-      this.adminService.updateCategory(cat.categoryId, { categoryName: newName.trim() }).subscribe({
-        next: () => {
-          alert('แก้ไขประเภทสินค้าสำเร็จ!');
-          this.loadCategories();
-        },
-        error: (err) => alert('เกิดข้อผิดพลาด: ' + (err.error?.message || err.message))
-      });
-    }
-  }
 
   loadProductLogs() {
     this.isLoadingLogs = true;
