@@ -1,18 +1,22 @@
-
-import { Component, output } from '@angular/core';
+import { Component, inject, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-
+import { UserService } from 'src/app/services/user.service';
 
 import { NavContentComponent } from './nav-content/nav-content.component';
 
 @Component({
   selector: 'app-navigation',
+  standalone: true,
   imports: [NavContentComponent, CommonModule],
   templateUrl: './navigation.component.html',
   styleUrls: ['./navigation.component.scss']
 })
 export class NavigationComponent {
+  private userService = inject(UserService);
+
+  get role() {
+    return this.userService.getUserRole();
+  }
 
   NavCollapsedMob = output();
 

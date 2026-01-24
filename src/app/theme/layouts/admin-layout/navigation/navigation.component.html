@@ -1,7 +1,8 @@
 <nav>
   <div class="navbar-wrapper">
     <div class="m-header">
-      <a href="/dashboard/home" class="b-brand">
+      <a [href]="role === 'CUSTOMER' || role === 'GUEST' ? '/dashboard/home' : role === 'ADMIN' || role === 'MANAGER' ? '/dashboard/admin' :role === 'STAFF' ? '/dashboard/staff' : '/dashboard/staff'"
+        class="b-brand">
         Buddy Petshop
       </a>
     </div>
