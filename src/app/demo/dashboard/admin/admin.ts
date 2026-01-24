@@ -40,6 +40,7 @@ export class Admin implements OnInit {
   quantityToAdd: number = 0;
   temp_img_url = 'https://s359.kapook.com/pagebuilder/ba154685-db18-4ac7-b318-a4a2b15b9d4c.jpg';
   selectedCategory: Category | null = null;
+  productSearchTerm: string = '';
   systemConfig: SystemConfig = {
     shopName: 'My Pet Store',
     vatRate: 7,
@@ -390,11 +391,17 @@ export class Admin implements OnInit {
   backToCategories(): void {
     this.selectedCategory = null;
     this.showAddProductForm = false;
+    this.productSearchTerm = '';
   }
 
   get filteredProducts(): Product[] {
     if (!this.selectedCategory) return [];
-    return this.products.filter((p) => p.category?.categoryId === this.selectedCategory?.categoryId);
+    let list = this.products.filter((p) => p.category?.categoryId === this.selectedCategory?.categoryId);
+    if (this.productSearchTerm.trim()) {
+      const term = this.productSearchTerm.toLowerCase().trim();
+      list = list.filter(p => p.productName.toLowerCase().includes(term));
+    }
+    return list;
   }
   countProductsInCategory(categoryId: number): number {
     return this.products.filter((p) => p.category?.categoryId === categoryId).length;
