@@ -10,7 +10,7 @@ export class StaffApiService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:8080/api';
 
-  constructor() {}
+  constructor() { }
 
   getAllStaff(): Observable<Staff[]> {
     return this.http.get<Staff[]>(`${this.apiUrl}/staff/all`);
@@ -31,5 +31,10 @@ export class StaffApiService {
 
   completeOrder(orderId: number): Observable<Order> {
     return this.http.put<Order>(`${this.apiUrl}/orders/${orderId}/complete`, {});
+  }
+
+  updateOrderShippingInfo(orderId: number, trackingNumber: string, shippingCost: number): Observable<Order> {
+    const body = { trackingNumber, shippingCost };
+    return this.http.put<Order>(`${this.apiUrl}/orders/${orderId}/shipping-info`, body);
   }
 }

@@ -38,13 +38,20 @@
         <h2>งานที่กำลังดำเนินการของคุณ</h2>
       </div>
       <div class="task-list">
-        <div class="order-mini-card" *ngFor="let order of myPreparingTasks" (click)="viewOrderDetails(order)">
+        <div class="order-mini-card" *ngFor="let order of myPreparingTasks" (click)="viewOrderDetails(order)"
+          style="position: relative; padding-bottom: 50px;">
           <div class="order-id">#{{ order.orderId }}</div>
           <div class="order-info">
             <span class="customer">{{ order.customer.customerName }}</span>
             <span class="amount">{{ order.totalAmount | currency:'฿':'symbol':'1.2-2' }}</span>
           </div>
-          <div class="order-action-hint">คลิกเพื่อดูรายละเอียด ></div>
+          <div class="tracking-input-mini" (click)="$event.stopPropagation()"
+            style="position: absolute; bottom: 10px; left: 15px; right: 15px;">
+            <input type="text" [(ngModel)]="order.trackingNumber" placeholder="ใส่เลข Tracking..."
+              style="width: 100%; padding: 5px 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;">
+          </div>
+          <div class="order-action-hint" style="position: absolute; bottom: 12px; right: 15px; font-size: 11px;">
+            คลิกดูรายละเอียด ></div>
         </div>
       </div>
     </div>
@@ -193,7 +200,14 @@
         </div>
       </div>
 
-      <div class="modal-footer">
+      <div class="modal-footer" style="display: flex; align-items: center; gap: 10px;">
+        <div class="tracking-input-box" *ngIf="selectedOrder.status.statusId === 4" style="flex: 1;">
+          <label style="display: block; font-size: 11px; color: #666; margin-bottom: 3px;">📍 หมายเลข Tracking
+            Number</label>
+          <input type="text" [(ngModel)]="selectedOrder.trackingNumber" placeholder="ระบุเลขพัสดุ..."
+            style="width: 100%; padding: 10px; border: 2px solid #2196F3; border-radius: 6px; font-weight: bold;">
+        </div>
+
         <button class="btn-action pickup" *ngIf="selectedOrder.status.statusId === 3"
           (click)="pickupOrder(selectedOrder)">
           📥 รับเตรียมจัดส่ง

@@ -4,10 +4,12 @@ import { Component, OnInit, inject } from '@angular/core';
 import { Order, Staff as Employee } from '../../models/product.model';
 import { StaffApiService } from 'src/app/services/StaffApiService';
 
+import { FormsModule } from '@angular/forms';
+
 @Component({
   selector: 'app-staff',
   standalone: true,
-  imports: [CommonModule, CurrencyPipe],
+  imports: [CommonModule, CurrencyPipe, FormsModule],
   templateUrl: './staff.html',
   styleUrl: './staff.scss'
 })
@@ -84,14 +86,26 @@ export class Staff implements OnInit {
   }
 
   shipOrder(order: Order): void {
+    if (!order.trackingNumber || !order.trackingNumber.trim()) {
+      alert('กรุณากรอกหมายเลข Tracking Number ก่อนยืนยันการจัดส่ง');
+      return;
+    }
+
     if (confirm(`ยืนยันว่าจัดเตรียมสินค้า #${order.orderId} เสร็จสิ้นและส่งแล้ว?`)) {
-      this.staffApiService.completeOrder(order.orderId).subscribe({
+      // First update shipping info (tracking number)
+      this.staffApiService.updateOrderShippingInfo(order.orderId, order.trackingNumber, order.shippingCost || 0).subscribe({
         next: () => {
-          alert(`อัปเดตออเดอร์ #${order.orderId} เป็นจัดส่งแล้ว`);
-          this.selectedOrder = null;
-          this.loadInitialData();
+          // Then mark as complete
+          this.staffApiService.completeOrder(order.orderId).subscribe({
+            next: () => {
+              alert(`อัปเดตออเดอร์ #${order.orderId} เป็นจัดส่งแล้วเรียบร้อย`);
+              this.selectedOrder = null;
+              this.loadInitialData();
+            },
+            error: (err) => alert('ไม่สามารถอัปเดตสถานะเป็นจัดส่งได้: ' + (err.error?.message || err.error))
+          });
         },
-        error: (err) => alert('ไม่สามารถอัปเดตสถานะได้: ' + (err.error?.message || err.error))
+        error: (err) => alert('ไม่สามารถบันทึกเลข Tracking ได้: ' + (err.error?.message || err.error))
       });
     }
   }
