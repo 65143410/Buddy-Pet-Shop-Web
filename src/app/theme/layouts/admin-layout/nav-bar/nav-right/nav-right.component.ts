@@ -141,7 +141,12 @@ export class NavRightComponent {
     if (param === 'logout') return this.logout();
 
     if (param === 'view-profile') {
-      this.router.navigate(['/dashboard/profile']);
+      const role = this.userService.getUserRole();
+      if (role === 'ADMIN' || role === 'MANAGER' || role === 'STAFF') {
+        this.router.navigate(['/dashboard/staff-profile']);
+      } else {
+        this.router.navigate(['/dashboard/profile']);
+      }
     }
   }
 

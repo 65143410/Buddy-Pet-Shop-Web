@@ -1,0 +1,43 @@
+/* Staff Profile Colors */
+:host {
+  display: block;
+  background-color: #f4f7fa;
+  min-height: calc(100vh - 70px);
+  padding: 20px 0;
+}
+
+.card {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.card-header.bg-primary {
+  background: linear-gradient(45deg, #448aff, #0046b8) !important;
+}
+
+.avatar-wrapper {
+  position: relative;
+  transition: transform 0.3s ease;
+  &:hover {
+    transform: scale(1.02);
+  }
+}
+
+.badge {
+  font-size: 0.75rem;
+  padding: 6px 12px;
+}
+
+.form-control:focus {
+  border-color: #448aff;
+  box-shadow: 0 0 0 0.2rem rgba(68, 138, 255, 0.25);
+}
+
+.btn-primary {
+  background: #448aff;
+  border-color: #448aff;
+  &:hover {
+    background: #0069d9;
+    border-color: #0062cc;
+  }
+}

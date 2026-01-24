@@ -516,8 +516,7 @@
       <div class="status-filter-container" style="margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
         <button
           *ngFor="let st of ['ทั้งหมด', 'รอชำระเงิน', 'รอตรวจสอบยอดเงิน', 'ชำระเงินแล้ว', 'ยกเลิก/สลิปไม่ถูกต้อง']"
-          (click)="selectedStatusFilter = st"
-          [style.background-color]="selectedStatusFilter === st ? '#6366f1' : '#f0f2f5'"
+          (click)="setStatusFilter(st)" [style.background-color]="selectedStatusFilter === st ? '#6366f1' : '#f0f2f5'"
           [style.color]="selectedStatusFilter === st ? 'white' : '#444'"
           style="border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; transition: 0.3s; font-size: 14px; font-weight: 500; border: 1px solid #ddd;">
           {{ st }}
@@ -539,7 +538,8 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let o of filteredOrders" (click)="viewOrderDetails(o)" style="cursor: pointer;" class="hover-row">
+          <tr *ngFor="let o of paginatedOrders" (click)="viewOrderDetails(o)" style="cursor: pointer;"
+            class="hover-row">
             <td><strong>#{{ o.orderId }}</strong></td>
             <td>{{ o.customer?.customerName }}</td>
             <td style="color: #2e7d32; font-weight: bold;">{{ o.totalAmount | number:'1.2-2' }} ฿</td>
@@ -551,6 +551,23 @@
           </tr>
         </tbody>
       </table>
+
+      <!-- Pagination Controls for Orders -->
+      <div *ngIf="ordersTotalPages > 1" class="d-flex justify-content-between align-items-center mt-3 mb-4 no-print">
+        <div class="page-info" style="font-size: 13px; color: #666;">
+          หน้าที่ {{ ordersCurrentPage }} / {{ ordersTotalPages }} (ทั้งหมด {{ filteredOrders.length }} รายการ)
+        </div>
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-outline-secondary px-3" [disabled]="ordersCurrentPage === 1"
+            (click)="changeOrdersPage(ordersCurrentPage - 1)">
+            &laquo; ก่อนหน้า
+          </button>
+          <button class="btn btn-sm btn-outline-secondary px-3" [disabled]="ordersCurrentPage === ordersTotalPages"
+            (click)="changeOrdersPage(ordersCurrentPage + 1)">
+            ถัดไป &raquo;
+          </button>
+        </div>
+      </div>
 
       <div *ngIf="filteredOrders.length === 0" style="text-align: center; padding: 40px; color: #999;">
         ไม่พบรายการออเดอร์ที่มีสถานะ "{{ selectedStatusFilter }}"

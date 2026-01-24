@@ -1,0 +1,124 @@
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white py-3">
+                    <h5 class="mb-0 fw-bold"><i class="fas fa-user-shield me-2"></i> โปรไฟล์เจ้าหน้าที่ (Staff Profile)
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Left Side: Profile Image -->
+                        <div class="col-md-4 text-center border-end">
+                            <div class="avatar-wrapper mb-3 mx-auto">
+                                <img [src]="getProfileImage()" alt="Staff Profile"
+                                    class="img-fluid rounded-circle shadow-sm"
+                                    style="width: 150px; height: 150px; object-fit: cover; border: 4px solid #f8f9fa;">
+                            </div>
+                            <h5 class="fw-bold mb-1">{{ currentUser?.name || currentUser?.customerName }}</h5>
+                            <span class="badge rounded-pill mb-3" [ngClass]="{
+                'bg-danger': currentUser?.position === 'ADMIN' || currentUser?.adminId,
+                'bg-warning text-dark': currentUser?.position === 'MANAGER',
+                'bg-success': currentUser?.position === 'STAFF' && currentUser?.position !== 'MANAGER'
+              }">
+                                {{ currentUser?.position || (currentUser?.adminId ? 'ADMIN' : 'STAFF') }}
+                            </span>
+
+                            <div class="mt-2" *ngIf="isEditMode">
+                                <label class="btn btn-sm btn-outline-primary w-100">
+                                    <i class="fas fa-camera me-1"></i> เปลี่ยนรูปภาพ
+                                    <input type="file" hidden (change)="onFileSelected($event)" accept="image/*">
+                                </label>
+                            </div>
+
+                            <hr>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-primary" (click)="toggleEditMode()" *ngIf="!isEditMode">
+                                    <i class="fas fa-edit me-1"></i> แก้ไขข้อมูลส่วนตัว
+                                </button>
+                                <a routerLink="/dashboard/admin" class="btn btn-outline-secondary"
+                                    *ngIf="currentUser?.adminId || currentUser?.position === 'MANAGER'">
+                                    <i class="fas fa-tachometer-alt me-1"></i> ไปที่แผงควบคุม
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Right Side: Details -->
+                        <div class="col-md-8 ps-md-4">
+                            <div *ngIf="!isEditMode">
+                                <div class="mb-4 text-start">
+                                    <label class="text-muted small fw-bold text-uppercase mb-1">รหัสเจ้าหน้าที่</label>
+                                    <p class="h6 mb-0 text-primary">#{{ currentUser?.staffId || currentUser?.adminId }}
+                                    </p>
+                                </div>
+
+                                <div class="row mb-3 text-start">
+                                    <div class="col-6">
+                                        <label class="text-muted small fw-bold text-uppercase mb-1">ชื่อ-นามสกุล</label>
+                                        <p class="h6 mb-0">{{ currentUser?.name || currentUser?.customerName }}</p>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="text-muted small fw-bold text-uppercase mb-1">ตำแหน่ง</label>
+                                        <p class="h6 mb-0">{{ currentUser?.position || (currentUser?.adminId ? 'ADMIN' :
+                                            'STAFF') }}</p>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3 text-start">
+                                    <label class="text-muted small fw-bold text-uppercase mb-1">อีเมล</label>
+                                    <p class="h6 mb-0">{{ currentUser?.email }}</p>
+                                </div>
+
+                                <div class="mb-3 text-start">
+                                    <label class="text-muted small fw-bold text-uppercase mb-1">เบอร์โทรศัพท์</label>
+                                    <p class="h6 mb-0">{{ currentUser?.phone || 'ไม่ระบุเบอร์โทร' }}</p>
+                                </div>
+
+                                <div class="mb-3 text-start" *ngIf="currentUser?.status">
+                                    <label class="text-muted small fw-bold text-uppercase mb-1">สถานะการทำงาน</label>
+                                    <p class="h6 mb-0">
+                                        <span class="badge bg-light-success text-success border border-success px-2">{{
+                                            currentUser?.status }}</span>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Edit Form -->
+                            <div *ngIf="isEditMode" class="text-start">
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">ชื่อ-นามสกุล</label>
+                                    <input type="text" class="form-control" [(ngModel)]="editUser.name">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">อีเมล</label>
+                                    <input type="email" class="form-control" [(ngModel)]="editUser.email">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">เบอร์โทรศัพท์</label>
+                                    <input type="text" class="form-control" [(ngModel)]="editUser.phone">
+                                </div>
+
+                                <div class="alert alert-info py-2 small">
+                                    <i class="fas fa-info-circle me-1"></i> หากต้องการเปลี่ยนตำแหน่งหรือรหัสผ่าน
+                                    กรุณาแจ้งผู้ดูแลระบบระดับสูง
+                                </div>
+
+                                <div class="d-flex gap-2 mt-4">
+                                    <button class="btn btn-success flex-grow-1" (click)="saveProfile()">
+                                        <i class="fas fa-save me-1"></i> บันทึกการเปลี่ยนแปลง
+                                    </button>
+                                    <button class="btn btn-light border flex-grow-1" (click)="toggleEditMode()">
+                                        ยกเลิก
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-light text-center py-3">
+                    <small class="text-muted">Buddy Petshop Management System</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

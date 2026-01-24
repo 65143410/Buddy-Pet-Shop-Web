@@ -35,6 +35,8 @@ export class Admin implements OnInit {
   logsPageSize: number = 10;
   modalLogsCurrentPage: number = 1;
   modalLogsPageSize: number = 5;
+  ordersCurrentPage: number = 1;
+  ordersPageSize: number = 10;
   selectedProductDetail: Product | null = null;
   selectedOrderDetail: Order | null = null;
   showAddStaffForm = false;
@@ -569,6 +571,27 @@ export class Admin implements OnInit {
 
   closeOrderDetails(): void {
     this.selectedOrderDetail = null;
+  }
+
+  get paginatedOrders() {
+    const list = this.filteredOrders;
+    const start = (this.ordersCurrentPage - 1) * this.ordersPageSize;
+    return list.slice(start, start + this.ordersPageSize);
+  }
+
+  get ordersTotalPages(): number {
+    return Math.ceil(this.filteredOrders.length / this.ordersPageSize);
+  }
+
+  changeOrdersPage(page: number): void {
+    if (page >= 1 && page <= this.ordersTotalPages) {
+      this.ordersCurrentPage = page;
+    }
+  }
+
+  setStatusFilter(status: string): void {
+    this.selectedStatusFilter = status;
+    this.ordersCurrentPage = 1;
   }
 
   get filteredOrders() {

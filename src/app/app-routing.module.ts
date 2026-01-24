@@ -35,7 +35,12 @@ export const routes: Routes = [
       {
         path: 'dashboard/profile',
         loadComponent: () => import('./demo/pages/user-profile/user-profile.component').then(c => c.UserProfileComponent),
-        data: { roles: ['ADMIN', 'MANAGER', 'STAFF', 'CUSTOMER'] }
+        data: { roles: ['CUSTOMER'] }
+      },
+      {
+        path: 'dashboard/staff-profile',
+        loadComponent: () => import('./demo/pages/staff-profile/staff-profile.component').then(c => c.StaffProfileComponent),
+        data: { roles: ['ADMIN', 'MANAGER', 'STAFF'] }
       },
       {
         path: 'dashboard/admin',
