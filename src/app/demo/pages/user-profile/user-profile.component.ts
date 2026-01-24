@@ -216,6 +216,9 @@ import { UserService } from 'src/app/services/user.service';
                                   'bg-info text-white': order.status.statusName.includes('เตรียม'),
                                   'bg-primary': order.status.statusName.includes('ชำระ')
                                }">{{ order.status.statusName }}</span>
+                               <div *ngIf="order.status.statusName.includes('รอชำระ')" class="text-danger fw-bold mb-1" style="font-size: 11px;">
+                                  <i class="fas fa-clock me-1"></i> แจ้งชำระภายใน: {{ getExpiryCountdown(order) }}
+                               </div>
                                <div class="progress" style="height: 4px; width: 120px; margin: 0 auto;">
                                   <div class="progress-bar bg-success" role="progressbar" 
                                        [style.width]="order.status.statusName.includes('รอชำระ') ? '20%' : 
@@ -438,13 +441,10 @@ export class UserProfileComponent implements OnInit {
 
   autoCancelExpiredOrders() {
     const NOW = new Date().getTime();
-    const FIFTEEN_MINUTES = 1 * 60 * 1000;
-    console.log('นาที', FIFTEEN_MINUTES)
+    const FIFTEEN_MINUTES = 15 * 60 * 1000;
     this.orders.forEach(order => {
       if (order.status.statusName.includes('รอชำระ')) {
-        console.log('222')
         const orderTime = new Date(order.orderDate).getTime();
-        console.log('order', orderTime)
         if (NOW > (orderTime + FIFTEEN_MINUTES)) {
           console.log(`Auto cancelling order #${order.orderId} (expired)`);
           this.orderService.cancelOrder(order.orderId).subscribe({
@@ -594,6 +594,21 @@ export class UserProfileComponent implements OnInit {
         }
       });
     }
+  }
+
+  getExpiryCountdown(order: Order): string {
+    const FIFTEEN_MINUTES = 15 * 60 * 1000;
+    const orderTime = new Date(order.orderDate).getTime();
+    const expiryTime = orderTime + FIFTEEN_MINUTES;
+    const NOW = new Date().getTime();
+    const diff = expiryTime - NOW;
+
+    if (diff <= 0) return 'หมดเวลา';
+
+    const minutes = Math.floor(diff / 60000);
+    const seconds = Math.floor((diff % 60000) / 1000);
+
+    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds} นาที`;
   }
 
   logout() {
