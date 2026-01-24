@@ -62,20 +62,35 @@ export class Home implements OnInit {
 
   public onSelectPet(pet: any): void {
     this.selectedPet = pet;
-    console.log('Selected Pet:', pet);
+    console.log('Selected Pet Analysis:', pet);
 
-    // Normalize Pet Type to Thai (matching DB)
     const apiPetType = this.normalizePetType(pet.petType);
+    const petDiseaseEnum = this.normalizeDisease(pet.congenitalDisease);
 
-    this.productService.getRecommendedProducts(apiPetType, pet.congenitalDisease)
-      .subscribe({
-        next: (products) => {
-          console.log('Recommended Products for ' + pet.petName + ':', products);
-          this.recommendedProducts = products;
-          this.originalRecommendedProducts = [...products];
-        },
-        error: (err) => console.error('Error fetching recommendations:', err)
-      });
+    // Filter rules:
+    // 1. Must match Pet Type (or ALL)
+    // 2. Must be 'NONE' (Normal food) OR match the pet's specific disease
+    // 3. MUST NOT suggest food for other diseases the pet doesn't have
+    this.productService.getProducts().subscribe({
+      next: (allProducts) => {
+        const filtered = allProducts.filter(p => {
+          const typeMatch = p.targetPetType === 'ALL' || p.targetPetType === apiPetType;
+          const productDisease = p.suitableForDisease || 'NONE';
+
+          // Logic: 
+          // If product is 'NONE', it's always recommended for that type.
+          // If product has a disease, it must match the pet's disease.
+          const diseaseMatch = (productDisease === 'NONE') || (productDisease === petDiseaseEnum);
+
+          return typeMatch && diseaseMatch;
+        });
+
+        console.log(`Found ${filtered.length} recommended products for ${pet.petName}`);
+        this.recommendedProducts = filtered.slice(0, 12); // Show top 12 matches
+        this.originalRecommendedProducts = [...this.recommendedProducts];
+      },
+      error: (err) => console.error('Error fetching recommendations:', err)
+    });
   }
 
   public onSearch(event: Event): void {
@@ -98,6 +113,21 @@ export class Home implements OnInit {
     if (t.toUpperCase() === 'CAT' || t === 'แมว') return 'CAT';
     if (t.toUpperCase() === 'GUINEA_PIG' || t === 'หนูตะเภา') return 'GUINEA_PIG';
     return t;
+  }
+
+  private normalizeDisease(disease: string): string {
+    if (!disease || disease === 'ไม่มี' || disease === 'NONE' || disease === 'อื่นๆ') return 'NONE';
+    const dMap: { [key: string]: string } = {
+      'ภูมิแพ้': 'SKIN_ALLERGY',
+      'โรคผิวหนัง': 'SKIN_ALLERGY',
+      'โรคไต': 'KIDNEY_DISEASE',
+      'โรคอ้วน': 'OBESITY',
+      'โรคข้อเสื่อม': 'JOINT_ISSUES',
+      'โรคระบบทางเดินอาหาร': 'DIGESTIVE_ISSUES',
+      'ควบคุมน้ำหนัก': 'WEIGHT_CONTROL',
+      'โรคหัวใจ': 'NONE'
+    };
+    return dMap[disease] || disease;
   }
 
   public addToCart(product: Product): void {
