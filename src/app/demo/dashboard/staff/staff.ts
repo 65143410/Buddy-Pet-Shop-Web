@@ -113,6 +113,10 @@ export class Staff implements OnInit {
   }
 
   // Pagination Getters & Methods
+  get shippedOrders(): Order[] {
+    return this.allOrders.filter(o => o.status.statusName === 'จัดส่งแล้ว');
+  }
+
   get paginatedShippingOrders(): Order[] {
     const start = (this.shippingCurrentPage - 1) * this.pageSize;
     return this.ordersForShipping.slice(start, start + this.pageSize);
@@ -130,11 +134,11 @@ export class Staff implements OnInit {
 
   get paginatedAllOrders(): Order[] {
     const start = (this.allOrdersCurrentPage - 1) * this.pageSize;
-    return this.allOrders.slice(start, start + this.pageSize);
+    return this.shippedOrders.slice(start, start + this.pageSize);
   }
 
   get allOrdersTotalPages(): number {
-    return Math.ceil(this.allOrders.length / this.pageSize);
+    return Math.ceil(this.shippedOrders.length / this.pageSize);
   }
 
   changeAllOrdersPage(page: number): void {

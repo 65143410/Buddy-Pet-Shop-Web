@@ -107,12 +107,12 @@
 
   <div class="section history-card" style="margin-top: 30px;">
     <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
-      <h2 style="margin: 0;">🧾 ประวัติคำสั่งซื้อทั้งหมด</h2>
-      <div *ngIf="allOrders.length > 0" style="font-size: 14px; color: #666;">
+      <h2 style="margin: 0;">🧾 ประวัติคำสั่งซื้อ (จัดส่งแล้ว)</h2>
+      <div *ngIf="shippedOrders.length > 0" style="font-size: 14px; color: #666;">
         หน้า {{ allOrdersCurrentPage }} / {{ allOrdersTotalPages }}
       </div>
     </div>
-    <div class="table-responsive">
+    <div class="table-responsive" *ngIf="shippedOrders.length > 0">
       <table class="modern-table">
         <thead>
           <tr>
