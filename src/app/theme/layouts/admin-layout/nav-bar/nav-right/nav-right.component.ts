@@ -94,6 +94,11 @@ export class NavRightComponent {
     this.userService.logout();
     this.router.navigate(['/login']);
   }
+
+  get isCustomer(): boolean {
+    const role = this.userService.getUserRole();
+    return role === 'CUSTOMER' || role === 'GUEST';
+  }
   markAllAsRead() {
     console.log("All notifications marked as read");
     this.notifications = [];
