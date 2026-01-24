@@ -3,6 +3,7 @@ import { Component, OnInit, inject } from '@angular/core';
 
 import { Order, Staff as Employee } from '../../models/product.model';
 import { StaffApiService } from 'src/app/services/StaffApiService';
+import { UserService } from 'src/app/services/user.service';
 
 import { FormsModule } from '@angular/forms';
 
@@ -15,6 +16,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class Staff implements OnInit {
   private staffApiService = inject(StaffApiService);
+  private userService = inject(UserService);
 
   selectedOrder: Order | null = null;
 
@@ -33,7 +35,15 @@ export class Staff implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    this.loadStaffProfile(1);
+    const user: any = this.userService.getCurrentUserValue();
+    if (user && user.staffId) {
+      this.loadStaffProfile(user.staffId);
+    } else if (user && user.adminId) {
+      this.loadStaffProfile(user.adminId); // Admins can also access staff view
+    } else {
+      console.warn('No staff/admin user found in session, using fallback ID');
+      this.loadStaffProfile(1); // Keep fallback or handle guest
+    }
     this.loadInitialData();
   }
 
