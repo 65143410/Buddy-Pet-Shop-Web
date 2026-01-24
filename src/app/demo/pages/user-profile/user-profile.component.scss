@@ -1,0 +1,27 @@
+/* User Profile Styles */
+.avatar-circle {
+  transition: transform 0.3s ease;
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+.clickable-card {
+  transition: all 0.2s ease;
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+  }
+}
+
+.badge {
+  font-weight: 500;
+}
+
+.modal-backdrop {
+  z-index: 1040;
+}
+
+.modal {
+  z-index: 1050;
+}
