@@ -45,6 +45,7 @@ export class Admin implements OnInit {
   temp_img_url = 'https://s359.kapook.com/pagebuilder/ba154685-db18-4ac7-b318-a4a2b15b9d4c.jpg';
   selectedCategory: Category | null = null;
   productSearchTerm: string = '';
+  selectedProcessingYear: number = new Date().getFullYear();
   systemConfig: SystemConfig = {
     shopName: 'My Pet Store',
     vatRate: 7,
@@ -725,6 +726,34 @@ export class Admin implements OnInit {
       }
     }
 
+    // --- Sheet: Annual Sales Report (Selection Based) ---
+    const annualSheet = workbook.addWorksheet(`Annual Report ${this.selectedProcessingYear}`);
+    annualSheet.addRow([`Annual Sales Report for Year ${this.selectedProcessingYear}`]);
+    annualSheet.addRow([`Exported on: ${new Date().toLocaleString()}`]);
+    annualSheet.addRow([]);
+    annualSheet.addRow(['Metric', 'Value']);
+    annualSheet.addRow(['Total Revenue (Verified)', this.yearlyTotal]);
+    annualSheet.addRow(['Total Orders', this.yearlyOrderCount]);
+    annualSheet.addRow(['Average Order Value', this.yearlyAvgOrder]);
+    annualSheet.addRow(['Best Performance Month', this.topMonthName]);
+    annualSheet.addRow([]);
+    annualSheet.addRow(['Monthly Performance Breakdown']);
+    annualSheet.addRow(['Month', 'Revenue (THB)']);
+
+    const monthsArr = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+    const salesByMonth = new Array(12).fill(0);
+    this.currentYearOrders.forEach(o => {
+      const m = new Date(o.orderDate).getMonth();
+      salesByMonth[m] += (o.totalAmount || 0);
+    });
+    monthsArr.forEach((mName, idx) => {
+      annualSheet.addRow([mName, salesByMonth[idx]]);
+    });
+
+    // Styling the annual sheet
+    annualSheet.getColumn(1).width = 25;
+    annualSheet.getColumn(2).width = 20;
+
     const summarySheet = workbook.addWorksheet('Executive Summary');
     const totalRevenue = this.orders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
     const totalOrders = this.orders.length;
@@ -779,6 +808,55 @@ export class Admin implements OnInit {
   getOrderCountByStatus(statusName: string): number {
     if (statusName === 'ทั้งหมด') return this.orders.length;
     return this.orders.filter(o => o.status?.statusName === statusName).length;
+  }
+
+  get currentYearOrders(): Order[] {
+    const revenueStatuses = ['ชำระเงินแล้ว', 'กำลังจัดเตรียมสินค้า', 'จัดส่งแล้ว', 'สำเร็จ'];
+    return this.orders.filter(o => {
+      const orderYear = new Date(o.orderDate).getFullYear();
+      return orderYear === this.selectedProcessingYear && revenueStatuses.includes(o.status?.statusName || '');
+    });
+  }
+
+  get yearlyTotal(): number {
+    return this.currentYearOrders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+  }
+
+  get yearlyOrderCount(): number {
+    return this.currentYearOrders.length;
+  }
+
+  get yearlyAvgOrder(): number {
+    return this.yearlyOrderCount > 0 ? this.yearlyTotal / this.yearlyOrderCount : 0;
+  }
+
+  get topMonthName(): string {
+    const monthSales = new Array(12).fill(0);
+    this.currentYearOrders.forEach(o => {
+      const month = new Date(o.orderDate).getMonth();
+      monthSales[month] += (o.totalAmount || 0);
+    });
+
+    const maxSales = Math.max(...monthSales);
+    if (maxSales === 0) return '-';
+
+    const topMonthIdx = monthSales.indexOf(maxSales);
+    const months = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+    return months[topMonthIdx];
+  }
+
+  get availableYears(): number[] {
+    const years = new Set<number>();
+    years.add(new Date().getFullYear());
+    this.orders.forEach(o => {
+      const y = new Date(o.orderDate).getFullYear();
+      if (!isNaN(y)) years.add(y);
+    });
+    return Array.from(years).sort((a, b) => b - a);
+  }
+
+  selectYear(year: number): void {
+    this.selectedProcessingYear = year;
   }
 }
 // Import at top (simulated here for clarity, but I will add real imports at file top)

@@ -687,7 +687,7 @@
 }
 
 @media print {
-
+  /* Hiding all non-report elements */
   .no-print,
   .sidebar,
   .sidebar-header,
@@ -695,19 +695,99 @@
   app-nav-bar,
   app-navigation,
   .pc-footer,
-  .admin-layout> :first-child {
-    /* Hide sidebar container */
+  .pc-header,
+  .btn,
+  .dropdown,
+  nav,
+  .giant-pet-overlay,
+  .admin-layout > :first-child {
     display: none !important;
   }
 
-  .content-wrapper {
-    padding: 0;
-    margin: 0;
+  /* Resetting Layout for Print */
+  body, .admin-layout {
+    background: white !important;
+    background-image: none !important;
+    height: auto !important;
+    overflow: visible !important;
+    display: block !important;
   }
 
-  .admin-layout {
-    height: auto;
-    overflow: visible;
+  .content-wrapper {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    overflow: visible !important;
+  }
+
+  .content-area {
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  /* Enhancing Cards for Print */
+  .stat-card, .card {
+    break-inside: avoid;
+    box-shadow: none !important;
+    border: 1px solid #eee !important;
+    margin-bottom: 20px !important;
+  }
+
+  /* Specifically style the Annual Sales Card for Print */
+  .card[style*="linear-gradient"] {
+    background: #f8fafc !important; /* Simple light background for printing */
+    color: black !important;
+    border: 2px solid #000 !important;
+  }
+  
+  .card[style*="linear-gradient"] .opacity-75,
+  .card[style*="linear-gradient"] .opacity-50 {
+    opacity: 1 !important;
+    color: #444 !important;
+  }
+
+  .card[style*="linear-gradient"] h4,
+  .card[style*="linear-gradient"] h2 {
+    color: black !important;
+  }
+
+  /* Chart Layouts */
+  .row {
+    display: flex !important;
+    flex-wrap: wrap !important;
+  }
+
+  .col-md-8, .col-md-4, .col-12 {
+    width: 100% !important;
+    margin-bottom: 30px !important;
+    break-inside: avoid;
+  }
+
+  #monthlyChartContainer, 
+  #incomeChartContainer,
+  #analyticsChartContainer,
+  #salesReportChartContainer {
+    page-break-after: auto;
+    break-inside: avoid;
+    margin-bottom: 50px;
+  }
+
+  /* Ensuring tables look good */
+  .history-table, .modern-table, .data-table {
+    width: 100% !important;
+    border: 1px solid #ccc !important;
+  }
+
+  /* Add Report Information */
+  .content-area::before {
+    content: "BUDDY PETSHOP - EXECUTIVE REPORT";
+    display: block;
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #333;
+    padding-bottom: 10px;
   }
 }
 

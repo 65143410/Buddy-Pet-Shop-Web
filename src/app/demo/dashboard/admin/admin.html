@@ -32,10 +32,10 @@
           </button>
           <div class="dropdown-menu" aria-labelledby="exportDropdown" ngbDropdownMenu>
             <button class="dropdown-item" (click)="exportReport()">
-              <i class="fas fa-print me-2 text-muted"></i> Print Report / PDF
+              <i class="fas fa-file-pdf me-2 text-danger"></i> Export Full PDF Report
             </button>
             <button class="dropdown-item" (click)="exportToExcel()">
-              <i class="fas fa-file-excel me-2 text-success"></i> Export to Excel
+              <i class="fas fa-file-excel me-2 text-success"></i> Export Full Excel (Inc. Annual Data)
             </button>
           </div>
         </div>
@@ -48,6 +48,68 @@
           <div class="card-info">
             <p>{{ s.label }}</p>
             <h3>{{ s.value }}</h3>
+          </div>
+        </div>
+      </div>
+
+      <!-- ✨ ประมวลผลการขายประจำปี (Yearly Sales Processing) -->
+      <div class="row mt-4">
+        <div class="col-12">
+          <div class="card border-0 shadow-sm"
+            style="background: linear-gradient(135deg, #d7daaf 0%, #0047b3 100%); color: white; border-radius: 12px; overflow: hidden;">
+            <div class="card-body p-4">
+              <div class="row align-items-center">
+                <div class="col-md-5 text-center text-md-start mb-4 mb-md-0">
+                  <div class="d-flex align-items-center justify-content-center justify-content-md-start mb-1">
+                    <h5 class="opacity-75 mb-0" style="font-weight: 300; margin-right: 10px;">ประมวลผลการขายประจำปี</h5>
+                    <div class="dropdown no-print d-inline-block" ngbDropdown>
+                      <button
+                        class="btn btn-sm btn-light bg-opacity-10 border-white border-opacity-25 text-white dropdown-toggle"
+                        type="button" ngbDropdownToggle style="font-size: 14px; background: rgba(255,255,255,0.1);">
+                        {{ selectedProcessingYear }}
+                      </button>
+                      <div class="dropdown-menu shadow-lg" ngbDropdownMenu>
+                        <button class="dropdown-item" *ngFor="let year of availableYears" (click)="selectYear(year)">
+                          ปี {{ year }}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <h2 class="display-5 fw-bold mb-0">฿{{ yearlyTotal | number:'1.2-2' }}</h2>
+                  <p class="mt-2 mb-0" style="font-size: 14px;">
+                    <i class="fas fa-chart-line me-1"></i> ยอดขายสะสมจากออเดอร์ปกติทั้งหมด
+                  </p>
+                </div>
+                <div class="col-md-7">
+                  <div class="row g-3">
+                    <div class="col-6 col-md-4">
+                      <div
+                        class="bg-white bg-opacity-10 p-3 rounded-3 text-center h-100 border border-white border-opacity-10">
+                        <small class="d-block opacity-75 mb-1">ออเดอร์ปีนี้</small>
+                        <h4 class="mb-0 fw-bold">{{ yearlyOrderCount }}</h4>
+                        <small class="opacity-50">รายการ</small>
+                      </div>
+                    </div>
+                    <div class="col-6 col-md-4">
+                      <div
+                        class="bg-white bg-opacity-10 p-3 rounded-3 text-center h-100 border border-white border-opacity-10">
+                        <small class="d-block opacity-75 mb-1">เฉลี่ย/ออเดอร์</small>
+                        <h4 class="mb-0 fw-bold">฿{{ yearlyAvgOrder | number:'1.0-0' }}</h4>
+                        <small class="opacity-50">บาท</small>
+                      </div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                      <div
+                        class="bg-white bg-opacity-10 p-3 rounded-3 text-center h-100 border border-white border-opacity-10">
+                        <small class="d-block opacity-75 mb-1">เดือนที่ขายดีสุด</small>
+                        <h4 class="mb-0 fw-bold" style="color: #ffec3d;">{{ topMonthName }}</h4>
+                        <small class="opacity-50">Performance</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
