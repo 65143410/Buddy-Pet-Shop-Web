@@ -25,4 +25,16 @@ export class ProductService {
   getRecommendedProducts(petType: string, disease: string): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/recommend?type=${petType}&disease=${disease}`);
   }
+
+  addCategory(category: Partial<Category>): Observable<Category> {
+    return this.http.post<Category>(`${this.apiUrlCategory}/add`, category);
+  }
+
+  deleteCategory(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrlCategory}/delete/${id}`);
+  }
+
+  updateCategory(id: number, category: Partial<Category>): Observable<Category> {
+    return this.http.put<Category>(`${this.apiUrlCategory}/update/${id}`, category);
+  }
 }

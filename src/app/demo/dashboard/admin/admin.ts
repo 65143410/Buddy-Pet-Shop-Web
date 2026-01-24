@@ -399,6 +399,53 @@ export class Admin implements OnInit {
   countProductsInCategory(categoryId: number): number {
     return this.products.filter((p) => p.category?.categoryId === categoryId).length;
   }
+
+  addCategory(): void {
+    const name = window.prompt('กรุณากรอกชื่อประเภทสินค้าใหม่:');
+    if (name && name.trim()) {
+      this.adminService.addCategory({ categoryName: name.trim() }).subscribe({
+        next: (res) => {
+          alert('เพิ่มประเภทสินค้าสำเร็จ!');
+          this.loadCategories();
+        },
+        error: (err) => alert('เกิดข้อผิดพลาด: ' + (err.error?.message || err.message))
+      });
+    }
+  }
+
+  deleteCategory(event: Event, cat: Category): void {
+    event.stopPropagation(); // ป้องกันการเลือกประเภทสินค้า
+
+    const productCount = this.getProductCount(cat.categoryId);
+    if (productCount > 0) {
+      alert(`ไม่สามารถลบประเภทสินค้า "${cat.categoryName}" ได้ เนื่องจากมีสินค้าอยู่ในประเภทนี้ ${productCount} รายการ`);
+      return;
+    }
+
+    if (confirm(`คุณต้องการลบประเภทสินค้า "${cat.categoryName}" ใช่หรือไม่?`)) {
+      this.adminService.deleteCategory(cat.categoryId).subscribe({
+        next: () => {
+          alert('ลบประเภทสินค้าสำเร็จ!');
+          this.loadCategories();
+        },
+        error: (err) => alert('เกิดข้อผิดพลาด: ' + (err.error?.message || err.message))
+      });
+    }
+  }
+
+  editCategory(event: Event, cat: Category): void {
+    event.stopPropagation();
+    const newName = window.prompt('แก้ไขชื่อประเภทสินค้า:', cat.categoryName);
+    if (newName && newName.trim() && newName.trim() !== cat.categoryName) {
+      this.adminService.updateCategory(cat.categoryId, { categoryName: newName.trim() }).subscribe({
+        next: () => {
+          alert('แก้ไขประเภทสินค้าสำเร็จ!');
+          this.loadCategories();
+        },
+        error: (err) => alert('เกิดข้อผิดพลาด: ' + (err.error?.message || err.message))
+      });
+    }
+  }
   loadProductLogs() {
     this.isLoadingLogs = true;
     this.adminService.getProductLogs().subscribe({

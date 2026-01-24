@@ -73,15 +73,35 @@
     <div class="content-area" *ngIf="currentPage === 'products'">
 
       <div *ngIf="!selectedCategory">
-        <div class="header-with-action" style="margin-bottom: 20px;">
-          <h2>📁 เลือกประเภทสินค้าเพื่อจัดการ</h2>
+        <div class="header-with-action"
+          style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <h2 style="margin: 0;">📁 เลือกประเภทสินค้าเพื่อจัดการ</h2>
+          <button (click)="addCategory()"
+            style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
+            ➕ เพิ่มประเภทสินค้า
+          </button>
         </div>
 
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;">
           <div *ngFor="let cat of categories" (click)="selectCategory(cat)"
-            style="background: white; padding: 30px; border-radius: 12px; border: 1px solid #ddd; cursor: pointer; text-align: center; transition: 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.05);"
+            style="background: white; padding: 30px; border-radius: 12px; border: 1px solid #ddd; cursor: pointer; text-align: center; transition: 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: relative;"
             onmouseover="this.style.borderColor='#FF9800'; this.style.transform='translateY(-5px)'"
             onmouseout="this.style.borderColor='#ddd'; this.style.transform='translateY(0)'">
+
+            <!-- Category Actions -->
+            <div style="position: absolute; top: 10px; right: 10px; display: flex; gap: 5px;">
+              <button (click)="editCategory($event, cat)"
+                style="background: none; border: none; color: #2196F3; cursor: pointer; font-size: 18px;"
+                title="แก้ไขประเภทสินค้า">
+                ✏️
+              </button>
+              <button (click)="deleteCategory($event, cat)"
+                style="background: none; border: none; color: #f44336; cursor: pointer; font-size: 18px;"
+                title="ลบประเภทสินค้า">
+                🗑️
+              </button>
+            </div>
+
             <div style="font-size: 40px; margin-bottom: 10px;">📦</div>
             <h3 style="margin: 0; color: #333;">{{ cat.categoryName }}</h3>
             <p style="color: #666; font-size: 14px; margin-top: 10px;">
