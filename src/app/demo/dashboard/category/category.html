@@ -1,41 +1,17 @@
-<div class="category-container p-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0 fw-bold text-primary">📁 หมวดหมู่สินค้า</h2>
-        <button class="btn btn-success shadow-sm" (click)="addCategory()">
-            ➕ เพิ่มประเภทสินค้า
-        </button>
+<div class="row g-4 justify-content-center">
+    <div *ngIf="categories.length === 0" class="text-center">
+        <p>กำลังโหลดหมวดหมู่...</p>
     </div>
 
-    <div class="row g-4 justify-content-center">
-        <div *ngIf="categories.length === 0" class="text-center w-100 py-5">
-            <p class="text-muted">กำลังโหลดหมวดหมู่...</p>
-        </div>
-
-        <div class="col-6 col-md-4 col-lg-3" *ngFor="let category of categories; trackBy: trackByCatId">
-            <div class="card h-100 category-tile shadow-sm clickable-card position-relative"
-                (click)="goToProducts(category.categoryId)"
-                style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #ddd; cursor: pointer; text-align: center; transition: 0.3s;">
-
-                <!-- Category Actions -->
-                <div class="position-absolute top-0 end-0 m-2 d-flex gap-1">
-                    <button class="btn btn-link text-primary p-0" (click)="editCategory($event, category)"
-                        title="แก้ไขประเภทสินค้า" style="text-decoration: none; font-size: 1.2rem;">
-                        ✏️
-                    </button>
-                    <button class="btn btn-link text-danger p-0" (click)="deleteCategory($event, category)"
-                        title="ลบประเภทสินค้า" style="text-decoration: none; font-size: 1.2rem;">
-                        🗑️
-                    </button>
-                </div>
-
-                <div class="card-body text-center d-flex flex-column align-items-center justify-content-center">
-                    <div style="font-size: 40px; margin-bottom: 10px;">📦</div>
-                    <h5 class="card-title mb-1 fw-bold">{{ category.categoryName }}</h5>
-                    <small *ngIf="category.description" class="text-muted mt-1 d-none d-md-block"
-                        style="font-size: 0.8rem;">
-                        {{ category.description }}
-                    </small>
-                </div>
+    <div class="col-6 col-md-4 col-lg-3" *ngFor="let category of categories; trackBy: trackByCatId"
+        (click)="goToProducts(category.categoryId)">
+        <div class="card h-100 category-tile shadow-sm clickable-card" [title]="category.description || ''">
+            <div class="card-body text-center d-flex flex-column align-items-center justify-content-center">
+                <h5 class="card-title mb-1 fw-bold">{{ category.categoryName }}</h5>
+                <small *ngIf="category.description" class="text-muted mt-1 d-none d-md-block"
+                    style="font-size: 0.8rem;">
+                    {{ category.description }}
+                </small>
             </div>
         </div>
     </div>
