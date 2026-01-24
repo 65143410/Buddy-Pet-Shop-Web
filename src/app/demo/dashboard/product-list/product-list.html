@@ -61,7 +61,7 @@
                 {{ item.targetPetType === 'DOG' ? '🐕 สุนัข' : item.targetPetType === 'CAT' ? '🐈 แมว' : '🐹 หนู' }}
               </span>
               <span *ngIf="item.suitableForDisease !== 'NONE'" class="badge-custom orange">
-                ✨ {{ item.suitableForDisease }}
+                ✨ {{ translateFormula(item.suitableForDisease) }}
               </span>
             </div>
             <h5 class="card-title product-title">{{ item.productName }}</h5>

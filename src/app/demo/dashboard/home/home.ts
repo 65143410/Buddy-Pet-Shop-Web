@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { ProductService } from 'src/app/services/ProductService';
 import { CartService } from 'src/app/services/cart.service';
+import { Product } from '../../models/product.model';
 
 @Component({
   selector: 'app-home',
@@ -99,8 +100,21 @@ export class Home implements OnInit {
     return t;
   }
 
-  public addToCart(product: any): void {
+  public addToCart(product: Product): void {
     this.cartService.add(product);
+  }
+
+  public translateFormula(formula: string): string {
+    const map: { [key: string]: string } = {
+      'NONE': 'สุขภาพปกติ',
+      'SKIN_ALLERGY': 'โรคผิวหนัง/แพ้ง่าย',
+      'KIDNEY_DISEASE': 'โรคไต',
+      'WEIGHT_CONTROL': 'ควบคุมน้ำหนัก',
+      'OBESITY': 'โรคอ้วน',
+      'JOINT_ISSUES': 'โรคข้อเสื่อม',
+      'DIGESTIVE_ISSUES': 'โรคระบบทางเดินอาหาร'
+    };
+    return map[formula] || formula;
   }
 
   public handleCardClick(event: MouseEvent, id: number | string): void {

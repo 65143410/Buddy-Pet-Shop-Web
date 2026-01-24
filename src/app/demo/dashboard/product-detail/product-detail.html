@@ -35,7 +35,7 @@
                     <div class="badge-pill-cute">📍 สำหรับ: <strong>{{ product.targetPetType === 'ALL' ?
                             'สัตว์เลี้ยงทุกชนิด' : product.targetPetType }}</strong></div>
                     <div *ngIf="product.suitableForDisease !== 'NONE'" class="badge-pill-cute">🩺 การดูแล: <strong>{{
-                            product.suitableForDisease }}</strong></div>
+                            translateFormula(product.suitableForDisease) }}</strong></div>
                     <div *ngIf="product.weightVolume" class="badge-pill-cute">⚖️ ปริมาณ: <strong>{{ product.weightVolume
                             }}</strong></div>
                 </div>

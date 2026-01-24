@@ -83,7 +83,7 @@
                     </span>
                     <span *ngIf="item.suitableForDisease !== 'NONE'" class="badge rounded-pill bg-warning text-dark"
                       style="font-size: 0.7rem;">
-                      ✨ สูตร: {{ item.suitableForDisease }}
+                      ✨ สูตร: {{ translateFormula(item.suitableForDisease) }}
                     </span>
                     <span *ngIf="item.brand" class="badge rounded-pill bg-light text-dark border ms-1"
                       style="font-size: 0.7rem;">

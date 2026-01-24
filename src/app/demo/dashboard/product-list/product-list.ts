@@ -72,6 +72,19 @@ export class ProductList implements OnInit {
     this.cartService.add(product);
   }
 
+  public translateFormula(formula: string): string {
+    const map: { [key: string]: string } = {
+      'NONE': 'สุขภาพปกติ',
+      'SKIN_ALLERGY': 'โรคผิวหนัง/แพ้ง่าย',
+      'KIDNEY_DISEASE': 'โรคไต',
+      'WEIGHT_CONTROL': 'ควบคุมน้ำหนัก',
+      'OBESITY': 'โรคอ้วน',
+      'JOINT_ISSUES': 'โรคข้อเสื่อม',
+      'DIGESTIVE_ISSUES': 'โรคระบบทางเดินอาหาร'
+    };
+    return map[formula] || formula;
+  }
+
   public onSortChange(event: Event): void {
     const sortValue = (event.target as HTMLSelectElement).value;
 
