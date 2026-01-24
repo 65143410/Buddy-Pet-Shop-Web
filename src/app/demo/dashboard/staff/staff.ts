@@ -59,7 +59,7 @@ export class Staff implements OnInit {
   loadInitialData(): void {
     this.staffApiService.getAllOrders().subscribe({
       next: (data) => {
-        this.allOrders = data;
+        this.allOrders = data.sort((a, b) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime());
         this.loadOrdersForShipping();
         // Keep current pages unless the data length makes them invalid
         if (this.shippingCurrentPage > this.shippingTotalPages) this.shippingCurrentPage = Math.max(1, this.shippingTotalPages);
@@ -138,7 +138,9 @@ export class Staff implements OnInit {
 
   // Pagination Getters & Methods
   get shippedOrders(): Order[] {
-    return this.allOrders.filter(o => o.status.statusName === 'จัดส่งแล้ว');
+    return this.allOrders
+      .filter(o => o.status.statusName === 'จัดส่งแล้ว' || o.status.statusName === 'สำเร็จ')
+      .sort((a, b) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime());
   }
 
   get paginatedShippingOrders(): Order[] {
