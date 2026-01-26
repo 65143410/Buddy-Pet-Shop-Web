@@ -4,11 +4,17 @@
 
 import packageInfo from '../../package.json';
 
+
 export const environment = {
   appVersion: packageInfo.version,
-  production: false,
-  apiUrl: 'http://localhost:8080/api'
+  production: true,
+  apiUrl: 'https://buddy-pet-shop-service.onrender.com/api'
 };
+// export const environment = {
+//   appVersion: packageInfo.version,
+//   production: false,
+//   apiUrl: 'http://localhost:8080/api'
+// };
 
 /*
  * For easier debugging in development mode, you can import the following file
