@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { ProductService } from 'src/app/services/ProductService';
 import { CartService } from 'src/app/services/cart.service';
 import { Product } from '../../models/product.model';
+import { environment } from 'src/environments/environment'; // <--- 1. เพิ่มบรรทัดนี้
 
 @Component({
   selector: 'app-home',
@@ -20,6 +21,9 @@ export class Home implements OnInit {
   private cartService = inject(CartService);
   private router = inject(Router);
 
+  // เพิ่มตัวแปร apiUrl เพื่อความสะดวก
+  private apiUrl = environment.apiUrl;
+
   currentUser: any = null;
   recommendedProducts: any[] = [];
   originalRecommendedProducts: any[] = [];
@@ -27,7 +31,7 @@ export class Home implements OnInit {
   allPets: any[] = [];
   selectedPet: any = null;
 
-  temp_img_url = "https://www.prachachat.net/wp-content/uploads/2023/05/%E0%B8%94%E0%B8%B5%E0%B9%84%E0%B8%8B%E0%B8%99%E0%B9%8C%E0%B8%97%E0%B8%B5%E0%B9%88%E0%B8%A2%E0%B8%B1%E0%B8%87%E0%B9%84%E0%B8%A1%E0%B9%88%E0%B9%84%E0%B8%94%E0%B9%89%E0%B8%95%E0%B8%B1%E0%B9%89%E0%B8%87%E0%B8%8A%E0%B8%B7%E0%B9%88%E0%B8%AD-6.jpg";
+  temp_img_url = "https://www.prachachat.net/wp-content/uploads/2023/05/%E0%B8%94%E0%B8%B5%E0%B9%84%E0%B8%8B%E0%B8%99%E0%B9%8C%E0%B8%97%E0%B8%B5%E0%B9%88%E0%B8%A2%E0%B8%B1%E0%B8%87%E0%B9%84%E0%B8%A1%E0%B9%88%E0%B9%84%E0%B8%94%E0%B9%89%E0%B8%95%E0%B8%B1%E0%B9%89%E0%B8%8A%E0%B8%B7%E0%B9%88%E0%B8%AD-6.jpg";
 
   constructor() { }
 
@@ -45,13 +49,12 @@ export class Home implements OnInit {
 
   loadUserPets() {
     if (this.currentUser?.customerId) {
-      this.http.get<any[]>(`http://localhost:8080/api/pets/customer/${this.currentUser.customerId}`)
+      this.http.get<any[]>(`${this.apiUrl}/pets/customer/${this.currentUser.customerId}`)
         .subscribe(pets => {
           console.log('User Pets:', pets);
           this.allPets = pets || [];
 
           if (this.allPets.length > 0) {
-            // Select the first pet by default
             this.onSelectPet(this.allPets[0]);
           } else {
             console.log('No pets found for user.');
@@ -60,6 +63,7 @@ export class Home implements OnInit {
     }
   }
 
+  // ... (ฟังก์ชันที่เหลือเหมือนเดิม: onSelectPet, onSearch, normalizePetType, etc.)
   public onSelectPet(pet: any): void {
     this.selectedPet = pet;
     console.log('Selected Pet Analysis:', pet);
@@ -67,26 +71,17 @@ export class Home implements OnInit {
     const apiPetType = this.normalizePetType(pet.petType);
     const petDiseaseEnum = this.normalizeDisease(pet.congenitalDisease);
 
-    // Filter rules:
-    // 1. Must match Pet Type (or ALL)
-    // 2. Must be 'NONE' (Normal food) OR match the pet's specific disease
-    // 3. MUST NOT suggest food for other diseases the pet doesn't have
     this.productService.getProducts().subscribe({
       next: (allProducts) => {
         const filtered = allProducts.filter(p => {
           const typeMatch = p.targetPetType === 'ALL' || p.targetPetType === apiPetType;
           const productDisease = p.suitableForDisease || 'NONE';
-
-          // Logic: 
-          // If product is 'NONE', it's always recommended for that type.
-          // If product has a disease, it must match the pet's disease.
           const diseaseMatch = (productDisease === 'NONE') || (productDisease === petDiseaseEnum);
-
           return typeMatch && diseaseMatch;
         });
 
         console.log(`Found ${filtered.length} recommended products for ${pet.petName}`);
-        this.recommendedProducts = filtered.slice(0, 12); // Show top 12 matches
+        this.recommendedProducts = filtered.slice(0, 12);
         this.originalRecommendedProducts = [...this.recommendedProducts];
       },
       error: (err) => console.error('Error fetching recommendations:', err)
@@ -163,5 +158,4 @@ export class Home implements OnInit {
   trackByProductId(index: number, item: any): string | number {
     return item.productId;
   }
-
 }

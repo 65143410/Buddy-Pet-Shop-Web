@@ -8,6 +8,7 @@ import { IncomeOverviewChartComponent } from 'src/app/theme/shared/apexchart/inc
 import { AnalyticsChartComponent } from 'src/app/theme/shared/apexchart/analytics-chart/analytics-chart.component';
 import { SalesReportChartComponent } from 'src/app/theme/shared/apexchart/sales-report-chart/sales-report-chart.component';
 import { UserService } from 'src/app/services/user.service';
+import { environment } from 'src/environments/environment'; // <--- เพิ่มบรรทัดนี้
 
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import ExcelJS from 'exceljs';
@@ -231,21 +232,7 @@ export class Admin implements OnInit {
       });
     }
   }
-  // ของจริง
-  // viewPaymentSlip(order: Order): void {
-  //   if (order.payments && order.payments.length > 0) {
-  //     const slip = order.payments[0].slipImage;
-  //     if (slip) {
-  //       const imageWindow = window.open('');
-  //       const src = slip.startsWith('http') ? slip : `data:image/png;base64,${slip}`;
-  //       imageWindow?.document.write(`<img src="${src}" style="max-width:100%">`);
-  //     } else {
-  //       alert('ไม่พบรูปภาพสลิป');
-  //     }
-  //   } else {
-  //     alert('ยังไม่มีการแจ้งชำระเงิน');
-  //   }
-  // }
+
   viewPaymentSlip(order: Order): void {
     if (!order.payments || order.payments.length === 0) {
       alert('ยังไม่มีข้อมูลการชำระเงินสำหรับออเดอร์นี้');
@@ -260,13 +247,12 @@ export class Admin implements OnInit {
 
     const imageWindow = window.open('', '_blank', 'width=600,height=800');
     if (imageWindow) {
-      // Logic: ถ้าเป็น URL เต็มให้ใช้เลย, ถ้าเป็น Base64 ให้ใช้เลย, ถ้าเป็นชื่อไฟล์ให้ต่อ Path
-      // (สมมติว่า Backend เก็บไฟล์ไว้ที่ /uploads และเปิดให้เข้าถึงผ่าน http://localhost:8080/uploads/)
+      // แก้ไขตรงนี้: ใช้ URL จาก Render แทน localhost
       let src = slip;
       if (!slip.startsWith('http') && !slip.startsWith('data:')) {
-        // Default Fallback: ลองเดาว่า Path คือ /uploads/
-        // ถ้า Backend คุณใช้ Path อื่น ต้องแก้ตรงนี้ หรือใช้ Base64 จาก Backend
-        src = `http://localhost:8080/uploads/${slip}`;
+        // ดึง Base URL จาก environment และตัด /api ออก (เพราะ uploads มักอยู่ที่ root)
+        const baseUrl = environment.apiUrl.replace('/api', '');
+        src = `${baseUrl}/uploads/${slip}`;
       }
 
       imageWindow.document.write(`
@@ -928,4 +914,3 @@ export class Admin implements OnInit {
     this.selectedProcessingYear = year;
   }
 }
-// Import at top (simulated here for clarity, but I will add real imports at file top)
