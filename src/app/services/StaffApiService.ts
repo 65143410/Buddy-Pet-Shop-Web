@@ -9,7 +9,7 @@ import { environment } from 'src/environments/environment.prod';
 })
 export class StaffApiService {
   private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/api`;
+  private apiUrl = environment.apiUrl;
 
   constructor() { }
 
