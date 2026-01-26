@@ -41,24 +41,34 @@ export class StaffProfileComponent implements OnInit {
 
     saveProfile() {
         let obs;
+
+        // Helper to strip base64 prefix if present
+        const cleanImage = (img: string) => {
+            if (!img) return img;
+            if (img.startsWith('data:')) {
+                return img.split(',')[1];
+            }
+            return img;
+        };
+
+        const imageToSend = cleanImage(this.editUser.image);
+
         if (this.currentUser.staffId) {
             const updateData = {
-                staffId: this.currentUser.staffId,
+                ...this.currentUser,
                 name: this.editUser.name,
                 email: this.editUser.email,
                 phone: this.editUser.phone,
-                image: this.editUser.image,
-                position: this.currentUser.position,
-                status: this.currentUser.status
+                image: imageToSend,
             };
             obs = this.http.put(`http://localhost:8080/api/staff/${this.currentUser.staffId}`, updateData);
         } else if (this.currentUser.adminId) {
             const updateData = {
-                adminId: this.currentUser.adminId,
+                ...this.currentUser,
                 name: this.editUser.name,
                 email: this.editUser.email,
                 phone: this.editUser.phone,
-                image: this.editUser.image
+                image: imageToSend
             };
             obs = this.http.put(`http://localhost:8080/api/admin/${this.currentUser.adminId}`, updateData);
         }
@@ -69,7 +79,11 @@ export class StaffProfileComponent implements OnInit {
             next: (res: any) => {
                 alert('บันทึกข้อมูลสำเร็จ!');
                 this.isEditMode = false;
+                // Update local storage and observable
                 this.userService.updateUser(res);
+
+                // Optional: Force re-sync from server to be 100% sure
+                this.refreshCurrentUserData();
             },
             error: (err) => {
                 console.error('Update Error:', err);
@@ -78,13 +92,25 @@ export class StaffProfileComponent implements OnInit {
         });
     }
 
+    refreshCurrentUserData() {
+        if (this.currentUser.staffId) {
+            this.http.get(`http://localhost:8080/api/staff/${this.currentUser.staffId}`).subscribe((res: any) => {
+                this.userService.updateUser(res);
+            });
+        } else if (this.currentUser.adminId) {
+            this.http.get(`http://localhost:8080/api/admin/${this.currentUser.adminId}`).subscribe((res: any) => {
+                this.userService.updateUser(res);
+            });
+        }
+    }
+
     logout() {
         this.userService.logout();
         this.router.navigate(['/login']);
     }
 
     getProfileImage(): SafeUrl | string {
-        let img = this.currentUser?.image;
+        let img = this.isEditMode ? this.editUser?.image : this.currentUser?.image;
         if (!img) return 'assets/images/user/avatar-2.jpg';
 
         img = img.replace(/[\n\r\s]/g, '');
@@ -112,5 +138,6 @@ export class StaffProfileComponent implements OnInit {
             };
             reader.readAsDataURL(file);
         }
+        event.target.value = '';
     }
 }
