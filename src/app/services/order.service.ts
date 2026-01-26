@@ -5,7 +5,7 @@ import { environment } from 'src/environments/environment.prod';
 
 @Injectable({ providedIn: 'root' })
 export class OrderService {
-    private apiUrl = `${environment.apiUrl}/order`;
+    private apiUrl = `${environment.apiUrl}/orders`;
 
     private http = inject(HttpClient);
 
