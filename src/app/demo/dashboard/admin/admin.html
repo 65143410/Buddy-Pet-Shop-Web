@@ -672,24 +672,6 @@
                   <label style="font-size: 12px; color: #666;">📍 ที่อยู่จัดส่ง (Shipping Address)</label>
                   <p style="margin: 5px 0;">{{ selectedOrderDetail.shippingAddress || 'ไม่ระบุ' }}</p>
                 </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                  <div>
-                    <label style="font-size: 12px; color: #666;">Tracking Number</label>
-                    <input type="text" [(ngModel)]="selectedOrderDetail.trackingNumber" placeholder="เลขพัสดุ"
-                      style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-                  </div>
-                  <div>
-                    <label style="font-size: 12px; color: #666;">ค่าจัดส่ง (Shipping Cost)</label>
-                    <input type="number" [(ngModel)]="selectedOrderDetail.shippingCost" placeholder="0.00"
-                      style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-                  </div>
-                </div>
-                <div style="text-align: right; margin-top: 10px;">
-                  <button class="action-btn" (click)="saveShippingInfo(selectedOrderDetail)"
-                    style="background: #6366f1; color: white; border: none; padding: 6px 15px; border-radius: 4px; font-size: 13px; cursor: pointer;">
-                    บันทึกข้อมูลจัดส่ง
-                  </button>
-                </div>
               </div>
 
             </div>
