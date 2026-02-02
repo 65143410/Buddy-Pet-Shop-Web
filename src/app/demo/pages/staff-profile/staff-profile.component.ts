@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { UserService } from 'src/app/services/user.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
     selector: 'app-staff-profile',
@@ -17,7 +18,7 @@ export class StaffProfileComponent implements OnInit {
     currentUser: any = null;
     isEditMode = false;
     editUser: any = {};
-
+    private apiUrl = environment.apiUrl;
     userService = inject(UserService);
     router = inject(Router);
     http = inject(HttpClient);
@@ -54,7 +55,7 @@ export class StaffProfileComponent implements OnInit {
                 phone: this.editUser.phone,
                 image: imageToSend,
             };
-            obs = this.http.put(`http://localhost:8080/api/staff/${this.currentUser.staffId}`, updateData);
+            obs = this.http.put(`${this.apiUrl}/staff/${this.currentUser.staffId}`, updateData);
         } else if (this.currentUser.adminId) {
             const updateData = {
                 ...this.currentUser,
@@ -63,7 +64,7 @@ export class StaffProfileComponent implements OnInit {
                 phone: this.editUser.phone,
                 image: imageToSend
             };
-            obs = this.http.put(`http://localhost:8080/api/admin/${this.currentUser.adminId}`, updateData);
+            obs = this.http.put(`${this.apiUrl}/admin/${this.currentUser.adminId}`, updateData);
         }
 
         if (!obs) return;
@@ -87,11 +88,19 @@ export class StaffProfileComponent implements OnInit {
 
     refreshCurrentUserData() {
         if (this.currentUser.staffId) {
-            this.http.get(`http://localhost:8080/api/staff/${this.currentUser.staffId}`).subscribe((res: any) => {
+            // ❌ ของเดิม (ลบออก):
+            // this.http.get(`http://localhost:8080/api/staff/${this.currentUser.staffId}`).subscribe(...)
+
+            // ✅ ของใหม่ (แก้เป็น):
+            this.http.get(`${this.apiUrl}/staff/${this.currentUser.staffId}`).subscribe((res: any) => {
                 this.userService.updateUser(res);
             });
         } else if (this.currentUser.adminId) {
-            this.http.get(`http://localhost:8080/api/admin/${this.currentUser.adminId}`).subscribe((res: any) => {
+            // ❌ ของเดิม (ลบออก):
+            // this.http.get(`http://localhost:8080/api/admin/${this.currentUser.adminId}`).subscribe(...)
+
+            // ✅ ของใหม่ (แก้เป็น):
+            this.http.get(`${this.apiUrl}/admin/${this.currentUser.adminId}`).subscribe((res: any) => {
                 this.userService.updateUser(res);
             });
         }
