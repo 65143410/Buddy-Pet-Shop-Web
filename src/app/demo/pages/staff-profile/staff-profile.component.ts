@@ -42,16 +42,9 @@ export class StaffProfileComponent implements OnInit {
     saveProfile() {
         let obs;
 
-        // Helper to strip base64 prefix if present
-        const cleanImage = (img: string) => {
-            if (!img) return img;
-            if (img.startsWith('data:')) {
-                return img.split(',')[1];
-            }
-            return img;
-        };
-
-        const imageToSend = cleanImage(this.editUser.image);
+        // --- ลบฟังก์ชัน cleanImage ออก หรือไม่ต้องเรียกใช้ ---
+        // ส่ง string ยาวๆ ไปทั้งดุ้นเลย เพื่อเก็บ MIME Type ไว้
+        const imageToSend = this.editUser.image;
 
         if (this.currentUser.staffId) {
             const updateData = {
@@ -113,31 +106,31 @@ export class StaffProfileComponent implements OnInit {
         let img = this.isEditMode ? this.editUser?.image : this.currentUser?.image;
         if (!img) return 'assets/images/user/avatar-2.jpg';
 
-        img = img.replace(/[\n\r\s]/g, '');
-
-        if (img.startsWith('http')) {
+        // ถ้ามี http (รูปจากเน็ต) หรือมี data: (รูป Base64 ที่ถูกต้อง) ให้แสดงเลย
+        if (img.startsWith('http') || img.startsWith('data:')) {
             return this.sanitizer.bypassSecurityTrustUrl(img);
         }
 
-        if (img.startsWith('data:')) {
-            if (img.includes('base64') && !img.includes('base64,')) {
-                img = img.replace('base64', 'base64,');
-            }
-            return this.sanitizer.bypassSecurityTrustUrl(img);
-        }
-
+        // Fallback: กรณีข้อมูลเก่าใน DB ที่ไม่มี Header (ที่คุณเคยตัดทิ้งไปแล้ว)
+        // ค่อยเติม header ให้ (เสี่ยงดวงว่าเป็น jpeg)
         return this.sanitizer.bypassSecurityTrustUrl(`data:image/jpeg;base64,${img}`);
     }
 
     onFileSelected(event: any) {
         const file = event.target.files[0];
         if (file) {
+            // เช็คขนาดไฟล์ (ตัวอย่าง: ห้ามเกิน 2MB)
+            if (file.size > 2 * 1024 * 1024) {
+                alert('ขนาดไฟล์รูปภาพต้องไม่เกิน 2MB');
+                event.target.value = ''; // ล้างค่าออก
+                return;
+            }
+
             const reader = new FileReader();
             reader.onload = (e: any) => {
-                this.editUser.image = e.target.result;
+                this.editUser.image = e.target.result; // เก็บทั้ง data:image/...,base64,...
             };
             reader.readAsDataURL(file);
         }
-        event.target.value = '';
     }
 }
